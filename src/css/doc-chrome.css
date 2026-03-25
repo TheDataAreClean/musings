@@ -1,363 +1,346 @@
 /* ==========================================================================
    DOC CHROME
-   The load-bearing aesthetic file.
-   Ruler, margins, section counters, page numbers, metadata strip.
    ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   Site Header — document application bar
-   -------------------------------------------------------------------------- */
+body {
+  background: var(--color-app-bg);
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  line-height: var(--leading-doc);
+}
 
-.site-header {
-  border-bottom: 1px solid var(--color-border);
-  padding: var(--space-2) var(--space-6);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
+/* ==========================================================================
+   TITLE BAR — static decoration only
+   ========================================================================== */
+
+.app-titlebar {
   position: sticky;
   top: 0;
-  z-index: 100;
-  background: var(--color-bg);
-}
-
-.site-header__title {
-  font-weight: 700;
-  font-size: var(--text-base);
-  text-decoration: none;
-  color: var(--color-text);
-  letter-spacing: -0.01em;
-}
-
-.site-header__title:visited {
-  color: var(--color-text);
-}
-
-.site-header__nav {
-  display: flex;
-  gap: var(--space-6);
-}
-
-.site-header__nav a {
-  color: var(--color-text);
-  text-decoration: none;
-  font-size: var(--text-sm);
-  font-family: var(--font-mono);
-}
-
-.site-header__nav a:hover {
-  text-decoration: underline;
-}
-
-.site-header__nav a:visited {
-  color: var(--color-text);
-}
-
-/* --------------------------------------------------------------------------
-   Ruler — sticky, tick marks via CSS gradient
-   -------------------------------------------------------------------------- */
-
-.doc-ruler {
-  position: sticky;
-  top: calc(var(--ruler-height) + 1px); /* sits below header */
-  z-index: 90;
-  height: var(--ruler-height);
-  background-color: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
-  background-image:
-    /* Minor ticks — every 0.5cm */
-    repeating-linear-gradient(
-      90deg,
-      var(--color-ruler) 0px,
-      var(--color-ruler) 1px,
-      transparent 1px,
-      transparent 0.5cm
-    ),
-    /* Major ticks — every 1cm */
-    repeating-linear-gradient(
-      90deg,
-      var(--color-border) 0px,
-      var(--color-border) 1px,
-      transparent 1px,
-      transparent 1cm
-    );
-  background-size: 0.5cm 40%, 1cm 65%;
-  background-repeat: repeat-x;
-  background-position: var(--space-6) bottom;
-  pointer-events: none;
+  z-index: 200;
+  height: var(--titlebar-h);
+  background: var(--color-app-chrome);
+  border-bottom: 1px solid var(--color-app-border);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 var(--space-4);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  gap: var(--space-4);
+  cursor: default;
   user-select: none;
 }
 
-/* --------------------------------------------------------------------------
-   Document page frame
-   -------------------------------------------------------------------------- */
+.app-titlebar__doc {
+  font-weight: 700;
+  font-size: var(--text-sm);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text);
+}
+
+.app-titlebar__saved {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  text-align: right;
+}
+
+/* ==========================================================================
+   MENU BAR — static decoration only, all items dead
+   ========================================================================== */
+
+.app-menubar {
+  position: sticky;
+  top: var(--titlebar-h);
+  z-index: 190;
+  height: var(--menubar-h);
+  background: var(--color-app-chrome);
+  border-bottom: 1px solid var(--color-app-border-soft);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  gap: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  cursor: default;
+  user-select: none;
+}
+
+.app-menubar__dead {
+  padding: 0 var(--space-3);
+  color: var(--color-muted);
+}
+
+/* ==========================================================================
+   TOOLBAR — static decoration only
+   ========================================================================== */
+
+.app-toolbar {
+  position: sticky;
+  top: calc(var(--titlebar-h) + var(--menubar-h));
+  z-index: 180;
+  height: var(--toolbar-h);
+  background: var(--color-app-chrome);
+  border-bottom: 2px solid var(--color-app-border);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-4);
+  gap: var(--space-2);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  cursor: default;
+  user-select: none;
+}
+
+.app-toolbar__pipe {
+  color: var(--color-app-border-soft);
+}
+
+.app-toolbar__spacer {
+  flex: 1;
+}
+
+/* ==========================================================================
+   RULER — static decoration only
+   ========================================================================== */
+
+.app-ruler {
+  position: sticky;
+  top: calc(var(--titlebar-h) + var(--menubar-h) + var(--toolbar-h));
+  z-index: 170;
+  height: var(--ruler-h);
+  background: #b8b8b8;
+  border-bottom: 1px solid #888;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+}
+
+.app-ruler::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: min(var(--page-width), 100%);
+  height: 100%;
+  background-color: #f0f0f0;
+  background-image:
+    repeating-linear-gradient(90deg, #bbb 0, #bbb 1px, transparent 1px, transparent 12px),
+    repeating-linear-gradient(90deg, #888 0, #888 1px, transparent 1px, transparent 96px);
+  background-repeat: repeat-x;
+}
+
+.app-ruler::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: min(var(--page-width), 100%);
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    #b8b8b8 0, #b8b8b8 var(--page-pad-h),
+    transparent var(--page-pad-h),
+    transparent calc(100% - var(--page-pad-h)),
+    #b8b8b8 calc(100% - var(--page-pad-h)), #b8b8b8 100%
+  );
+}
+
+/* ==========================================================================
+   APP CANVAS — the grey desk
+   ========================================================================== */
+
+.app-canvas {
+  background: var(--color-app-bg);
+  min-height: calc(100vh - var(--chrome-h) - var(--statusbar-h));
+  padding: var(--space-6) var(--space-6) calc(var(--statusbar-h) + var(--space-12));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ==========================================================================
+   APP NAV — real navigation, plain links floating above the page card
+   ========================================================================== */
+
+.app-nav {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  margin-bottom: var(--space-3);
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  width: 100%;
+  max-width: var(--page-width);
+}
+
+.app-nav a {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+
+.app-nav a:visited {
+  color: var(--color-visited);
+}
+
+.app-nav a:hover {
+  text-decoration: none;
+}
+
+.app-nav span {
+  color: var(--color-muted);
+}
+
+/* ==========================================================================
+   DOCUMENT PAGE — white paper on the grey desk
+   ========================================================================== */
 
 .doc-page {
-  max-width: calc(var(--measure) + var(--sidebar-width) + var(--space-16) * 3);
-  margin: 0 auto;
-  padding: var(--space-12) var(--space-6);
+  background: var(--color-page-bg);
+  width: 100%;
+  max-width: var(--page-width);
+  padding: var(--page-pad-v) var(--page-pad-h);
+  box-shadow: var(--color-page-shadow);
+  min-height: calc(100vh - var(--chrome-h) - var(--statusbar-h) - var(--space-16));
+  color: var(--color-text);
 }
 
-/* Single-column pages (about, index) */
-.doc-page--single {
-  max-width: var(--measure);
-}
-
-/* --------------------------------------------------------------------------
-   Document layout — main content + margin column
-   -------------------------------------------------------------------------- */
+/* ==========================================================================
+   DOCUMENT LAYOUT — content + optional TOC sidebar
+   ========================================================================== */
 
 .doc-layout {
   display: grid;
-  grid-template-columns: 1fr var(--sidebar-width);
-  grid-template-areas: "content sidebar";
-  gap: 0 var(--space-12);
+  grid-template-columns: 1fr var(--sidebar-w);
+  gap: 0 var(--space-10);
   align-items: start;
 }
 
 .doc-layout__content {
-  grid-area: content;
   min-width: 0;
 }
 
 .doc-layout__sidebar {
-  grid-area: sidebar;
   position: sticky;
-  top: calc(var(--ruler-height) * 2 + var(--space-4));
+  top: calc(var(--chrome-h) + var(--space-6));
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .doc-layout {
     grid-template-columns: 1fr;
-    grid-template-areas:
-      "sidebar"
-      "content";
   }
-
   .doc-layout__sidebar {
-    position: static;
+    display: none;
   }
 }
 
-/* --------------------------------------------------------------------------
-   Document metadata strip — last edited, word count, read time
-   -------------------------------------------------------------------------- */
-
-.doc-meta {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--color-muted);
-  border-top: 1px solid var(--color-border-soft);
-  border-bottom: 1px solid var(--color-border-soft);
-  padding: var(--space-2) 0;
-  margin-bottom: var(--space-8);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-4);
-  align-items: center;
-}
-
-.doc-meta__item {
-  display: flex;
-  gap: var(--space-1);
-  align-items: center;
-}
-
-.doc-meta__label {
-  color: var(--color-muted);
-}
-
-.doc-meta__value {
-  color: var(--color-text);
-}
-
-.doc-meta__sep {
-  color: var(--color-border-soft);
-}
-
-/* --------------------------------------------------------------------------
-   Document title area
-   -------------------------------------------------------------------------- */
+/* ==========================================================================
+   DOCUMENT TITLE — just a big h1, no tricks
+   ========================================================================== */
 
 .doc-title {
+  font-family: var(--font-doc);
   font-size: var(--text-3xl);
   font-weight: 700;
   line-height: var(--leading-tight);
-  margin-bottom: var(--space-3);
-  letter-spacing: -0.02em;
-  /* Doc-style: looks editable, but isn't — the brutalist joke */
-  cursor: text;
-}
-
-.doc-breadcrumb {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--color-muted);
-  margin-bottom: var(--space-6);
-}
-
-.doc-breadcrumb a {
-  color: var(--color-muted);
-  text-decoration: none;
-}
-
-.doc-breadcrumb a:hover {
-  text-decoration: underline;
+  margin-bottom: var(--space-2);
   color: var(--color-text);
 }
 
-.doc-breadcrumb a:visited {
+/* ==========================================================================
+   DOCUMENT METADATA — one plain text line
+   ========================================================================== */
+
+.doc-meta {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
   color: var(--color-muted);
+  margin-bottom: var(--space-8);
 }
 
-.doc-breadcrumb__sep {
-  margin: 0 var(--space-1);
+.doc-meta a {
+  color: var(--color-link);
 }
 
-/* --------------------------------------------------------------------------
-   Section counters — automatic numbering via CSS
-   -------------------------------------------------------------------------- */
+.doc-meta a:visited {
+  color: var(--color-visited);
+}
+
+/* ==========================================================================
+   PAGE BREAKS — grey desk showing through the page
+   ========================================================================== */
 
 .doc-body {
-  counter-reset: h2-counter;
-}
-
-.doc-body h2 {
-  counter-increment: h2-counter;
-  counter-reset: h3-counter;
-}
-
-.doc-body h3 {
-  counter-increment: h3-counter;
-}
-
-.doc-body h2::before {
-  content: counter(h2-counter) ". ";
-  font-family: var(--font-mono);
-  font-size: 0.85em;
-  color: var(--color-muted);
-  font-weight: 400;
-  margin-right: var(--space-1);
-}
-
-.doc-body h3::before {
-  content: counter(h2-counter) "." counter(h3-counter) " ";
-  font-family: var(--font-mono);
-  font-size: 0.8em;
-  color: var(--color-muted);
-  font-weight: 400;
-  margin-right: var(--space-1);
-}
-
-/* --------------------------------------------------------------------------
-   Page breaks — manual {% pagebreak %} shortcode
-   -------------------------------------------------------------------------- */
-
-.doc-body {
-  counter-reset: h2-counter page-counter;
+  counter-reset: page-counter;
 }
 
 .page-break {
   counter-increment: page-counter;
-  border-top: 1px dashed var(--color-border-soft);
-  margin: var(--space-16) 0;
-  padding-top: var(--space-2);
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--color-muted);
-  user-select: none;
+  display: block;
+  width: calc(100% + var(--page-pad-h) * 2);
+  margin-left: calc(-1 * var(--page-pad-h));
+  background: var(--color-app-bg);
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  height: 40px;
+  margin-top: var(--space-12);
+  margin-bottom: var(--space-12);
+  position: relative;
 }
 
 .page-break::after {
-  content: "— " counter(page-counter) " —";
+  content: counter(page-counter);
+  position: absolute;
+  right: var(--page-pad-h);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
 }
 
-/* --------------------------------------------------------------------------
-   Left margin rule — the document page edge
-   -------------------------------------------------------------------------- */
-
-.doc-body {
-  border-left: 3px solid var(--color-border);
-  padding-left: var(--space-8);
-}
-
-@media (max-width: 600px) {
-  .doc-body {
-    border-left: 2px solid var(--color-border);
-    padding-left: var(--space-4);
-  }
-}
-
-/* --------------------------------------------------------------------------
-   Deep-link highlights — :target
-   -------------------------------------------------------------------------- */
-
-:target {
-  outline: 2px solid var(--color-border);
-  outline-offset: var(--space-2);
-}
+/* ==========================================================================
+   :TARGET HIGHLIGHTS
+   ========================================================================== */
 
 .doc-body h2:target,
-.doc-body h3:target,
-.doc-body h4:target {
-  background-color: var(--color-mark);
-  outline: 2px solid var(--color-border);
-  outline-offset: var(--space-1);
+.doc-body h3:target {
+  background: var(--color-mark);
 }
 
-/* --------------------------------------------------------------------------
-   Tags
-   -------------------------------------------------------------------------- */
+/* ==========================================================================
+   STATUS BAR — static decoration only
+   ========================================================================== */
 
-.tags {
+.app-statusbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--statusbar-h);
+  z-index: 300;
+  background: var(--color-app-chrome);
+  border-top: 1px solid var(--color-app-border);
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  list-style: none;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-}
-
-.tags__item a {
-  color: var(--color-muted);
-  text-decoration: none;
-  border-bottom: 1px solid currentColor;
-  padding-bottom: 1px;
-}
-
-.tags__item a:hover {
-  color: var(--color-text);
-}
-
-.tags__item a:visited {
-  color: var(--color-muted);
-}
-
-/* --------------------------------------------------------------------------
-   Site footer
-   -------------------------------------------------------------------------- */
-
-.site-footer {
-  border-top: 2px solid var(--color-border);
-  padding: var(--space-6);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--color-muted);
-  margin-top: var(--space-24);
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-2);
+  padding: 0 var(--space-4);
+  gap: var(--space-3);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  cursor: default;
+  user-select: none;
 }
 
-.site-footer a {
-  color: var(--color-muted);
+.app-statusbar__pipe {
+  color: var(--color-border-soft);
 }
 
-.site-footer a:visited {
-  color: var(--color-muted);
+.app-statusbar__spacer {
+  flex: 1;
 }

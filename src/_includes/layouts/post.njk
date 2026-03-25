@@ -5,77 +5,18 @@ ogType: article
 
 <article class="doc-page">
 
-  {# Breadcrumb #}
-  <nav class="doc-breadcrumb" aria-label="Breadcrumb">
-    <a href="/">{{ site.title }}</a>
-    <span class="doc-breadcrumb__sep" aria-hidden="true">/</span>
-    <a href="/ideas/">Ideas</a>
-    <span class="doc-breadcrumb__sep" aria-hidden="true">/</span>
-    <span>{{ title }}</span>
-  </nav>
-
-  {# Document title — styled like a doc editor filename #}
   <h1 class="doc-title">{{ title }}</h1>
 
-  {# Metadata strip #}
-  <div class="doc-meta" aria-label="Document metadata">
-    <span class="doc-meta__item">
-      <span class="doc-meta__label">Published</span>
-      <time class="doc-meta__value" datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
-    </span>
-    {% if updated %}
-    <span class="doc-meta__sep" aria-hidden="true">·</span>
-    <span class="doc-meta__item">
-      <span class="doc-meta__label">Updated</span>
-      <time class="doc-meta__value" datetime="{{ updated | isoDate }}">{{ updated | readableDate }}</time>
-    </span>
-    {% endif %}
-    <span class="doc-meta__sep" aria-hidden="true">·</span>
-    <span class="doc-meta__item">
-      <span class="doc-meta__value">{{ content | wordcount }} words</span>
-    </span>
-    <span class="doc-meta__sep" aria-hidden="true">·</span>
-    <span class="doc-meta__item">
-      <span class="doc-meta__value">{{ content | readtime }} min read</span>
-    </span>
+  <p class="doc-meta">
+    <time datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
+    {% if updated %} · Updated <time datetime="{{ updated | isoDate }}">{{ updated | readableDate }}</time>{% endif %}
+    · {{ content | wordcount }} words
+    · {{ content | readtime }} min read
     {% if tags %}
-    <span class="doc-meta__sep" aria-hidden="true">·</span>
-    <ul class="tags" aria-label="Tags">
-      {% for tag in tags %}
-      {% if tag != "ideas" %}
-      <li class="tags__item"><a href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a></li>
-      {% endif %}
-      {% endfor %}
-    </ul>
+      {% for tag in tags %}{% if tag != "ideas" %} · <a href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endif %}{% endfor %}
     {% endif %}
-  </div>
+  </p>
 
-  {# Mobile TOC — collapsed by default #}
-  {% if toc and toc.length > 2 %}
-  <details class="doc-toc-mobile">
-    <summary>Table of Contents</summary>
-    <nav class="doc-toc" aria-label="Table of contents">
-      <ol class="doc-toc__list">
-        {% for item in toc %}
-        <li class="doc-toc__item">
-          <a class="doc-toc__link" href="#{{ item.id }}">{{ item.text }}</a>
-          {% if item.children and item.children.length %}
-          <ol class="doc-toc__list">
-            {% for child in item.children %}
-            <li class="doc-toc__item">
-              <a class="doc-toc__link" href="#{{ child.id }}">{{ child.text }}</a>
-            </li>
-            {% endfor %}
-          </ol>
-          {% endif %}
-        </li>
-        {% endfor %}
-      </ol>
-    </nav>
-  </details>
-  {% endif %}
-
-  {# Main layout: content + sidebar #}
   <div class="doc-layout">
 
     <div class="doc-layout__content">
@@ -83,30 +24,22 @@ ogType: article
         {{ content | safe }}
       </div>
 
-      {# Post navigation #}
-      {% set allPosts = collections.ideas %}
-      {% set postIndex = allPosts | findIndex(page) %}
       <nav class="post-nav" aria-label="Post navigation">
+        {% set allPosts = collections.ideas %}
+        {% set postIndex = allPosts | findIndex(page) %}
         <div class="post-nav__prev">
           {% if allPosts[postIndex + 1] %}
-          <span class="post-nav__label">← Previous</span>
-          <a class="post-nav__title" href="{{ allPosts[postIndex + 1].url }}">
-            {{ allPosts[postIndex + 1].data.title }}
-          </a>
+          <a href="{{ allPosts[postIndex + 1].url }}">← {{ allPosts[postIndex + 1].data.title }}</a>
           {% endif %}
         </div>
         <div class="post-nav__next">
           {% if allPosts[postIndex - 1] %}
-          <span class="post-nav__label">Next →</span>
-          <a class="post-nav__title" href="{{ allPosts[postIndex - 1].url }}">
-            {{ allPosts[postIndex - 1].data.title }}
-          </a>
+          <a href="{{ allPosts[postIndex - 1].url }}">{{ allPosts[postIndex - 1].data.title }} →</a>
           {% endif %}
         </div>
       </nav>
     </div>
 
-    {# Sidebar: desktop TOC #}
     {% if toc and toc.length > 2 %}
     <aside class="doc-layout__sidebar" aria-label="Table of contents">
       {% include "components/toc.njk" %}

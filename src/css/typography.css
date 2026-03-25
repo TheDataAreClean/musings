@@ -1,44 +1,56 @@
 /* ==========================================================================
-   TYPOGRAPHY
-   Document-style prose typesetting.
+   TYPOGRAPHY — Unformatted document prose
+   As if you opened a blank doc and typed. No decoration beyond text itself.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Headings
+   Headings — size and weight only, nothing else
    -------------------------------------------------------------------------- */
 
 .doc-body h1,
 .doc-body h2,
 .doc-body h3,
 .doc-body h4 {
-  font-family: var(--font-body);
+  font-family: var(--font-doc);
   font-weight: 700;
   line-height: var(--leading-tight);
-  margin-top: var(--space-10);
-  margin-bottom: var(--space-3);
+  color: var(--color-text);
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-2);
 }
 
 .doc-body h1 { font-size: var(--text-2xl); }
 .doc-body h2 { font-size: var(--text-xl); }
 .doc-body h3 { font-size: var(--text-lg); }
-.doc-body h4 { font-size: var(--text-base); text-transform: uppercase; letter-spacing: 0.05em; }
+.doc-body h4 { font-size: var(--text-base); font-weight: 700; }
+
+.doc-body > h2:first-child,
+.doc-body > h3:first-child {
+  margin-top: 0;
+}
 
 /* --------------------------------------------------------------------------
    Body text
    -------------------------------------------------------------------------- */
 
+.doc-body {
+  font-family: var(--font-doc);
+  font-size: var(--text-base);
+  line-height: var(--leading-doc);
+  color: var(--color-text);
+}
+
 .doc-body p {
   margin-bottom: var(--space-4);
-  max-width: var(--measure);
 }
 
+/* Paragraph indent after first — classic document convention */
 .doc-body p + p {
-  /* No extra gap between consecutive paragraphs, use indent instead */
   text-indent: 1.5em;
-  margin-top: calc(var(--space-4) * -1);
+  margin-top: calc(-1 * var(--space-4));
 }
 
-/* But not after headings, lists, blockquotes */
+/* No indent after structural breaks */
 .doc-body h1 + p,
 .doc-body h2 + p,
 .doc-body h3 + p,
@@ -47,11 +59,14 @@
 .doc-body ol + p,
 .doc-body blockquote + p,
 .doc-body pre + p,
-.doc-body figure + p,
-.doc-body .callout + p {
+.doc-body hr + p,
+.doc-body figure + p {
   text-indent: 0;
   margin-top: 0;
 }
+
+.doc-body a { color: var(--color-link); }
+.doc-body a:visited { color: var(--color-visited); }
 
 /* --------------------------------------------------------------------------
    Lists
@@ -59,9 +74,8 @@
 
 .doc-body ul,
 .doc-body ol {
-  padding-left: var(--space-6);
+  padding-left: var(--space-8);
   margin-bottom: var(--space-4);
-  max-width: var(--measure);
 }
 
 .doc-body li {
@@ -75,20 +89,18 @@
 }
 
 /* --------------------------------------------------------------------------
-   Blockquote
+   Blockquote — indented, italic. No decorative marks.
    -------------------------------------------------------------------------- */
 
 .doc-body blockquote {
-  border-left: 3px solid var(--color-border);
-  padding-left: var(--space-6);
-  margin: var(--space-6) 0;
-  color: var(--color-muted);
+  margin: var(--space-6) var(--space-8);
   font-style: italic;
-  max-width: var(--measure);
+  color: var(--color-muted);
 }
 
 .doc-body blockquote p {
   text-indent: 0;
+  margin-bottom: var(--space-2);
 }
 
 /* --------------------------------------------------------------------------
@@ -97,40 +109,45 @@
 
 .doc-body code {
   font-family: var(--font-mono);
-  font-size: 0.875em;
+  font-size: 0.88em;
   background: var(--color-mark-dim);
-  padding: 0.1em 0.3em;
   border: 1px solid var(--color-border-soft);
+  padding: 0.1em 0.35em;
 }
 
 .doc-body pre {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   background: #f8f8f8;
-  border: 1px solid var(--color-border);
   border-left: 3px solid var(--color-border);
   padding: var(--space-4) var(--space-6);
   overflow-x: auto;
   margin: var(--space-6) 0;
-  max-width: var(--measure);
-  line-height: var(--leading-normal);
+  line-height: 1.4;
 }
 
 .doc-body pre code {
   background: none;
-  padding: 0;
   border: none;
+  padding: 0;
   font-size: inherit;
 }
 
 /* --------------------------------------------------------------------------
-   Horizontal rule
+   Horizontal rule — * * * as typed text, not a drawn line
    -------------------------------------------------------------------------- */
 
 .doc-body hr {
   border: none;
-  border-top: 2px solid var(--color-border);
-  margin: var(--space-12) 0;
+  margin: var(--space-10) 0;
+  text-align: center;
+}
+
+.doc-body hr::after {
+  content: '* * *';
+  font-family: var(--font-doc);
+  color: var(--color-muted);
+  font-size: var(--text-base);
 }
 
 /* --------------------------------------------------------------------------
@@ -138,60 +155,46 @@
    -------------------------------------------------------------------------- */
 
 .doc-body table {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-sm);
   border-collapse: collapse;
   margin: var(--space-6) 0;
-  max-width: var(--measure);
   width: 100%;
 }
 
 .doc-body th {
   text-align: left;
+  font-weight: 700;
   border-bottom: 2px solid var(--color-border);
   padding: var(--space-2) var(--space-3);
-  font-weight: 700;
 }
 
 .doc-body td {
   border-bottom: 1px solid var(--color-border-soft);
   padding: var(--space-2) var(--space-3);
+  vertical-align: top;
 }
 
 /* --------------------------------------------------------------------------
-   Figures and images
+   Figures
    -------------------------------------------------------------------------- */
 
 .doc-body figure {
   margin: var(--space-8) 0;
-  max-width: var(--measure);
 }
 
 .doc-body figcaption {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-xs);
   color: var(--color-muted);
   margin-top: var(--space-2);
-  border-top: 1px solid var(--color-border-soft);
-  padding-top: var(--space-1);
 }
 
 /* --------------------------------------------------------------------------
-   Anchor links on headings
+   Selection — Google Docs yellow
    -------------------------------------------------------------------------- */
 
-.doc-body .header-anchor {
-  opacity: 0;
-  font-size: 0.75em;
-  margin-left: var(--space-2);
-  text-decoration: none;
-  color: var(--color-muted);
-  font-family: var(--font-mono);
-  transition: opacity 0.1s;
-}
-
-.doc-body h2:hover .header-anchor,
-.doc-body h3:hover .header-anchor,
-.doc-body h4:hover .header-anchor {
-  opacity: 1;
+::selection {
+  background: var(--color-mark);
+  color: var(--color-text);
 }

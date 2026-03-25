@@ -5,73 +5,17 @@ ogType: article
 
 <article class="doc-page">
 
-  {# Breadcrumb #}
-  <nav class="doc-breadcrumb" aria-label="Breadcrumb">
-    <a href="/">{{ site.title }}</a>
-    <span class="doc-breadcrumb__sep" aria-hidden="true">/</span>
-    <a href="/works/">Works</a>
-    <span class="doc-breadcrumb__sep" aria-hidden="true">/</span>
-    <span>{{ title }}</span>
-  </nav>
-
-  {# Title #}
   <h1 class="doc-title">{{ title }}</h1>
 
-  {# Metadata strip #}
-  <div class="doc-meta" aria-label="Document metadata">
-    {% if year %}
-    <span class="doc-meta__item">
-      <span class="doc-meta__label">Year</span>
-      <span class="doc-meta__value">{{ year }}</span>
-    </span>
-    <span class="doc-meta__sep" aria-hidden="true">·</span>
-    {% endif %}
-    {% if role %}
-    <span class="doc-meta__item">
-      <span class="doc-meta__label">Role</span>
-      <span class="doc-meta__value">{{ role }}</span>
-    </span>
-    <span class="doc-meta__sep" aria-hidden="true">·</span>
-    {% endif %}
-    {% if status %}
-    <span class="doc-meta__item">
-      <span class="doc-meta__label">Status</span>
-      <span class="doc-meta__value">{{ status }}</span>
-    </span>
-    {% endif %}
-    {% if link %}
-    <span class="doc-meta__sep" aria-hidden="true">·</span>
-    <span class="doc-meta__item">
-      <a class="doc-meta__value" href="{{ link }}" rel="noopener">↗ View</a>
-    </span>
-    {% endif %}
+  <p class="doc-meta">
+    {% if year %}{{ year }}{% endif %}
+    {% if role %} · {{ role }}{% endif %}
+    {% if status %} · {{ status }}{% endif %}
+    {% if link %} · <a href="{{ link }}" rel="noopener">↗ View project</a>{% endif %}
     {% if tags %}
-    <span class="doc-meta__sep" aria-hidden="true">·</span>
-    <ul class="tags" aria-label="Tags">
-      {% for tag in tags %}
-      {% if tag != "works" %}
-      <li class="tags__item"><a href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a></li>
-      {% endif %}
-      {% endfor %}
-    </ul>
+      {% for tag in tags %}{% if tag != "works" %} · <a href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endif %}{% endfor %}
     {% endif %}
-  </div>
-
-  {# Mobile TOC #}
-  {% if toc and toc.length > 2 %}
-  <details class="doc-toc-mobile">
-    <summary>Table of Contents</summary>
-    <nav class="doc-toc" aria-label="Table of contents">
-      <ol class="doc-toc__list">
-        {% for item in toc %}
-        <li class="doc-toc__item">
-          <a class="doc-toc__link" href="#{{ item.id }}">{{ item.text }}</a>
-        </li>
-        {% endfor %}
-      </ol>
-    </nav>
-  </details>
-  {% endif %}
+  </p>
 
   <div class="doc-layout">
     <div class="doc-layout__content">

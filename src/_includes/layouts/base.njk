@@ -3,50 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% if title %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <title>{% if title and title != "Home" %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
   <meta name="description" content="{{ description or site.description }}">
   <meta name="author" content="{{ site.author }}">
-
-  {# Open Graph #}
   <meta property="og:title" content="{% if title %}{{ title }}{% else %}{{ site.title }}{% endif %}">
   <meta property="og:description" content="{{ description or site.description }}">
   <meta property="og:type" content="{{ ogType or 'website' }}">
-  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
-
-  {# Canonical #}
   <link rel="canonical" href="{{ site.url }}{{ page.url }}">
-
-  {# Feeds #}
-  <link rel="alternate" type="application/atom+xml" title="{{ site.title }} — Ideas" href="/ideas/feed.xml">
-
-  {# CSS — one file, no render blocking beyond this #}
+  <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="/ideas/feed.xml">
   <link rel="stylesheet" href="/css/main.css">
-
-  {# No Google Fonts. No tracking. No JS. #}
 </head>
 <body>
 
-  <header class="site-header" role="banner">
-    <a href="/" class="site-header__title">{{ site.title }}</a>
-    <nav class="site-header__nav" aria-label="Site navigation">
+  {# ── STATIC DECORATION ONLY — nothing below is clickable ──────────────── #}
+
+  <div class="app-titlebar" aria-hidden="true">
+    <span></span>
+    <span class="app-titlebar__doc">
+      {{ site.title }}{% if title and title != "Home" %} — {{ title }}{% endif %}
+    </span>
+    <span class="app-titlebar__saved">Saved ✓</span>
+  </div>
+
+  <div class="app-menubar" aria-hidden="true">
+    <span class="app-menubar__dead">File</span>
+    <span class="app-menubar__dead">Edit</span>
+    <span class="app-menubar__dead">View</span>
+    <span class="app-menubar__dead">Insert</span>
+    <span class="app-menubar__dead">Format</span>
+    <span class="app-menubar__dead">Tools</span>
+    <span class="app-menubar__dead">Help</span>
+  </div>
+
+  <div class="app-toolbar" aria-hidden="true">
+    <span>Arial</span>
+    <span>12</span>
+    <span class="app-toolbar__pipe">|</span>
+    <b>B</b>
+    <i>I</i>
+    <u>U</u>
+    <span class="app-toolbar__pipe">|</span>
+    <span>&#8676;</span>
+    <span>&#8596;</span>
+    <span>&#8677;</span>
+    <span class="app-toolbar__spacer"></span>
+    <span>100%</span>
+  </div>
+
+  <div class="app-ruler" aria-hidden="true"></div>
+
+  {# ── REAL CONTENT LIVES HERE ────────────────────────────────────────────── #}
+
+  <div class="app-canvas">
+
+    {# Navigation — plain links sitting on the desk, above the page #}
+    <nav class="app-nav" aria-label="Site navigation">
+      <a href="/">Home</a>
+      <span aria-hidden="true">·</span>
       <a href="/works/">Works</a>
+      <span aria-hidden="true">·</span>
       <a href="/ideas/">Ideas</a>
+      <span aria-hidden="true">·</span>
       <a href="/about/">About</a>
     </nav>
-  </header>
 
-  <div class="doc-ruler" role="presentation" aria-hidden="true"></div>
+    <main id="main" role="main">
+      {{ content | safe }}
+    </main>
 
-  <main id="main" role="main">
-    {{ content | safe }}
-  </main>
+  </div>
 
-  <footer class="site-footer" role="contentinfo">
+  {# Status bar — static decoration #}
+  <div class="app-statusbar" aria-hidden="true">
+    <span>Page 1</span>
+    <span class="app-statusbar__pipe">|</span>
+    <span>English (UK)</span>
+    <span class="app-statusbar__spacer"></span>
     <span>{{ site.author }}</span>
-    <span>
-      <a href="/ideas/feed.xml">Feed</a>
-    </span>
-  </footer>
+  </div>
 
 </body>
 </html>

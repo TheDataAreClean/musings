@@ -1,33 +1,38 @@
 /* ==========================================================================
    PRINT STYLESHEET
-   The document prints as the thing it is pretending to be.
    ========================================================================== */
 
 @media print {
-  /* Hide navigation chrome */
-  .site-header,
-  .doc-ruler,
+  /* Strip application chrome */
+  .app-titlebar,
+  .app-menubar,
+  .app-toolbar,
+  .app-ruler,
+  .app-statusbar,
   .doc-toc,
   .doc-toc-mobile,
   .doc-layout__sidebar,
-  .post-nav,
-  .site-footer {
+  .post-nav {
     display: none !important;
   }
 
-  /* Reset sticky / grid layout */
+  /* Remove the desk */
+  body, .app-canvas {
+    background: white;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Remove page shadow */
+  .doc-page {
+    box-shadow: none;
+    padding: 0;
+    max-width: 100%;
+  }
+
+  /* Flatten layout */
   .doc-layout {
     display: block;
-  }
-
-  .doc-body {
-    border-left: none;
-    padding-left: 0;
-  }
-
-  .doc-page {
-    max-width: 100%;
-    padding: 0;
   }
 
   /* Show full URLs after links */
@@ -38,56 +43,29 @@
     font-family: 'Courier New', monospace;
   }
 
-  /* But not for anchor links or navigation */
   a[href^="#"]::after,
   a[href^="javascript"]::after {
     content: none;
   }
 
   /* Page break control */
-  h2 {
-    page-break-after: avoid;
-    page-break-before: auto;
-  }
-
-  h3, h4 {
-    page-break-after: avoid;
-  }
-
-  pre, blockquote, figure, table {
-    page-break-inside: avoid;
-  }
+  h2 { page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  pre, blockquote, figure, table { page-break-inside: avoid; }
 
   .page-break {
     page-break-before: always;
-    border: none;
-    margin: 0;
-    padding: 0;
     background: none;
+    border: none;
+    height: 0;
+    margin: 0;
   }
 
-  .page-break::after {
-    content: none;
-  }
+  .page-break::after { content: none; }
 
-  /* Footnotes */
-  .footnotes {
-    page-break-before: always;
-  }
+  .footnotes { page-break-before: always; }
 
   /* Reset colors */
-  body {
-    color: #000;
-    background: #fff;
-  }
-
-  a {
-    color: #000;
-    text-decoration: underline;
-  }
-
-  /* Keep monospace metadata readable */
-  .doc-meta {
-    display: block;
-  }
+  body { color: #000; background: #fff; }
+  a { color: #000; text-decoration: underline; }
 }

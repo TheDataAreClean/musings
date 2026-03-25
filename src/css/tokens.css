@@ -1,43 +1,47 @@
 /* ==========================================================================
    DESIGN TOKENS
-   The entire visual system lives here.
    ========================================================================== */
 
 :root {
-  /* Color */
-  --color-bg:          #ffffff;
-  --color-text:        #000000;
-  --color-muted:       #555555;
-  --color-border:      #000000;
-  --color-border-soft: #cccccc;
-  --color-link:        #0000ee;
-  --color-visited:     #551a8b;
-  --color-mark:        #ffff00;
-  --color-mark-dim:    #fffacd;
-  --color-ruler:       #999999;
+  /* Application surface */
+  --color-app-bg:         #c8c8c8;   /* the desk — grey surface behind the page */
+  --color-app-chrome:     #f0f0f0;   /* titlebar / menubar / toolbar background */
+  --color-app-border:     #000000;
+  --color-app-border-soft:#b0b0b0;
 
-  /* Typography */
-  --font-body:   'iA Writer Quattro', 'Courier Prime', 'Courier New', monospace;
-  --font-mono:   'iA Writer Mono', 'Courier New', monospace;
+  /* Page */
+  --color-page-bg:        #ffffff;
+  --color-page-shadow:    0 2px 8px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.1);
 
-  /* Type scale — Major Third (1.25) */
-  --text-xs:   0.64rem;    /* 10px — footnotes, metadata labels */
-  --text-sm:   0.8rem;     /* 13px — captions, TOC */
-  --text-base: 1rem;       /* 16px — body */
-  --text-lg:   1.25rem;    /* 20px — h3 */
-  --text-xl:   1.563rem;   /* 25px — h2 */
-  --text-2xl:  1.953rem;   /* 31px — h1 */
-  --text-3xl:  2.441rem;   /* 39px — display / post title */
+  /* Content */
+  --color-text:           #000000;
+  --color-muted:          #666666;
+  --color-border:         #000000;
+  --color-border-soft:    #cccccc;
+  --color-link:           #0000ee;
+  --color-visited:        #551a8b;
+  --color-mark:           #ffff00;
+  --color-mark-dim:       #fffacd;
 
-  /* Line height */
-  --leading-tight:  1.2;
-  --leading-normal: 1.5;
-  --leading-body:   1.75;
+  /* Fonts — Arial throughout */
+  --font-ui:    Arial, Helvetica, sans-serif;
+  --font-doc:   Arial, Helvetica, sans-serif;
+  --font-mono:  'Courier New', Courier, monospace;
 
-  /* Measure */
-  --measure: 65ch;
+  /* Type scale */
+  --text-xs:    0.7rem;     /* 11px */
+  --text-sm:    0.8rem;     /* 13px */
+  --text-base:  1rem;       /* 16px ≈ 12pt */
+  --text-lg:    1.2rem;
+  --text-xl:    1.5rem;
+  --text-2xl:   1.875rem;
+  --text-3xl:   2.25rem;
 
-  /* Spacing — base 4px */
+  /* Line heights */
+  --leading-tight:  1.15;
+  --leading-doc:    1.5;    /* document default */
+
+  /* Spacing */
   --space-1:  0.25rem;
   --space-2:  0.5rem;
   --space-3:  0.75rem;
@@ -50,10 +54,21 @@
   --space-20: 5rem;
   --space-24: 6rem;
 
-  /* Ruler */
-  --ruler-height: 1.75rem;
+  /* Page dimensions — US Letter at 96dpi */
+  --page-width:     816px;
+  --page-pad-v:     80px;     /* top/bottom page margin */
+  --page-pad-h:     96px;     /* left/right page margin — 1 inch */
 
-  /* Layout */
-  --sidebar-width: 220px;
-  --gutter: var(--space-8);
+  /* Application chrome heights */
+  --titlebar-h:   34px;
+  --menubar-h:    26px;
+  --toolbar-h:    32px;
+  --ruler-h:      22px;
+  --statusbar-h:  22px;
+
+  /* Total sticky chrome offset */
+  --chrome-h: calc(var(--titlebar-h) + var(--menubar-h) + var(--toolbar-h) + var(--ruler-h));
+
+  /* TOC sidebar */
+  --sidebar-w: 190px;
 }

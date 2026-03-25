@@ -2,21 +2,12 @@
 layout: layouts/base.njk
 ---
 
-<div class="doc-page doc-page--single">
-
+<div class="doc-page">
   <h1 class="doc-title">{{ title }}</h1>
-
   {% if date %}
-  <div class="doc-meta">
-    <span class="doc-meta__item">
-      <span class="doc-meta__label">Last updated</span>
-      <time class="doc-meta__value" datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
-    </span>
-  </div>
+  <p class="doc-meta">Last updated {{ date | readableDate }}</p>
   {% endif %}
-
   <div class="doc-body">
     {{ content | safe }}
   </div>
-
 </div>
