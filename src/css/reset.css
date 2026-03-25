@@ -1,0 +1,71 @@
+/* ==========================================================================
+   RESET
+   Opinionated but minimal. Preserve browser defaults where sensible.
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+}
+
+img, svg, video {
+  display: block;
+  max-width: 100%;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Raw link colors — no softening */
+a {
+  color: var(--color-link);
+}
+
+a:visited {
+  color: var(--color-visited);
+}
+
+/* Google Docs-style selection */
+::selection {
+  background-color: var(--color-mark);
+  color: var(--color-text);
+}
+
+/* Remove default list styles only where class is applied */
+.list-none {
+  list-style: none;
+}

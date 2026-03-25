@@ -1,0 +1,120 @@
+---
+layout: layouts/base.njk
+title: Home
+---
+
+<div class="doc-page doc-page--single">
+
+  {# Document title — the site as a document #}
+  <h1 class="doc-title">{{ site.title }}</h1>
+
+  <div class="doc-meta" aria-label="Document metadata">
+    <span class="doc-meta__item">
+      <span class="doc-meta__label">Author</span>
+      <span class="doc-meta__value">{{ site.author }}</span>
+    </span>
+    <span class="doc-meta__sep" aria-hidden="true">·</span>
+    <span class="doc-meta__item">
+      <span class="doc-meta__value">{{ collections.ideas | length }} ideas</span>
+    </span>
+    <span class="doc-meta__sep" aria-hidden="true">·</span>
+    <span class="doc-meta__item">
+      <span class="doc-meta__value">{{ collections.works | length }} works</span>
+    </span>
+  </div>
+
+  <div class="doc-body">
+    <p>{{ site.description }}</p>
+  </div>
+
+  {# Works section #}
+  <hr class="section-divider">
+  <h2 class="section-heading">Works</h2>
+
+  {% set recentWorks = collections.works | limit(4) %}
+  {% if recentWorks.length %}
+  <ul class="works-list">
+    {% for work in recentWorks %}
+    <li class="works-list__item">
+      <div class="works-list__body">
+        <h3 class="works-list__title">
+          <a href="{{ work.url }}">{{ work.data.title }}</a>
+        </h3>
+        {% if work.data.description %}
+        <p class="works-list__description">{{ work.data.description }}</p>
+        {% endif %}
+        <div class="works-list__meta">
+          {% if work.data.year %}<span>{{ work.data.year }}</span>{% endif %}
+          {% if work.data.role %}<span>{{ work.data.role }}</span>{% endif %}
+          {% if work.data.status %}<span>{{ work.data.status }}</span>{% endif %}
+        </div>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  <p style="font-family: var(--font-mono); font-size: var(--text-sm); margin-top: var(--space-4);">
+    <a href="/works/">All works →</a>
+  </p>
+  {% else %}
+  <p style="color: var(--color-muted); font-family: var(--font-mono); font-size: var(--text-sm);">No works yet.</p>
+  {% endif %}
+
+  {# Ideas section #}
+  <hr class="section-divider">
+  <h2 class="section-heading">Ideas</h2>
+
+  {% set recentIdeas = collections.ideas | limit(5) %}
+  {% set olderIdeas = collections.ideas | offset(5) %}
+
+  {% if recentIdeas.length %}
+  <ul class="post-list">
+    {% for post in recentIdeas %}
+    <li class="post-list__item">
+      <div class="post-list__body">
+        <h3 class="post-list__title">
+          <a href="{{ post.url }}">{{ post.data.title }}</a>
+        </h3>
+        {% if post.data.description %}
+        <p class="post-list__excerpt">{{ post.data.description }}</p>
+        {% else %}
+        <p class="post-list__excerpt">{{ post.templateContent | excerpt }}</p>
+        {% endif %}
+      </div>
+      <div class="post-list__meta">
+        <time datetime="{{ post.date | isoDate }}">{{ post.date | isoDate }}</time>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p style="color: var(--color-muted); font-family: var(--font-mono); font-size: var(--text-sm);">No ideas yet.</p>
+  {% endif %}
+
+  {# Archive — older posts in <details> #}
+  {% if olderIdeas.length %}
+  <div class="archive">
+    <details class="archive__details">
+      <summary class="archive__summary">Archive ({{ olderIdeas | length }} more)</summary>
+      <div class="archive__body">
+        {% set grouped = olderIdeas | groupByYear %}
+        {% for group in grouped %}
+        <div class="archive__year">{{ group.year }}</div>
+        <ul class="archive__list">
+          {% for post in group.items %}
+          <li class="archive__entry">
+            <a class="archive__entry-title" href="{{ post.url }}">{{ post.data.title }}</a>
+            <time class="archive__entry-date" datetime="{{ post.date | isoDate }}">{{ post.date | isoDate }}</time>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endfor %}
+      </div>
+    </details>
+  </div>
+  {% endif %}
+
+  <p style="font-family: var(--font-mono); font-size: var(--text-sm); margin-top: var(--space-4);">
+    <a href="/ideas/">All ideas →</a>
+  </p>
+
+</div>

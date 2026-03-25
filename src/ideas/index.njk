@@ -1,0 +1,50 @@
+---
+layout: layouts/base.njk
+title: Ideas
+description: Essays, notes, and half-formed thoughts.
+---
+
+<div class="doc-page doc-page--single">
+
+  <nav class="doc-breadcrumb" aria-label="Breadcrumb">
+    <a href="/">{{ site.title }}</a>
+    <span class="doc-breadcrumb__sep" aria-hidden="true">/</span>
+    <span>Ideas</span>
+  </nav>
+
+  <h1 class="doc-title">Ideas</h1>
+
+  <div class="doc-meta">
+    <span class="doc-meta__item">
+      <span class="doc-meta__value">{{ collections.ideas | length }} entries</span>
+    </span>
+  </div>
+
+  <div class="doc-body">
+    <p>Essays, notes, and half-formed thoughts. Writing is thinking.</p>
+  </div>
+
+  {% if collections.ideas.length %}
+  <ul class="post-list" style="margin-top: var(--space-8);">
+    {% for post in collections.ideas %}
+    <li class="post-list__item">
+      <div class="post-list__body">
+        <h2 class="post-list__title">
+          <a href="{{ post.url }}">{{ post.data.title }}</a>
+        </h2>
+        {% if post.data.description %}
+        <p class="post-list__excerpt">{{ post.data.description }}</p>
+        {% endif %}
+      </div>
+      <div class="post-list__meta">
+        <time datetime="{{ post.date | isoDate }}">{{ post.date | isoDate }}</time>
+        <span>{{ post.templateContent | wordcount }}w</span>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p style="color: var(--color-muted); font-family: var(--font-mono); font-size: var(--text-sm); margin-top: var(--space-8);">No ideas yet.</p>
+  {% endif %}
+
+</div>

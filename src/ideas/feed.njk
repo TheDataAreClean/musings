@@ -1,0 +1,28 @@
+---
+permalink: /ideas/feed.xml
+eleventyExcludeFromCollections: true
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ site.title }} — Ideas</title>
+  <subtitle>{{ site.description }}</subtitle>
+  <link href="{{ site.url }}/ideas/feed.xml" rel="self"/>
+  <link href="{{ site.url }}/ideas/"/>
+  <updated>{{ collections.ideas[0].date | isoDate }}</updated>
+  <id>{{ site.url }}/ideas/</id>
+  <author>
+    <name>{{ site.author }}</name>
+  </author>
+  {% for post in collections.ideas | limit(20) %}
+  <entry>
+    <title>{{ post.data.title }}</title>
+    <link href="{{ site.url }}{{ post.url }}"/>
+    <id>{{ site.url }}{{ post.url }}</id>
+    <updated>{{ post.date | isoDate }}</updated>
+    {% if post.data.description %}
+    <summary>{{ post.data.description }}</summary>
+    {% endif %}
+    <content type="html"><![CDATA[{{ post.templateContent | safe }}]]></content>
+  </entry>
+  {% endfor %}
+</feed>

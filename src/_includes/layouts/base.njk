@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if title %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <meta name="description" content="{{ description or site.description }}">
+  <meta name="author" content="{{ site.author }}">
+
+  {# Open Graph #}
+  <meta property="og:title" content="{% if title %}{{ title }}{% else %}{{ site.title }}{% endif %}">
+  <meta property="og:description" content="{{ description or site.description }}">
+  <meta property="og:type" content="{{ ogType or 'website' }}">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+
+  {# Canonical #}
+  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+
+  {# Feeds #}
+  <link rel="alternate" type="application/atom+xml" title="{{ site.title }} — Ideas" href="/ideas/feed.xml">
+
+  {# CSS — one file, no render blocking beyond this #}
+  <link rel="stylesheet" href="/css/main.css">
+
+  {# No Google Fonts. No tracking. No JS. #}
+</head>
+<body>
+
+  <header class="site-header" role="banner">
+    <a href="/" class="site-header__title">{{ site.title }}</a>
+    <nav class="site-header__nav" aria-label="Site navigation">
+      <a href="/works/">Works</a>
+      <a href="/ideas/">Ideas</a>
+      <a href="/about/">About</a>
+    </nav>
+  </header>
+
+  <div class="doc-ruler" role="presentation" aria-hidden="true"></div>
+
+  <main id="main" role="main">
+    {{ content | safe }}
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <span>{{ site.author }}</span>
+    <span>
+      <a href="/ideas/feed.xml">Feed</a>
+    </span>
+  </footer>
+
+</body>
+</html>

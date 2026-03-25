@@ -1,0 +1,54 @@
+---
+layout: layouts/base.njk
+title: Works
+description: Projects, case studies, and things built.
+---
+
+<div class="doc-page doc-page--single">
+
+  <nav class="doc-breadcrumb" aria-label="Breadcrumb">
+    <a href="/">{{ site.title }}</a>
+    <span class="doc-breadcrumb__sep" aria-hidden="true">/</span>
+    <span>Works</span>
+  </nav>
+
+  <h1 class="doc-title">Works</h1>
+
+  <div class="doc-meta">
+    <span class="doc-meta__item">
+      <span class="doc-meta__value">{{ collections.works | length }} projects</span>
+    </span>
+  </div>
+
+  <div class="doc-body">
+    <p>Projects, case studies, and things built. Selected work.</p>
+  </div>
+
+  {% if collections.works.length %}
+  <ul class="works-list" style="margin-top: var(--space-8);">
+    {% for work in collections.works %}
+    <li class="works-list__item">
+      <div class="works-list__body">
+        <h2 class="works-list__title">
+          <a href="{{ work.url }}">{{ work.data.title }}</a>
+        </h2>
+        {% if work.data.description %}
+        <p class="works-list__description">{{ work.data.description }}</p>
+        {% endif %}
+        <div class="works-list__meta">
+          {% if work.data.year %}<span>{{ work.data.year }}</span>{% endif %}
+          {% if work.data.role %}<span>{{ work.data.role }}</span>{% endif %}
+          {% if work.data.status %}<span>{{ work.data.status }}</span>{% endif %}
+          {% if work.data.link %}
+          <a href="{{ work.data.link }}" rel="noopener">↗ View</a>
+          {% endif %}
+        </div>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p style="color: var(--color-muted); font-family: var(--font-mono); font-size: var(--text-sm); margin-top: var(--space-8);">No works yet.</p>
+  {% endif %}
+
+</div>

@@ -1,0 +1,93 @@
+/* ==========================================================================
+   PRINT STYLESHEET
+   The document prints as the thing it is pretending to be.
+   ========================================================================== */
+
+@media print {
+  /* Hide navigation chrome */
+  .site-header,
+  .doc-ruler,
+  .doc-toc,
+  .doc-toc-mobile,
+  .doc-layout__sidebar,
+  .post-nav,
+  .site-footer {
+    display: none !important;
+  }
+
+  /* Reset sticky / grid layout */
+  .doc-layout {
+    display: block;
+  }
+
+  .doc-body {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  .doc-page {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  /* Show full URLs after links */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #555;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* But not for anchor links or navigation */
+  a[href^="#"]::after,
+  a[href^="javascript"]::after {
+    content: none;
+  }
+
+  /* Page break control */
+  h2 {
+    page-break-after: avoid;
+    page-break-before: auto;
+  }
+
+  h3, h4 {
+    page-break-after: avoid;
+  }
+
+  pre, blockquote, figure, table {
+    page-break-inside: avoid;
+  }
+
+  .page-break {
+    page-break-before: always;
+    border: none;
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+
+  .page-break::after {
+    content: none;
+  }
+
+  /* Footnotes */
+  .footnotes {
+    page-break-before: always;
+  }
+
+  /* Reset colors */
+  body {
+    color: #000;
+    background: #fff;
+  }
+
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+
+  /* Keep monospace metadata readable */
+  .doc-meta {
+    display: block;
+  }
+}

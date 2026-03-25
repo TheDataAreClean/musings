@@ -1,0 +1,363 @@
+/* ==========================================================================
+   DOC CHROME
+   The load-bearing aesthetic file.
+   Ruler, margins, section counters, page numbers, metadata strip.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Site Header — document application bar
+   -------------------------------------------------------------------------- */
+
+.site-header {
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-2) var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-bg);
+}
+
+.site-header__title {
+  font-weight: 700;
+  font-size: var(--text-base);
+  text-decoration: none;
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+}
+
+.site-header__title:visited {
+  color: var(--color-text);
+}
+
+.site-header__nav {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.site-header__nav a {
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+}
+
+.site-header__nav a:hover {
+  text-decoration: underline;
+}
+
+.site-header__nav a:visited {
+  color: var(--color-text);
+}
+
+/* --------------------------------------------------------------------------
+   Ruler — sticky, tick marks via CSS gradient
+   -------------------------------------------------------------------------- */
+
+.doc-ruler {
+  position: sticky;
+  top: calc(var(--ruler-height) + 1px); /* sits below header */
+  z-index: 90;
+  height: var(--ruler-height);
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  background-image:
+    /* Minor ticks — every 0.5cm */
+    repeating-linear-gradient(
+      90deg,
+      var(--color-ruler) 0px,
+      var(--color-ruler) 1px,
+      transparent 1px,
+      transparent 0.5cm
+    ),
+    /* Major ticks — every 1cm */
+    repeating-linear-gradient(
+      90deg,
+      var(--color-border) 0px,
+      var(--color-border) 1px,
+      transparent 1px,
+      transparent 1cm
+    );
+  background-size: 0.5cm 40%, 1cm 65%;
+  background-repeat: repeat-x;
+  background-position: var(--space-6) bottom;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* --------------------------------------------------------------------------
+   Document page frame
+   -------------------------------------------------------------------------- */
+
+.doc-page {
+  max-width: calc(var(--measure) + var(--sidebar-width) + var(--space-16) * 3);
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-6);
+}
+
+/* Single-column pages (about, index) */
+.doc-page--single {
+  max-width: var(--measure);
+}
+
+/* --------------------------------------------------------------------------
+   Document layout — main content + margin column
+   -------------------------------------------------------------------------- */
+
+.doc-layout {
+  display: grid;
+  grid-template-columns: 1fr var(--sidebar-width);
+  grid-template-areas: "content sidebar";
+  gap: 0 var(--space-12);
+  align-items: start;
+}
+
+.doc-layout__content {
+  grid-area: content;
+  min-width: 0;
+}
+
+.doc-layout__sidebar {
+  grid-area: sidebar;
+  position: sticky;
+  top: calc(var(--ruler-height) * 2 + var(--space-4));
+}
+
+@media (max-width: 900px) {
+  .doc-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "sidebar"
+      "content";
+  }
+
+  .doc-layout__sidebar {
+    position: static;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Document metadata strip — last edited, word count, read time
+   -------------------------------------------------------------------------- */
+
+.doc-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  border-top: 1px solid var(--color-border-soft);
+  border-bottom: 1px solid var(--color-border-soft);
+  padding: var(--space-2) 0;
+  margin-bottom: var(--space-8);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  align-items: center;
+}
+
+.doc-meta__item {
+  display: flex;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.doc-meta__label {
+  color: var(--color-muted);
+}
+
+.doc-meta__value {
+  color: var(--color-text);
+}
+
+.doc-meta__sep {
+  color: var(--color-border-soft);
+}
+
+/* --------------------------------------------------------------------------
+   Document title area
+   -------------------------------------------------------------------------- */
+
+.doc-title {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  margin-bottom: var(--space-3);
+  letter-spacing: -0.02em;
+  /* Doc-style: looks editable, but isn't — the brutalist joke */
+  cursor: text;
+}
+
+.doc-breadcrumb {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  margin-bottom: var(--space-6);
+}
+
+.doc-breadcrumb a {
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
+.doc-breadcrumb a:hover {
+  text-decoration: underline;
+  color: var(--color-text);
+}
+
+.doc-breadcrumb a:visited {
+  color: var(--color-muted);
+}
+
+.doc-breadcrumb__sep {
+  margin: 0 var(--space-1);
+}
+
+/* --------------------------------------------------------------------------
+   Section counters — automatic numbering via CSS
+   -------------------------------------------------------------------------- */
+
+.doc-body {
+  counter-reset: h2-counter;
+}
+
+.doc-body h2 {
+  counter-increment: h2-counter;
+  counter-reset: h3-counter;
+}
+
+.doc-body h3 {
+  counter-increment: h3-counter;
+}
+
+.doc-body h2::before {
+  content: counter(h2-counter) ". ";
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--color-muted);
+  font-weight: 400;
+  margin-right: var(--space-1);
+}
+
+.doc-body h3::before {
+  content: counter(h2-counter) "." counter(h3-counter) " ";
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  color: var(--color-muted);
+  font-weight: 400;
+  margin-right: var(--space-1);
+}
+
+/* --------------------------------------------------------------------------
+   Page breaks — manual {% pagebreak %} shortcode
+   -------------------------------------------------------------------------- */
+
+.doc-body {
+  counter-reset: h2-counter page-counter;
+}
+
+.page-break {
+  counter-increment: page-counter;
+  border-top: 1px dashed var(--color-border-soft);
+  margin: var(--space-16) 0;
+  padding-top: var(--space-2);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  user-select: none;
+}
+
+.page-break::after {
+  content: "— " counter(page-counter) " —";
+}
+
+/* --------------------------------------------------------------------------
+   Left margin rule — the document page edge
+   -------------------------------------------------------------------------- */
+
+.doc-body {
+  border-left: 3px solid var(--color-border);
+  padding-left: var(--space-8);
+}
+
+@media (max-width: 600px) {
+  .doc-body {
+    border-left: 2px solid var(--color-border);
+    padding-left: var(--space-4);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Deep-link highlights — :target
+   -------------------------------------------------------------------------- */
+
+:target {
+  outline: 2px solid var(--color-border);
+  outline-offset: var(--space-2);
+}
+
+.doc-body h2:target,
+.doc-body h3:target,
+.doc-body h4:target {
+  background-color: var(--color-mark);
+  outline: 2px solid var(--color-border);
+  outline-offset: var(--space-1);
+}
+
+/* --------------------------------------------------------------------------
+   Tags
+   -------------------------------------------------------------------------- */
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.tags__item a {
+  color: var(--color-muted);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 1px;
+}
+
+.tags__item a:hover {
+  color: var(--color-text);
+}
+
+.tags__item a:visited {
+  color: var(--color-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Site footer
+   -------------------------------------------------------------------------- */
+
+.site-footer {
+  border-top: 2px solid var(--color-border);
+  padding: var(--space-6);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  margin-top: var(--space-24);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.site-footer a {
+  color: var(--color-muted);
+}
+
+.site-footer a:visited {
+  color: var(--color-muted);
+}
