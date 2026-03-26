@@ -378,6 +378,21 @@ git checkout -b hotfix/feed-xml v1.1.0
 
 ---
 
+## Release history
+
+| Tag | Commit | Description |
+|---|---|---|
+| `v0.1.0` | `fdac81c` | Initial build — brutalist living-document concept |
+| `v0.2.0` | `3264e75` | Redesign — word-processor chrome, unformatted doc aesthetic |
+| `v0.2.1` | `6f0881b` | Fix — app chrome five targeted improvements |
+| `v1.0.0` | `fd6e9e6` | **Site reaches definitive form** — nav inside document, full typographic flattening |
+| `v1.1.0` | `cd79212` | Add — ideas, notes, shots, tag pages, mobile layout, GitHub Pages deployment |
+| `v1.1.1` | `766923b` | Docs — README and CLAUDE.md updated for shots and current state |
+
+The current release is **v1.1.1**. The v1 design identity is the word-processor aesthetic established at v1.0.0. A v2.0.0 would require a complete visual overhaul.
+
+---
+
 ## Commit message convention
 
 Keep messages consistent so the git log reads as a changelog.
