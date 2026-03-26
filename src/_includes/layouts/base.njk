@@ -76,22 +76,9 @@
   {# ── REAL CONTENT LIVES HERE ─────────────────────────────────────────── #}
 
   <div class="app-canvas">
-
-    {# Navigation — plain links on the grey desk, above the page card #}
-    <nav class="app-nav" aria-label="Site navigation">
-      <a href="/">Home</a>
-      <span aria-hidden="true">·</span>
-      <a href="/works/">Works</a>
-      <span aria-hidden="true">·</span>
-      <a href="/ideas/">Ideas</a>
-      <span aria-hidden="true">·</span>
-      <a href="/about/">About</a>
-    </nav>
-
     <main id="main" role="main">
       {{ content | safe }}
     </main>
-
   </div>
 
   {# Status bar — static decoration #}

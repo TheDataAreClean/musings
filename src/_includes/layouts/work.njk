@@ -5,7 +5,11 @@ ogType: article
 
 <article class="doc-page">
 
-  <h1 class="doc-title">{{ title }}</h1>
+  <p class="doc-title">{{ title }}</p>
+
+  <p class="doc-nav">
+    <a href="/">Home</a> · <a href="/works/">Works</a> · <a href="/ideas/">Ideas</a> · <a href="/about/">About</a>
+  </p>
 
   <p class="doc-meta">
     {% if year %}{{ year }}{% endif %}

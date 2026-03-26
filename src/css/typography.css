@@ -4,7 +4,8 @@
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Headings — size and weight only, nothing else
+   Headings — same size and weight as body text
+   Structure is in the spacing and the words, not in the type
    -------------------------------------------------------------------------- */
 
 .doc-body h1,
@@ -12,17 +13,13 @@
 .doc-body h3,
 .doc-body h4 {
   font-family: var(--font-doc);
-  font-weight: 700;
-  line-height: var(--leading-tight);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: var(--leading-doc);
   color: var(--color-text);
-  margin-top: var(--space-8);
-  margin-bottom: var(--space-2);
+  margin-top: var(--space-6);
+  margin-bottom: 0;
 }
-
-.doc-body h1 { font-size: var(--text-2xl); }
-.doc-body h2 { font-size: var(--text-xl); }
-.doc-body h3 { font-size: var(--text-lg); }
-.doc-body h4 { font-size: var(--text-base); font-weight: 700; }
 
 .doc-body > h2:first-child,
 .doc-body > h3:first-child {
@@ -89,13 +86,11 @@
 }
 
 /* --------------------------------------------------------------------------
-   Blockquote — indented, italic. No decorative marks.
+   Blockquote — indented only, no italic, no colour change
    -------------------------------------------------------------------------- */
 
 .doc-body blockquote {
-  margin: var(--space-6) var(--space-8);
-  font-style: italic;
-  color: var(--color-muted);
+  margin: var(--space-4) var(--space-8);
 }
 
 .doc-body blockquote p {

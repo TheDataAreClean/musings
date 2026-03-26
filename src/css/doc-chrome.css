@@ -227,40 +227,6 @@ body {
 }
 
 /* ==========================================================================
-   APP NAV — real navigation, plain links floating above the page card
-   ========================================================================== */
-
-.app-nav {
-  font-family: var(--font-ui);
-  font-size: var(--text-xs);
-  margin-bottom: var(--space-3);
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
-  width: 100%;
-  max-width: var(--page-width);
-  /* Indent to align with the document text column, not the raw page edge */
-  padding-left: var(--page-pad-h);
-}
-
-.app-nav a {
-  color: var(--color-link);
-  text-decoration: underline;
-}
-
-.app-nav a:visited {
-  color: var(--color-visited);
-}
-
-.app-nav a:hover {
-  text-decoration: none;
-}
-
-.app-nav span {
-  color: var(--color-muted);
-}
-
-/* ==========================================================================
    DOCUMENT PAGE — white paper on the grey desk
    ========================================================================== */
 
@@ -304,16 +270,25 @@ body {
 }
 
 /* ==========================================================================
-   DOCUMENT TITLE — just a big h1, no tricks
+   DOCUMENT TITLE — plain body text, no size or weight distinction
    ========================================================================== */
 
 .doc-title {
   font-family: var(--font-doc);
-  font-size: var(--text-3xl);
-  font-weight: 700;
-  line-height: var(--leading-tight);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: var(--leading-doc);
   margin-bottom: var(--space-2);
   color: var(--color-text);
+}
+
+/* ==========================================================================
+   DOCUMENT NAV — inside the doc, under the title, just plain links
+   ========================================================================== */
+
+.doc-nav {
+  margin-bottom: var(--space-2);
+  font-size: var(--text-base);
 }
 
 /* ==========================================================================
