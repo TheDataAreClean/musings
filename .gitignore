@@ -2,3 +2,27 @@ _site/
 node_modules/
 .DS_Store
 *.log
+
+# Local test content — not for deployment
+# Notion-synced content is committed by the sync workflow
+src/ideas/2022-01-05-minimal.md
+src/ideas/2022-07-14-long-title-test.md
+src/ideas/2023-03-22-the-cost-of-options.md
+src/ideas/2023-09-15-on-slowness.md
+src/ideas/2024-04-08-writing-in-public.md
+src/ideas/2024-11-20-against-dark-mode.md
+src/ideas/2025-01-15-on-plainness.md
+src/ideas/2025-03-01-notes-on-tools.md
+src/ideas/2026-03-26-formatting-reference.md
+src/notes/2025-04-01-single-sentence.md
+src/notes/2025-06-15-image-in-a-note.md
+src/notes/2025-08-03-long-note-title-to-test-wrapping.md
+src/notes/2025-11-11-a-photograph.md
+src/notes/2026-01-20-on-coffee.md
+src/notes/2026-02-22-inline-formatting.md
+src/notes/2026-03-15-a-thing-noticed.md
+src/shots/2025-04-20-three-frames.md
+src/shots/2025-09-18-a-very-long-shot-title-to-test-how-the-shots-list-renders-overflow.md
+src/shots/2025-11-05-fog.md
+src/shots/2026-01-28-borough-market.md
+src/shots/2026-03-10-morning-commute.md
