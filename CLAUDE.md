@@ -65,6 +65,9 @@ src/
 .github/
   workflows/
     deploy.yml         # GitHub Actions: build Eleventy → deploy to GitHub Pages
+    sync.yml           # GitHub Actions: run Notion sync daily at midnight UTC
+scripts/
+  sync-notion.js       # Notion → markdown sync script (run by sync.yml)
 ```
 
 ---
@@ -553,6 +556,79 @@ Eleventy does not generate a `404.html` by default. Add `src/404.md` with `perma
 npm audit          # Check for known vulnerabilities in devDependencies
 npm outdated       # List available updates
 ```
-All dependencies are `devDependencies` — they run at build time only; nothing is shipped to the browser. The full dependency surface is: Eleventy, `markdown-it-anchor`, `markdown-it-attrs`, `markdown-it-footnote`.
+All dependencies are `devDependencies` — they run at build time only; nothing is shipped to the browser. The full dependency surface is: Eleventy, `markdown-it-anchor`, `markdown-it-attrs`, `markdown-it-footnote`, `@notionhq/client`, `notion-to-md`.
 
 When updating Eleventy, check the [Eleventy changelog](https://www.11ty.dev/docs/changelog/) for breaking changes in collection APIs, filter signatures, and template engine versions before upgrading.
+
+---
+
+## Notion CMS sync
+
+Content can be authored in a Notion database and synced automatically into the repo. The sync runs daily at midnight UTC via GitHub Actions, or can be triggered manually.
+
+### How it works
+
+1. `scripts/sync-notion.js` queries a Notion database for all pages with **Status = "Ready"**
+2. Each page is converted to Markdown via `notion-to-md`
+3. Front matter is built from Notion properties
+4. Files are written to `src/{type}/YYYY-MM-DD-{slug}.md`
+5. The sync workflow commits any new/changed files and pushes to `main`, which triggers `deploy.yml`
+
+### Notion database schema
+
+The Notion database must have these properties:
+
+| Property | Type | Notes |
+|---|---|---|
+| Title | Title | Required |
+| Date | Date | Required — publication date |
+| Type | Select | Required — `ideas`, `notes`, or `shots` |
+| Tags | Multi-select | Optional |
+| Description | Text | Optional — used for OG description on ideas |
+| Updated | Date | Optional — shows "Updated" line in post meta |
+| Status | Select | Required — only `Ready` pages are synced |
+
+### Idempotency
+
+Each synced file contains two hidden front matter fields:
+- `notion_id` — Notion page UUID; used to find the file on subsequent runs
+- `notion_last_edited` — Notion's `last_edited_time`; if unchanged, the page is skipped
+
+A page is only re-written when Notion reports a newer `last_edited_time`.
+
+### Sanitisation
+
+`{#` in Notion content is replaced with `{ #` before writing. This avoids the Nunjucks comment delimiter trap (see [The `{#` Nunjucks trap](#the--nunjucks-trap)).
+
+### GitHub Secrets required
+
+Add these in the repo Settings → Secrets → Actions:
+
+| Secret | Value |
+|---|---|
+| `NOTION_TOKEN` | Internal integration token from notion.so/my-integrations |
+| `NOTION_DATABASE_ID` | The ID from the database URL (32-char hex string) |
+
+### Workflow schedule
+
+`.github/workflows/sync.yml` runs on:
+- `schedule: cron: '0 0 * * *'` — midnight UTC every day
+- `workflow_dispatch` — manual trigger from the Actions tab
+
+The workflow checks out the repo, installs dependencies, runs the sync script, then commits and pushes only if files changed. A no-op run (nothing changed in Notion) produces no commit and does not trigger a deploy.
+
+### Running the sync locally
+
+```sh
+export NOTION_TOKEN=secret_xxx
+export NOTION_DATABASE_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+node scripts/sync-notion.js
+```
+
+### Notion integration setup checklist
+
+- [ ] Create a Notion internal integration at notion.so/my-integrations — copy the token
+- [ ] Share the database with the integration (open the database → `...` menu → Connections)
+- [ ] Add `NOTION_TOKEN` and `NOTION_DATABASE_ID` to GitHub Secrets
+- [ ] Set a page's Status to `Ready` and trigger a manual sync to verify the pipeline end-to-end
+- [ ] Confirm the new file appears in `src/{type}/` and the deploy completes successfully

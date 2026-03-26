@@ -13,8 +13,10 @@
   "license": "ISC",
   "devDependencies": {
     "@11ty/eleventy": "^3.1.5",
+    "@notionhq/client": "^5.15.0",
     "markdown-it-anchor": "^9.2.0",
     "markdown-it-attrs": "^4.3.1",
-    "markdown-it-footnote": "^4.0.0"
+    "markdown-it-footnote": "^4.0.0",
+    "notion-to-md": "^3.1.9"
   }
 }
