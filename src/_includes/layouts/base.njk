@@ -15,48 +15,69 @@
 </head>
 <body>
 
-  {# ── STATIC DECORATION ONLY — nothing below is clickable ──────────────── #}
+  {# ── STATIC DECORATION ONLY — nothing below is interactive ───────────── #}
 
+  {# Title bar: app name left · document name centre · save state right #}
   <div class="app-titlebar" aria-hidden="true">
-    <span></span>
-    <span class="app-titlebar__doc">
-      {{ site.title }}{% if title and title != "Home" %} — {{ title }}{% endif %}
-    </span>
-    <span class="app-titlebar__saved">Saved ✓</span>
+    <span class="app-titlebar__app">{{ site.title }}</span>
+    <span class="app-titlebar__doc">{{ title or site.title }}</span>
+    <span class="app-titlebar__saved">All changes saved</span>
   </div>
 
+  {# Menu bar: all items are dead text — black, readable, unresponsive #}
   <div class="app-menubar" aria-hidden="true">
-    <span class="app-menubar__dead">File</span>
-    <span class="app-menubar__dead">Edit</span>
-    <span class="app-menubar__dead">View</span>
-    <span class="app-menubar__dead">Insert</span>
-    <span class="app-menubar__dead">Format</span>
-    <span class="app-menubar__dead">Tools</span>
-    <span class="app-menubar__dead">Help</span>
+    <span class="app-menubar__item">File</span>
+    <span class="app-menubar__item">Edit</span>
+    <span class="app-menubar__item">View</span>
+    <span class="app-menubar__item">Insert</span>
+    <span class="app-menubar__item">Format</span>
+    <span class="app-menubar__item">Tools</span>
+    <span class="app-menubar__item">Help</span>
   </div>
 
+  {# Toolbar: realistic content, denser, correct glyphs #}
   <div class="app-toolbar" aria-hidden="true">
-    <span>Arial</span>
-    <span>12</span>
+    <span class="app-toolbar__select">Normal text ▾</span>
     <span class="app-toolbar__pipe">|</span>
-    <b>B</b>
-    <i>I</i>
-    <u>U</u>
+    <span class="app-toolbar__select">Arial ▾</span>
+    <span class="app-toolbar__select app-toolbar__select--size">12 ▾</span>
     <span class="app-toolbar__pipe">|</span>
-    <span>&#8676;</span>
-    <span>&#8596;</span>
-    <span>&#8677;</span>
+    <b class="app-toolbar__fmt">B</b>
+    <i class="app-toolbar__fmt">I</i>
+    <u class="app-toolbar__fmt">U</u>
+    <s class="app-toolbar__fmt">S</s>
+    <span class="app-toolbar__pipe">|</span>
+    <span class="app-toolbar__fmt">A ▾</span>
+    <span class="app-toolbar__fmt">¶</span>
+    <span class="app-toolbar__pipe">|</span>
+    <span class="app-toolbar__fmt">&#8644;</span>
+    <span class="app-toolbar__fmt">&#8644;</span>
+    <span class="app-toolbar__fmt">&#8644;</span>
+    <span class="app-toolbar__fmt">&#8644;</span>
+    <span class="app-toolbar__pipe">|</span>
+    <span class="app-toolbar__fmt">&#8676;</span>
+    <span class="app-toolbar__fmt">&#8677;</span>
     <span class="app-toolbar__spacer"></span>
-    <span>100%</span>
+    <span class="app-toolbar__select">100% ▾</span>
   </div>
 
-  <div class="app-ruler" aria-hidden="true"></div>
+  {# Ruler: tick marks + inch numbers in HTML #}
+  <div class="app-ruler" aria-hidden="true">
+    <div class="app-ruler__zone">
+      <span class="app-ruler__num" style="--i: 1">1</span>
+      <span class="app-ruler__num" style="--i: 2">2</span>
+      <span class="app-ruler__num" style="--i: 3">3</span>
+      <span class="app-ruler__num" style="--i: 4">4</span>
+      <span class="app-ruler__num" style="--i: 5">5</span>
+      <span class="app-ruler__num" style="--i: 6">6</span>
+    </div>
+  </div>
 
-  {# ── REAL CONTENT LIVES HERE ────────────────────────────────────────────── #}
+  {# ── REAL CONTENT LIVES HERE ─────────────────────────────────────────── #}
 
   <div class="app-canvas">
 
-    {# Navigation — plain links sitting on the desk, above the page #}
+    {# Navigation — plain links on the grey desk, above the page card #}
     <nav class="app-nav" aria-label="Site navigation">
       <a href="/">Home</a>
       <span aria-hidden="true">·</span>
@@ -75,11 +96,10 @@
 
   {# Status bar — static decoration #}
   <div class="app-statusbar" aria-hidden="true">
-    <span>Page 1</span>
-    <span class="app-statusbar__pipe">|</span>
-    <span>English (UK)</span>
+    <span class="app-statusbar__item">Page 1</span>
+    <span class="app-statusbar__item">English (UK)</span>
     <span class="app-statusbar__spacer"></span>
-    <span>{{ site.author }}</span>
+    <span class="app-statusbar__item">100%</span>
   </div>
 
 </body>
