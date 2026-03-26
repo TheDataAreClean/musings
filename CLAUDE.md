@@ -581,12 +581,12 @@ The Notion database must have these properties:
 | Property | Type | Notes |
 |---|---|---|
 | Title | Title | Required |
-| Date | Date | Required — publication date |
 | Type | Select | Required — `ideas`, `notes`, or `shots` |
 | Tags | Multi-select | Optional |
 | Description | Text | Optional — used for OG description on ideas |
-| Updated | Date | Optional — shows "Updated" line in post meta |
 | Status | Select | Required — only `Ready` pages are synced |
+
+Publication date is read from Notion's built-in **Created time**. The `updated` front matter field is read from Notion's built-in **Last edited time**. No manual Date or Updated properties are needed.
 
 ### Idempotency
 

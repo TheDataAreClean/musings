@@ -5,12 +5,13 @@
  *
  * Notion database properties expected:
  *   Title       — Title
- *   Date        — Date       (publication date)
  *   Type        — Select     "ideas" | "notes" | "shots"
- *   Tags        — Multi-select
+ *   Tags        — Multi-select (optional)
  *   Description — Text       (optional — used for OG description on ideas)
- *   Updated     — Date       (optional — shows "Updated" line in doc-meta)
  *   Status      — Select     only pages with Status = "Ready" are synced
+ *
+ *   Publication date is taken from the page's built-in "Created time".
+ *   Updated date is taken from the page's built-in "Last edited time".
  *
  * Env vars required:
  *   NOTION_TOKEN       — Notion integration token
@@ -96,16 +97,16 @@ async function sync() {
       try {
         // ── Read properties ──
         const title       = page.properties.Title?.title?.[0]?.plain_text?.trim();
-        const date        = page.properties.Date?.date?.start;
+        const date        = page.created_time.split('T')[0];
         const type        = page.properties.Type?.select?.name?.toLowerCase().trim();
         const tags        = (page.properties.Tags?.multi_select || []).map(t => t.name);
         const description = page.properties.Description?.rich_text?.[0]?.plain_text?.trim() || '';
-        const updatedDate = page.properties.Updated?.date?.start || '';
+        const updatedDate = page.last_edited_time.split('T')[0];
         const lastEdited  = page.last_edited_time;
 
         // ── Validate ──
-        if (!title || !date || !type) {
-          console.log(`  skip  ${page.id} — missing title, date, or type`);
+        if (!title || !type) {
+          console.log(`  skip  ${page.id} — missing title or type`);
           skipped++; continue;
         }
 
