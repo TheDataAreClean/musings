@@ -41,7 +41,7 @@ src/
     reset.css          # Minimal reset
     doc-chrome.css     # App chrome: titlebar, menubar, toolbar, ruler, statusbar
     typography.css     # Document body typography
-    components.css     # Post list, TOC, footnotes, callouts, post-nav, archive
+    components.css     # Post list, footnotes, callouts, post-nav, archive
     print.css          # Print media query — strips chrome, shows URLs
   ideas/
     ideas.json         # Directory data: layout + tags for all ideas
@@ -52,11 +52,19 @@ src/
     notes.json         # Directory data: layout + tags for all notes
     index.njk          # Notes listing page
     *.md               # Individual notes
+  shots/
+    shots.json         # Directory data: layout + tags for all shots
+    index.njk          # Shots listing page
+    *.md               # Individual shot posts
   images/              # Static images (passthrough copied)
   fonts/               # Static fonts (passthrough copied)
+  CNAME                # Custom domain — passthrough copied to _site/
   index.md             # Home page content (uses home.njk layout)
   about.md             # About page (uses doc.njk layout)
 .eleventy.js           # Eleventy config: markdown, collections, filters, shortcodes
+.github/
+  workflows/
+    deploy.yml         # GitHub Actions: build Eleventy → deploy to GitHub Pages
 ```
 
 ---
@@ -85,10 +93,11 @@ Font and zoom selections persist for the browser session via `sessionStorage` (k
 A4 at 96dpi: `--page-width: 794px`, `--page-pad-v: 80px`, `--page-pad-h: 96px`, `min-height: 297mm`. Not US Letter.
 
 ### Content collections
-Three Eleventy collections:
+Four Eleventy collections:
 - `ideas` — `src/ideas/**/*.md`, sorted newest first
 - `notes` — `src/notes/**/*.md`, sorted newest first
-- `feed` — both merged and sorted newest first (used on home page)
+- `shots` — `src/shots/**/*.md`, sorted newest first
+- `feed` — all three merged and sorted newest first (used on home page)
 
 ---
 
@@ -119,7 +128,19 @@ tags:
 ---
 ```
 
-The `ideas` and `notes` tags are inherited from the directory data files (`ideas.json` / `notes.json`) — you do not need to repeat them in front matter unless you want additional tags. The layout is also set by the directory data file.
+**Shots** (photography):
+```yaml
+---
+title: Place or subject
+date: 2026-03-26
+description: One line of context.
+tags:
+  - shots
+  - optional-topic-tag
+---
+```
+
+The `ideas`, `notes`, and `shots` tags are inherited from the directory data files (`ideas.json` / `notes.json` / `shots.json`) — you do not need to repeat them in front matter unless you want additional tags. The layout is also set by the directory data file.
 
 ### Markdown extensions
 
@@ -222,7 +243,7 @@ Run through this before every push to the remote.
 - [ ] All links in new content resolve (check anchor links manually)
 - [ ] Images referenced in content exist in `src/images/`
 - [ ] Shortcodes render correctly — callouts, margin notes, and page breaks visually correct in dev
-- [ ] `collections.ideas` and `collections.notes` counts are correct (check home page feed)
+- [ ] `collections.ideas`, `collections.notes`, and `collections.shots` counts are correct (check home page feed)
 
 ### Behaviour
 - [ ] Font dropdown switches document text (all content inside `.doc-page`) — not the chrome
@@ -234,7 +255,7 @@ Run through this before every push to the remote.
 - [ ] Custom dropdowns close when clicking anywhere outside them
 
 ### Visual
-- [ ] Check home page, one idea, one note, and about page
+- [ ] Check home page, one idea, one note, one shot, and about page
 - [ ] No layout breakage at 768px viewport width
 - [ ] Page-break strip bleeds correctly to the page edges (test on formatting-reference post)
 - [ ] Anchor link navigation lands below the sticky chrome (not hidden under it)
@@ -260,8 +281,8 @@ Run through this before every push to the remote.
 - [ ] Validate the live feed at [validator.w3.org/feed](https://validator.w3.org/feed) after any template or front matter change
 
 ### Spot checks on live
-- [ ] Home page loads and feed items appear with correct sigils (`→` ideas, `·` notes)
-- [ ] Click through to one idea and one note — content renders correctly
+- [ ] Home page loads and feed items appear with correct sigils (`→` ideas, `·` notes, `○` shots)
+- [ ] Click through to one idea, one note, and one shot — content renders correctly
 - [ ] Font and zoom easter eggs work on the live domain
 - [ ] Chrome inactive state triggers when switching tabs
 - [ ] `about/` page loads
@@ -403,8 +424,8 @@ Chore: npm audit — eleventy patch update 3.1.5 → 3.1.6
 
 ### Templates (`src/_includes/layouts/`)
 - `base.njk` — all chrome HTML and the inline `<script>` live here; every page inherits it; changes here affect everything
-- `doc.njk` — prev/next nav uses `findIndex` filter against `collections.notes` or `collections.ideas` depending on the post's tags; verify the tag-based branch logic is correct when adding new content types
-- `home.njk` — uses `collections.feed`; sigil (`→` or `·`) determined by `"ideas" in post.data.tags`
+- `doc.njk` — prev/next nav uses `findIndex` filter against `collections.shots`, `collections.notes`, or `collections.ideas` depending on the post's tags (checked in that order); verify the tag-based branch logic is correct when adding new content types
+- `home.njk` — uses `collections.feed`; sigil determined by tag: `→` ideas, `○` shots, `·` notes (fallback)
 - `feed.njk` — must have `layout: false`; the only template that produces non-HTML output
 
 ### Inline JavaScript (`base.njk` script block)
@@ -439,11 +460,12 @@ Later files override earlier ones at equal specificity. `print.css` is last so `
 - **Mobile (<600px):** Chrome not designed for mobile — titlebar, toolbar wrapping, ruler overflow are known unresolved gaps; do not try to patch them without a proper mobile plan
 
 ### Per-page-type
-Check all four page types after any chrome or typography change:
+Check all five page types after any chrome or typography change:
 1. **Home** (`/`) — feed list, sigils, post tags, dates
 2. **Idea** (`/ideas/slug/`) — full prose, footnotes, page breaks, prev/next nav
 3. **Note** (`/notes/slug/`) — short content, same layout as ideas
-4. **About** (`/about/`) — static page, no date/wordcount in meta
+4. **Shot** (`/shots/slug/`) — image-led content, same layout as notes
+5. **About** (`/about/`) — static page, no date/wordcount in meta
 
 ### Font modes
 Test both Arial and Georgia:
@@ -483,6 +505,12 @@ Test both Arial and Georgia:
 ---
 
 ## Infrastructure review guide
+
+### Deployment
+- GitHub Actions workflow at `.github/workflows/deploy.yml` — triggers on push to `main`
+- Builds with `npm ci && npm run build`, uploads `_site/` as a Pages artifact
+- `src/CNAME` is passthrough-copied to `_site/CNAME` — required for the custom domain to survive deploys
+- Check Actions tab at github.com/TheDataAreClean/musings/actions after every push
 
 ### `src/_data/site.json`
 - `url` — must exactly match the live domain, no trailing slash, correct protocol
