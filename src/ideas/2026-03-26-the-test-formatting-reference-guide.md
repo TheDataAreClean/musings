@@ -1,5 +1,5 @@
 ---
-title: The test formatting reference guide
+title: A complete formatting reference
 date: 2026-03-26
 updated: 2026-03-26
 description: "Every element this document format supports, in one place."
@@ -7,7 +7,7 @@ tags:
   - meta
   - design
 notion_id: 32fa5f73-735d-806c-8982-f508ecea9baf
-notion_last_edited: 2026-03-26T15:59:00.000Z
+notion_last_edited: 2026-03-26T16:19:00.000Z
 ---
 
 This document exists to show every formatting element this site can render. It is a reference and a test. The content is real where it can be; instrumental where it must be.
@@ -162,7 +162,7 @@ Use `<hr class="page-break">` to insert one. A plain `---` in the body renders a
 An image, constrained to the document width:
 
 
-![sample.svg](https://prod-files-secure.s3.us-west-2.amazonaws.com/739020b0-af35-4d8b-b730-bb8292bdb363/7a0ce7e6-4a9a-424c-b43d-f5613ecf4d37/sample.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466VY3TM5V6%2F20260326%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260326T160938Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAAaCXVzLXdlc3QtMiJHMEUCIEv4maUaxGP5oAOVjA7DlrMouEYxtxDCghZwXXOcp9hPAiEAp4BnJhjBq3CB9soft5beO7Xtag14ZH0FYXOEdix3fDgqiAQIyf%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDGyUnXfIdM4XA8HMPircA61fJuiyh4BUDXbVRk7m%2BzT9OphbghJs%2FkG3qnRO27l78CsBMG7Isps4pDVHktK5%2F6tQfsvNrS0GtLRjHBtcUSVOgDWdJVnI%2F5ouE8l%2FkzxCaY3xhcLYqicbazOBT54HnFQDfQA9tIYMM8zX%2F2PcvCE27uDcEK0cobiTFjdHeAnh9dAmeXzYNDJVBXrzgJrvpvKn%2FLkcqCbobY2Fp685WgmVJgBsoZpGfvPI1u89Hkgy5q0cHCMO9Wv4odDp89mssoXliH7niuVaiS38gp0dN7ufP3RaA2l%2B3GnXOBkFdgh%2Fh%2FlnIaNBkLRhy9reh8At7Hxj3XiUd4dfCROX%2FsTj6zgvR0bfzvKpj91h5Lj7wc5ijanC749tryMRjVFqstRFEuZM0tMZ2R91Rl8hTPHkJHD4t6Iv0wpcYMLMCJVN%2F0QsP8k7YrM2gJVR1TXQ4j7MtCl42pPRO7Kjy9n3pgZrSMmUp7pGj%2B9CzaspIDIkzRuSb3ijwRw0BmqxGATF9VB39zPiBA8edb4Tzu7ylLDWOzWLhGQm7VRdys1LpbShqud5ReXmUkkpMIbfxAivhjGn6unAWmqPYrxom59L38Taq89AUgXEf02Y%2B89ObGZrKC0IO0qvr7Q2krZmVfrEMOqvlc4GOqUBO5pEhKbqB4uHVQwwkS8%2Bz4LXO8hfZdcRlMfQFnTqgKjcsg%2FeuRD%2BEM2nglLR9K4MNjCC5GgICfIGkggpA7I8vAF%2BGpbOnDonWEU%2FHPnB2dlpS4LH4%2BUhmj23%2FwtvlQ0CBQFUhBEnYDmk1tiCBwOylj6jvRCDA932%2F3NQAQfcibont92W3qY6%2FfTtiKlFHeuNXyL0TRgf6VVg9jMyng2cWQdrhmKq&X-Amz-Signature=a5bcecb12db4796a8b9ce3413d7bc505937c3d2f0bdfb6fbb72ea93e20c7d6f3&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject)
+![sample.svg](https://prod-files-secure.s3.us-west-2.amazonaws.com/739020b0-af35-4d8b-b730-bb8292bdb363/7a0ce7e6-4a9a-424c-b43d-f5613ecf4d37/sample.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466VOM5HIVW%2F20260326%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260326T162216Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAAaCXVzLXdlc3QtMiJIMEYCIQD%2F6TCGyGY%2B7cEPTQaVm%2BB%2FkVOrhlOQhWNEC2HnagsoegIhAOjGd4Iqi6g%2BDjCwFdmX1Cs2PvxuOlwzgB86zkXQY9QxKogECMn%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMNjM3NDIzMTgzODA1IgyJEy6R4ZKTmWo38RQq3AME55j8aYGRdrCI56qc0lgffexXsLp9e0DAky0WWY8VNambSSuZULUqz6nI7PsxCUKtoETChH1e69DJ8Qly%2FmvW9LNT0VYxH4bdrij1MCUGOM7aMxxn5dDf3HpeziDQ%2FZuCA0jRdx29HS8qkKcWNnDaXEAMh4xhbj%2BxRT15SpjwolhLnofrEDgfBz3XP5KsclDAWOay0kNZKyXZ5IoLQ42tqIYsoEzAt7XFeHaOMSh9N7dmOV5Fak02N4d2uhKSD4oGFfvWVATxKUL4dgvqo37U5WYmpOtntAj3V93WbfEQGP7jDIy9noj4SlHt%2BHJkDCz%2FH4tY4hunC2nbrv3Jri1ObR%2BBDAUv05enjF5fvvresV%2BGTMbxdSnjG9lb8xeUevQ31SaUjjkly%2FiKB1gunmVIMO1qh9iWSzMnKbQl6hS7KKpz0TOGV6LfKKY6mYOE3uqkJ8RVEqWHgvYwBLXdJcnYIRHLA0Ye7sM%2FRFlJl%2Br9FeHRl%2BmPUzmDihebXonsrk3rGSB7bLXyOfQqbA2sHCi8SHExT%2B1s15oLINb4sGKXz5KDCtu1p05xHhiKYY2YnaC3BLCqBpGF7FdxaUL3ypiBgvN5nAGYjfYTugTFWmcPepdGU98ml4pXqYJcMjCPsZXOBjqkATgf5LMMWOEOPYiPnBIF8pGhTfLCMpC2if1zfM%2FyV%2BUW6IiGHVSb5tamjoj5HErlHtTx8Lev8MeTFPmu8u0KUngzzj7JMXbmEZqylmcONYr4W4dylqUYRb1sDWv3VLrcawwFW7jWoxMWa4aLrQXZ6VMMTxl0ePRMTkxlbFX5OS2B6FckLQOTRjkjxLQsOjIek1f4Qda3OZ8kpOO%2BkhYmqGVLPgUQ&X-Amz-Signature=77d8d304ab66367dd700e15eaf7e20812445a1a1c10f6ea623b4f1938ad030f3&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject)
 
 
 Images are block-level. They sit on their own line with vertical spacing above and below. They do not float. Captions are not built in — a following paragraph in _italic_ can serve as one.
