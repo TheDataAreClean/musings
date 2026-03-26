@@ -11,7 +11,7 @@
 
   /* Page */
   --color-page-bg:        #ffffff;
-  --color-page-shadow:    0 2px 8px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.1);
+  --color-page-shadow:    none;
 
   /* Content */
   --color-text:           #000000;
@@ -32,10 +32,6 @@
   --text-xs:    0.7rem;     /* 11px */
   --text-sm:    0.8rem;     /* 13px */
   --text-base:  1rem;       /* 16px ≈ 12pt */
-  --text-lg:    1.2rem;
-  --text-xl:    1.5rem;
-  --text-2xl:   1.875rem;
-  --text-3xl:   2.25rem;
 
   /* Line heights */
   --leading-tight:  1.15;
@@ -54,8 +50,8 @@
   --space-20: 5rem;
   --space-24: 6rem;
 
-  /* Page dimensions — US Letter at 96dpi */
-  --page-width:     816px;
+  /* Page dimensions — A4 at 96dpi */
+  --page-width:     794px;
   --page-pad-v:     80px;     /* top/bottom page margin */
   --page-pad-h:     96px;     /* left/right page margin — 1 inch */
 
@@ -69,6 +65,13 @@
   /* Total sticky chrome offset */
   --chrome-h: calc(var(--titlebar-h) + var(--menubar-h) + var(--toolbar-h) + var(--ruler-h));
 
-  /* TOC sidebar */
-  --sidebar-w: 190px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-pad-h: var(--space-4);   /* 16px — flush to viewport edges */
+    --page-pad-v: var(--space-6);   /* 24px — reduce top/bottom page margin */
+    --toolbar-h:  32px;             /* single row on mobile — same as desktop */
+    --ruler-h:    0px;              /* ruler hidden on mobile — keeps --chrome-h correct */
+  }
 }

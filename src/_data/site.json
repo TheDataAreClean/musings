@@ -1,7 +1,17 @@
 {
   "title": "Musings",
-  "author": "Your Name",
-  "description": "Works and ideas, in document form.",
-  "url": "https://musings.example.com",
-  "lang": "en"
+  "author": "Arpit",
+  "description": "Stuff on my mind.",
+  "url": "https://musings.thedataareclean.com",
+  "lang": "en",
+
+  "chrome": {
+    "saveState": "All changes saved",
+    "menu": ["File", "Edit", "View", "Insert", "Format", "Tools", "Help"],
+    "fontName": "Arial",
+    "fontSize": "12",
+    "styleLabel": "Normal text",
+    "zoom": "100%",
+    "language": "English (UK)"
+  }
 }

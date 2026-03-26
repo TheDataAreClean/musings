@@ -19,6 +19,7 @@
   color: var(--color-text);
   margin-top: var(--space-6);
   margin-bottom: 0;
+  scroll-margin-top: calc(var(--chrome-h) + var(--space-6));
 }
 
 .doc-body > h2:first-child,
@@ -132,13 +133,13 @@
    Horizontal rule — * * * as typed text, not a drawn line
    -------------------------------------------------------------------------- */
 
-.doc-body hr {
+.doc-body hr:not(.page-break) {
   border: none;
   margin: var(--space-10) 0;
   text-align: center;
 }
 
-.doc-body hr::after {
+.doc-body hr:not(.page-break)::after {
   content: '* * *';
   font-family: var(--font-doc);
   color: var(--color-muted);
@@ -168,6 +169,17 @@
   border-bottom: 1px solid var(--color-border-soft);
   padding: var(--space-2) var(--space-3);
   vertical-align: top;
+}
+
+/* --------------------------------------------------------------------------
+   Images
+   -------------------------------------------------------------------------- */
+
+.doc-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: var(--space-8) 0;
 }
 
 /* --------------------------------------------------------------------------

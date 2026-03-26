@@ -27,7 +27,7 @@ The decorative border. The hover state on a card. The fade-in on scroll. These a
 
 A document asks one question: *what do you want to read?*
 
-{% pagebreak %}
+<hr class="page-break">
 
 ## Brutalism as Honesty
 

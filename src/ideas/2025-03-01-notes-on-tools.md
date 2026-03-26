@@ -1,6 +1,7 @@
 ---
 title: Notes on Tools
 date: 2025-03-01
+updated: 2026-02-11
 description: A tool should disappear into the work.
 tags:
   - craft

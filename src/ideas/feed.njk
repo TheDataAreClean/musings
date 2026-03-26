@@ -1,11 +1,12 @@
 ---
 permalink: /ideas/feed.xml
+layout: false
 eleventyExcludeFromCollections: true
 ---
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>{{ site.title }} — Ideas</title>
-  <subtitle>{{ site.description }}</subtitle>
+  <subtitle>{{ site.author }}</subtitle>
   <link href="{{ site.url }}/ideas/feed.xml" rel="self"/>
   <link href="{{ site.url }}/ideas/"/>
   <updated>{{ collections.ideas[0].date | isoDate }}</updated>

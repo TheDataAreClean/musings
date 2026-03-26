@@ -29,6 +29,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/fonts");
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/images");
+  eleventyConfig.addPassthroughCopy("src/CNAME");
 
   // Filters
   eleventyConfig.addFilter("wordcount", function (content) {
@@ -57,11 +58,6 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter("isoDate", function (date) {
     if (!date) return "";
     return new Date(date).toISOString().split("T")[0];
-  });
-
-  eleventyConfig.addFilter("year", function (date) {
-    if (!date) return "";
-    return new Date(date).getFullYear();
   });
 
   eleventyConfig.addFilter("groupByYear", function (posts) {
@@ -101,10 +97,24 @@ module.exports = function (eleventyConfig) {
       .sort((a, b) => b.date - a.date);
   });
 
-  eleventyConfig.addCollection("works", function (collectionApi) {
+  eleventyConfig.addCollection("notes", function (collectionApi) {
     return collectionApi
-      .getFilteredByGlob("src/works/**/*.md")
+      .getFilteredByGlob("src/notes/**/*.md")
       .sort((a, b) => b.date - a.date);
+  });
+
+  eleventyConfig.addCollection("shots", function (collectionApi) {
+    return collectionApi
+      .getFilteredByGlob("src/shots/**/*.md")
+      .sort((a, b) => b.date - a.date);
+  });
+
+  eleventyConfig.addCollection("feed", function (collectionApi) {
+    return [
+      ...collectionApi.getFilteredByGlob("src/ideas/**/*.md"),
+      ...collectionApi.getFilteredByGlob("src/notes/**/*.md"),
+      ...collectionApi.getFilteredByGlob("src/shots/**/*.md"),
+    ].sort((a, b) => b.date - a.date);
   });
 
   // Shortcodes

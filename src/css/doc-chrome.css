@@ -19,8 +19,8 @@ body {
   top: 0;
   z-index: 200;
   height: var(--titlebar-h);
-  background: var(--color-app-chrome);
-  border-bottom: 1px solid var(--color-app-border);
+  background: linear-gradient(180deg, #f8f8f8 0%, #efefef 100%);
+  border-bottom: 1px solid #e0e0e0;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -30,6 +30,95 @@ body {
   gap: var(--space-4);
   cursor: default;
   user-select: none;
+  transition: background 0.15s;
+}
+
+/* Inactive: doc title and save state dim, mirroring macOS */
+.app-titlebar--inactive {
+  background: linear-gradient(180deg, #f2f2f2 0%, #eaeaea 100%);
+}
+
+.app-titlebar--inactive .app-titlebar__doc {
+  color: #aaaaaa;
+}
+
+.app-titlebar--inactive .app-titlebar__saved {
+  color: #cccccc;
+}
+
+/* Left: stoplight + app name grouped */
+.app-titlebar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Stoplight — early Mac OS X Aqua style: glossy spheres */
+.stoplight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.stoplight button,
+.stoplight span {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stoplight button {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Ring + bottom interior shadow + soft drop shadow */
+.stoplight button,
+.stoplight span {
+  box-shadow:
+    inset 0 0 0 0.5px  rgba(0,0,0,0.30),   /* defined edge ring */
+    inset 0 -2px 3px   rgba(0,0,0,0.12),   /* bottom interior shadow */
+    0 1px 2px          rgba(0,0,0,0.22);   /* drop shadow */
+}
+
+/* Crescent highlight: tight ellipse at top edge, not a big blob */
+.stoplight__red {
+  background:
+    radial-gradient(ellipse 56% 26% at 50% 16%, rgba(255,255,255,0.52) 0%, transparent 100%),
+    linear-gradient(175deg, #f26c64 0%, #d44040 100%);
+}
+
+.stoplight__yellow {
+  background:
+    radial-gradient(ellipse 56% 26% at 50% 16%, rgba(255,255,255,0.52) 0%, transparent 100%),
+    linear-gradient(175deg, #f8c44c 0%, #df9a1c 100%);
+}
+
+.stoplight__green {
+  background:
+    radial-gradient(ellipse 56% 26% at 50% 16%, rgba(255,255,255,0.52) 0%, transparent 100%),
+    linear-gradient(175deg, #42c852 0%, #1fa030 100%);
+}
+
+.stoplight__red:active {
+  filter: brightness(0.85);
+}
+
+/* Inactive: flat gray, ring only, no gloss */
+.stoplight--inactive .stoplight__red,
+.stoplight--inactive .stoplight__yellow,
+.stoplight--inactive .stoplight__green,
+.stoplight--inactive button {
+  background: #d8d8d8;
+  box-shadow:
+    inset 0 0 0 0.5px rgba(0,0,0,0.18),
+    0 1px 1px         rgba(0,0,0,0.12);
 }
 
 /* Left: application identifier — like Google Docs wordmark */
@@ -71,7 +160,7 @@ body {
   z-index: 190;
   height: var(--menubar-h);
   background: var(--color-app-chrome);
-  border-bottom: 1px solid var(--color-app-border-soft);
+  border-bottom: 1px solid #d4d4d4;
   display: flex;
   align-items: center;
   padding: 0 var(--space-2);
@@ -98,14 +187,15 @@ body {
   z-index: 180;
   height: var(--toolbar-h);
   background: var(--color-app-chrome);
-  border-bottom: 2px solid var(--color-app-border);
+  border-bottom: 1px solid #c4c4c4;
+  box-shadow: 0 1px 0 #e8e8e8; /* double-line effect: strong then feather */
   display: flex;
   align-items: center;
   padding: 0 var(--space-4);
   gap: 3px;
   font-family: var(--font-ui);
   font-size: var(--text-xs);
-  color: #222;               /* dark, not muted — items should read as content */
+  color: #333;
   cursor: default;
   user-select: none;
 }
@@ -125,15 +215,101 @@ body {
 .app-toolbar__fmt {
   padding: 0 3px;
   color: #222;
+  white-space: nowrap;
 }
 
 .app-toolbar__pipe {
-  color: var(--color-app-border-soft);
+  color: #d0d0d0;
   margin: 0 var(--space-1);
 }
 
 .app-toolbar__spacer {
   flex: 1;
+}
+
+/* Row break — invisible on desktop, forces two-row wrap on mobile */
+.app-toolbar__break {
+  display: none;
+}
+
+/* ==========================================================================
+   CUSTOM DROPDOWN — font and zoom pickers
+   Looks identical to the dead toolbar spans; opens a chrome-styled menu
+   ========================================================================== */
+
+.app-dropdown {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 1px var(--space-2);
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: #222;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.app-dropdown:hover,
+.app-dropdown--open {
+  background: rgba(0,0,0,0.07);
+}
+
+.app-dropdown__label {
+  /* inherits font/size/color from .app-dropdown */
+}
+
+/* The dropdown panel */
+.app-dropdown__menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  z-index: 500;
+  background: #f8f8f8;
+  border: 1px solid #c8c8c8;
+  border-radius: 2px;
+  min-width: 100%;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.14), 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* Zoom panel opens right-aligned (sits at end of toolbar) */
+.app-dropdown--right .app-dropdown__menu {
+  left: auto;
+  right: 0;
+}
+
+.app-dropdown--open .app-dropdown__menu {
+  display: block;
+}
+
+.app-dropdown__option {
+  position: relative;
+  padding: 4px var(--space-4) 4px 20px;
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: #222;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.app-dropdown__option:hover {
+  background: rgba(0,0,0,0.06);
+}
+
+.app-dropdown__option--selected {
+  background: rgba(0,0,0,0.04);
+}
+
+.app-dropdown__option--selected::before {
+  content: '✓';
+  position: absolute;
+  left: 6px;
+  font-size: var(--text-xs);
+  color: #555;
+  line-height: inherit;
 }
 
 /* ==========================================================================
@@ -147,8 +323,8 @@ body {
   top: calc(var(--titlebar-h) + var(--menubar-h) + var(--toolbar-h));
   z-index: 170;
   height: var(--ruler-h);
-  background: #b8b8b8;
-  border-bottom: 1px solid #888;
+  background: #bcbcbc;
+  border-bottom: 1px solid #a0a0a0;
   /* No overflow: hidden — numbers need to render inside */
   user-select: none;
   pointer-events: none;
@@ -226,6 +402,65 @@ body {
   align-items: center;
 }
 
+.app-canvas > main {
+  width: 100%;
+  max-width: var(--page-width);
+}
+
+/* ==========================================================================
+   MOBILE — ≤768px
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+  /* Titlebar: no stoplight, title flush left */
+  .app-titlebar {
+    grid-template-columns: 1fr auto;
+  }
+
+  .app-titlebar__left {
+    display: none;
+  }
+
+  .app-titlebar__doc {
+    text-align: left;
+  }
+
+  /* Toolbar: single row on mobile — second-row items hidden, zoom pushed right */
+  .app-toolbar {
+    height: auto;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .app-toolbar__break,
+  .app-toolbar__mobile-hide {
+    display: none;
+  }
+
+  .app-toolbar__zoom {
+    margin-left: auto;
+  }
+
+  /* Ruler — hide on mobile; tick positions are desktop-only */
+  .app-ruler {
+    display: none;
+  }
+
+  /* Canvas — slight padding so page border has breathing room */
+  .app-canvas {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+    box-shadow: none;
+  }
+
+  .doc-page {
+    min-height: 0;
+  }
+
+
+}
+
 /* ==========================================================================
    DOCUMENT PAGE — white paper on the grey desk
    ========================================================================== */
@@ -234,39 +469,26 @@ body {
   background: var(--color-page-bg);
   width: 100%;
   max-width: var(--page-width);
+  margin: 0 auto;
   padding: var(--page-pad-v) var(--page-pad-h);
-  box-shadow: var(--color-page-shadow);
-  min-height: calc(100vh - var(--chrome-h) - var(--statusbar-h) - var(--space-16));
+  min-height: 297mm;
+  overflow-x: clip;
   color: var(--color-text);
+  font-family: var(--font-doc);
 }
 
 /* ==========================================================================
-   DOCUMENT LAYOUT — content + optional TOC sidebar
+   DOCUMENT LAYOUT
    ========================================================================== */
 
 .doc-layout {
   display: grid;
-  grid-template-columns: 1fr var(--sidebar-w);
-  gap: 0 var(--space-10);
+  grid-template-columns: 1fr;
   align-items: start;
 }
 
 .doc-layout__content {
   min-width: 0;
-}
-
-.doc-layout__sidebar {
-  position: sticky;
-  top: calc(var(--chrome-h) + var(--space-6));
-}
-
-@media (max-width: 960px) {
-  .doc-layout {
-    grid-template-columns: 1fr;
-  }
-  .doc-layout__sidebar {
-    display: none;
-  }
 }
 
 /* ==========================================================================
@@ -296,9 +518,6 @@ body {
    ========================================================================== */
 
 .doc-meta {
-  font-family: var(--font-ui);
-  font-size: var(--text-sm);
-  color: var(--color-muted);
   margin-bottom: var(--space-8);
 }
 
@@ -314,34 +533,19 @@ body {
    PAGE BREAKS — grey desk showing through the page
    ========================================================================== */
 
-.doc-body {
-  counter-reset: page-counter;
-}
-
 .page-break {
-  counter-increment: page-counter;
   display: block;
   width: calc(100% + var(--page-pad-h) * 2);
   margin-left: calc(-1 * var(--page-pad-h));
+  /* page bottom margin above, page top margin below */
+  margin-top: var(--page-pad-v);
+  margin-bottom: var(--page-pad-v);
+  height: 56px;
   background: var(--color-app-bg);
-  border-top: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
-  height: 40px;
-  margin-top: var(--space-12);
-  margin-bottom: var(--space-12);
+  border: none;
   position: relative;
 }
 
-.page-break::after {
-  content: counter(page-counter);
-  position: absolute;
-  right: var(--page-pad-h);
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: var(--font-ui);
-  font-size: var(--text-xs);
-  color: var(--color-muted);
-}
 
 /* ==========================================================================
    :TARGET HIGHLIGHTS
@@ -368,7 +572,7 @@ body {
   height: var(--statusbar-h);
   z-index: 300;
   background: var(--color-app-chrome);
-  border-top: 1px solid var(--color-app-border);
+  border-top: 1px solid #d4d4d4;
   display: flex;
   align-items: stretch;
   font-family: var(--font-ui);
@@ -381,10 +585,14 @@ body {
 /* Each status item separated by border-right — document-style cell look */
 .app-statusbar__item {
   padding: 0 var(--space-3);
-  border-right: 1px solid var(--color-app-border-soft);
+  border-right: 1px solid #e4e4e4;
   display: flex;
   align-items: center;
   white-space: nowrap;
+}
+
+.app-statusbar__item:last-child {
+  border-right: none;
 }
 
 .app-statusbar__spacer {

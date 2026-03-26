@@ -1,0 +1,32 @@
+---
+layout: layouts/base.njk
+---
+
+<div class="doc-page">
+
+  <p class="doc-title">{{ site.title }}</p>
+
+  <p class="doc-nav">
+    <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/shots/">Shots</a> · <a href="/about/">About</a>
+  </p>
+
+  <div class="doc-body">
+    {{ content | safe }}
+  </div>
+
+  {% if collections.feed.length %}
+  <div class="post-list">
+    {% for post in collections.feed %}
+    <div class="post-list__item">
+      <p class="post-list__title">
+        <span class="post-sigil">{% if "ideas" in post.data.tags %}→{% elif "shots" in post.data.tags %}○{% else %}·{% endif %}</span><a href="{{ post.url }}">{{ post.data.title }}</a>
+      </p>
+      <p class="post-list__line2">{% for tag in post.data.tags %}{% if tag != "ideas" and tag != "notes" and tag != "shots" %}<a class="post-tag" href="/tags/{{ tag }}/">{{ tag }}</a>{% endif %}{% endfor %}<time datetime="{{ post.date | isoDate }}">{{ post.date | isoDate }}</time></p>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No posts yet.</p>
+  {% endif %}
+
+</div>

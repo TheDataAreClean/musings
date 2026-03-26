@@ -1,0 +1,60 @@
+---
+layout: layouts/base.njk
+ogType: article
+---
+
+<article class="doc-page">
+
+  <p class="doc-title">{{ title }}</p>
+
+  <p class="doc-nav">
+    <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/shots/">Shots</a> · <a href="/about/">About</a>
+  </p>
+
+  <p class="doc-meta">
+    {% if date %}
+      <time datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
+      {% if updated %} · Updated <time datetime="{{ updated | isoDate }}">{{ updated | readableDate }}</time>{% endif %}
+      · {{ content | wordcount }} words
+      · {{ content | readtime }} min read
+    {% endif %}
+    {% if tags %}
+      {% for tag in tags %}{% if tag != "ideas" and tag != "notes" and tag != "shots" %} · <a href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endif %}{% endfor %}
+    {% endif %}
+  </p>
+
+  <div class="doc-layout">
+
+    <div class="doc-layout__content">
+      <div class="doc-body">
+        {{ content | safe }}
+      </div>
+
+      {% if tags and ("shots" in tags) %}
+        {% set allPosts = collections.shots %}
+      {% elif tags and ("notes" in tags) %}
+        {% set allPosts = collections.notes %}
+      {% else %}
+        {% set allPosts = collections.ideas %}
+      {% endif %}
+      {% set postIndex = allPosts | findIndex(page) %}
+      {% if postIndex >= 0 %}
+      <nav class="post-nav" aria-label="Post navigation">
+        <div class="post-nav__prev">
+          {% if allPosts[postIndex + 1] %}
+          <a href="{{ allPosts[postIndex + 1].url }}">← {{ allPosts[postIndex + 1].data.title }}</a>
+          {% endif %}
+        </div>
+        <div class="post-nav__next">
+          {% if allPosts[postIndex - 1] %}
+          <a href="{{ allPosts[postIndex - 1].url }}">{{ allPosts[postIndex - 1].data.title }} →</a>
+          {% endif %}
+        </div>
+      </nav>
+      {% endif %}
+    </div>
+
+
+  </div>
+
+</article>

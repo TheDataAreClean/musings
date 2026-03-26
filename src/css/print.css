@@ -9,9 +9,6 @@
   .app-toolbar,
   .app-ruler,
   .app-statusbar,
-  .doc-toc,
-  .doc-toc-mobile,
-  .doc-layout__sidebar,
   .post-nav {
     display: none !important;
   }

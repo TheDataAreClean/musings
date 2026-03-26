@@ -1,21 +1,21 @@
 ---
 layout: layouts/base.njk
-title: Ideas
+title: Notes
 ---
 
 <div class="doc-page">
 
-  <p class="doc-title">Ideas</p>
+  <p class="doc-title">Notes</p>
 
   <p class="doc-nav">
     <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/shots/">Shots</a> · <a href="/about/">About</a>
   </p>
 
-  <p class="doc-meta">{{ collections.ideas | length }} posts</p>
+  <p class="doc-meta">{{ collections.notes | length }} notes</p>
 
-  {% if collections.ideas.length %}
+  {% if collections.notes.length %}
   <div class="post-list">
-    {% for post in collections.ideas %}
+    {% for post in collections.notes %}
     <div class="post-list__item">
       <p class="post-list__title"><a href="{{ post.url }}">{{ post.data.title }}</a></p>
       <p class="post-list__line2">{% for tag in post.data.tags %}{% if tag != "ideas" and tag != "notes" %}<a class="post-tag" href="/tags/{{ tag }}/">{{ tag }}</a>{% endif %}{% endfor %}<time datetime="{{ post.date | isoDate }}">{{ post.date | isoDate }}</time></p>
@@ -23,7 +23,7 @@ title: Ideas
     {% endfor %}
   </div>
   {% else %}
-  <p>No posts yet.</p>
+  <p>No notes yet.</p>
   {% endif %}
 
 </div>

@@ -17,30 +17,38 @@
 
   {# ── STATIC DECORATION ONLY — nothing below is interactive ───────────── #}
 
-  {# Title bar: app name left · document name centre · save state right #}
+  {# Title bar: stoplight left · document name centre · save state right #}
   <div class="app-titlebar" aria-hidden="true">
-    <span class="app-titlebar__app">{{ site.title }}</span>
+    <div class="app-titlebar__left">
+      <div class="stoplight">
+        <button class="stoplight__red" title="Close tab"></button>
+        <span class="stoplight__yellow"></span>
+        <span class="stoplight__green"></span>
+      </div>
+    </div>
     <span class="app-titlebar__doc">{{ title or site.title }}</span>
-    <span class="app-titlebar__saved">All changes saved</span>
+    <span class="app-titlebar__saved">{{ site.chrome.saveState }}</span>
   </div>
 
   {# Menu bar: all items are dead text — black, readable, unresponsive #}
   <div class="app-menubar" aria-hidden="true">
-    <span class="app-menubar__item">File</span>
-    <span class="app-menubar__item">Edit</span>
-    <span class="app-menubar__item">View</span>
-    <span class="app-menubar__item">Insert</span>
-    <span class="app-menubar__item">Format</span>
-    <span class="app-menubar__item">Tools</span>
-    <span class="app-menubar__item">Help</span>
+    {% for item in site.chrome.menu %}
+    <span class="app-menubar__item">{{ item }}</span>
+    {% endfor %}
   </div>
 
   {# Toolbar: realistic content, denser, correct glyphs #}
   <div class="app-toolbar" aria-hidden="true">
-    <span class="app-toolbar__select">Normal text ▾</span>
+    <span class="app-toolbar__select">{{ site.chrome.styleLabel }} ▾</span>
     <span class="app-toolbar__pipe">|</span>
-    <span class="app-toolbar__select">Arial ▾</span>
-    <span class="app-toolbar__select app-toolbar__select--size">12 ▾</span>
+    <span class="app-dropdown app-toolbar__font" aria-hidden="true">
+      <span class="app-dropdown__label">Arial</span>&#8200;&#9662;
+      <div class="app-dropdown__menu">
+        <div class="app-dropdown__option app-dropdown__option--selected" data-value="arial">Arial</div>
+        <div class="app-dropdown__option" data-value="georgia">Georgia</div>
+      </div>
+    </span>
+    <span class="app-toolbar__select app-toolbar__select--size">{{ site.chrome.fontSize }} ▾</span>
     <span class="app-toolbar__pipe">|</span>
     <b class="app-toolbar__fmt">B</b>
     <i class="app-toolbar__fmt">I</i>
@@ -50,15 +58,29 @@
     <span class="app-toolbar__fmt">A ▾</span>
     <span class="app-toolbar__fmt">¶</span>
     <span class="app-toolbar__pipe">|</span>
-    <span class="app-toolbar__fmt">&#8644;</span>
-    <span class="app-toolbar__fmt">&#8644;</span>
-    <span class="app-toolbar__fmt">&#8644;</span>
-    <span class="app-toolbar__fmt">&#8644;</span>
-    <span class="app-toolbar__pipe">|</span>
-    <span class="app-toolbar__fmt">&#8676;</span>
-    <span class="app-toolbar__fmt">&#8677;</span>
-    <span class="app-toolbar__spacer"></span>
-    <span class="app-toolbar__select">100% ▾</span>
+    <span class="app-toolbar__break"></span>
+    <span class="app-toolbar__fmt app-toolbar__mobile-hide">&#8644;</span>
+    <span class="app-toolbar__fmt app-toolbar__mobile-hide">&#8644;</span>
+    <span class="app-toolbar__fmt app-toolbar__mobile-hide">&#8644;</span>
+    <span class="app-toolbar__fmt app-toolbar__mobile-hide">&#8644;</span>
+    <span class="app-toolbar__pipe app-toolbar__mobile-hide">|</span>
+    <span class="app-toolbar__fmt app-toolbar__mobile-hide">&#8676;</span>
+    <span class="app-toolbar__fmt app-toolbar__mobile-hide">&#8677;</span>
+    <span class="app-toolbar__spacer app-toolbar__mobile-hide"></span>
+    <span class="app-dropdown app-dropdown--right app-toolbar__zoom" aria-hidden="true">
+      <span class="app-dropdown__label">100%</span>&#8200;&#9662;
+      <div class="app-dropdown__menu">
+        <div class="app-dropdown__option" data-value="50">50%</div>
+        <div class="app-dropdown__option" data-value="75">75%</div>
+        <div class="app-dropdown__option" data-value="90">90%</div>
+        <div class="app-dropdown__option app-dropdown__option--selected" data-value="100">100%</div>
+        <div class="app-dropdown__option" data-value="110">110%</div>
+        <div class="app-dropdown__option" data-value="125">125%</div>
+        <div class="app-dropdown__option" data-value="150">150%</div>
+        <div class="app-dropdown__option" data-value="175">175%</div>
+        <div class="app-dropdown__option" data-value="200">200%</div>
+      </div>
+    </span>
   </div>
 
   {# Ruler: tick marks + inch numbers in HTML #}
@@ -84,10 +106,125 @@
   {# Status bar — static decoration #}
   <div class="app-statusbar" aria-hidden="true">
     <span class="app-statusbar__item">Page 1</span>
-    <span class="app-statusbar__item">English (UK)</span>
+    <span class="app-statusbar__item">{{ site.chrome.language }}</span>
     <span class="app-statusbar__spacer"></span>
-    <span class="app-statusbar__item">100%</span>
+    <span class="app-statusbar__item app-statusbar__zoom">{{ site.chrome.zoom }}</span>
   </div>
 
+  <script>
+  (function () {
+
+    // ── Shared: custom dropdown ───────────────────────────────────────────────
+    function initDropdown(el, onChange) {
+      var label   = el.querySelector('.app-dropdown__label');
+      var options = el.querySelectorAll('.app-dropdown__option');
+
+      el.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = el.classList.contains('app-dropdown--open');
+        // Close all open dropdowns first
+        document.querySelectorAll('.app-dropdown--open').forEach(function (d) {
+          d.classList.remove('app-dropdown--open');
+        });
+        if (!isOpen) el.classList.add('app-dropdown--open');
+      });
+
+      options.forEach(function (opt) {
+        opt.addEventListener('click', function (e) {
+          e.stopPropagation();
+          options.forEach(function (o) { o.classList.remove('app-dropdown__option--selected'); });
+          opt.classList.add('app-dropdown__option--selected');
+          label.textContent = opt.textContent;
+          el.classList.remove('app-dropdown--open');
+          if (onChange) onChange(opt.dataset.value);
+        });
+      });
+
+      return {
+        setValue: function (val) {
+          options.forEach(function (o) {
+            var match = o.dataset.value === String(val);
+            o.classList.toggle('app-dropdown__option--selected', match);
+            if (match) label.textContent = o.textContent;
+          });
+        }
+      };
+    }
+
+    document.addEventListener('click', function () {
+      document.querySelectorAll('.app-dropdown--open').forEach(function (d) {
+        d.classList.remove('app-dropdown--open');
+      });
+    });
+
+    // ── 1. FONT — session-persistent ─────────────────────────────────────────
+    var fontMap = {
+      arial:   'Arial, Helvetica, sans-serif',
+      georgia: 'Georgia, "Times New Roman", serif'
+    };
+
+    function applyFont(key) {
+      document.documentElement.style.setProperty('--font-doc', fontMap[key] || fontMap.arial);
+      sessionStorage.setItem('musings-font', key);
+    }
+
+    var fontDropdown = initDropdown(document.querySelector('.app-toolbar__font'), applyFont);
+
+    var savedFont = sessionStorage.getItem('musings-font');
+    if (savedFont && fontMap[savedFont]) {
+      applyFont(savedFont);
+      fontDropdown.setValue(savedFont);
+    }
+
+    // ── 2. ZOOM — session-persistent, Cmd/Ctrl +/-/0 ─────────────────────────
+    var zoomDropdown = initDropdown(document.querySelector('.app-toolbar__zoom'), function (value) {
+      applyZoom(levels.indexOf(Number(value)));
+    });
+
+    var zoomStatus = document.querySelector('.app-statusbar__zoom');
+    var canvas     = document.querySelector('.app-canvas');
+    var levels     = [50, 75, 90, 100, 110, 125, 150, 175, 200];
+    var zi         = levels.indexOf(100);
+
+    function applyZoom(i) {
+      zi = Math.max(0, Math.min(levels.length - 1, i));
+      var pct = levels[zi];
+      canvas.style.zoom      = pct / 100;
+      zoomStatus.textContent = pct + '%';
+      zoomDropdown.setValue(pct);
+      sessionStorage.setItem('musings-zoom', pct);
+    }
+
+    var savedZoom = sessionStorage.getItem('musings-zoom');
+    if (savedZoom) applyZoom(levels.indexOf(Number(savedZoom)));
+
+    document.addEventListener('keydown', function (e) {
+      if (!e.metaKey && !e.ctrlKey) return;
+      if (e.key === '=' || e.key === '+') { e.preventDefault(); applyZoom(zi + 1); }
+      else if (e.key === '-')             { e.preventDefault(); applyZoom(zi - 1); }
+      else if (e.key === '0')             { e.preventDefault(); applyZoom(levels.indexOf(100)); }
+    });
+
+    // ── 3. STOPLIGHT — red closes tab; all dots dim on window blur ────────────
+    document.querySelector('.stoplight__red').addEventListener('click', function () {
+      window.close();
+    });
+
+    var titlebar = document.querySelector('.app-titlebar');
+    var stoplight = document.querySelector('.stoplight');
+
+    function setActive(active) {
+      titlebar.classList.toggle('app-titlebar--inactive', !active);
+      stoplight.classList.toggle('stoplight--inactive', !active);
+    }
+
+    window.addEventListener('blur',  function () { setActive(false); });
+    window.addEventListener('focus', function () { setActive(true);  });
+    document.addEventListener('visibilitychange', function () {
+      setActive(!document.hidden);
+    });
+
+  })();
+  </script>
 </body>
 </html>
