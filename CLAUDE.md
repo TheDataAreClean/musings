@@ -611,8 +611,8 @@ A page is only re-written when Notion reports a newer `last_edited_time`.
 Images embedded in Notion pages are served as signed S3 URLs that expire in ~1 hour. The sync script handles this automatically:
 
 1. After converting a page to markdown, all `![alt](https://...)` URLs are detected
-2. Each image is downloaded to `src/images/notion/{hash}{ext}` (hash of the URL path for a stable filename across re-syncs)
-3. The markdown URL is rewritten to `/images/notion/filename.ext`
+2. Each image is downloaded to `src/images/notion/{type}/{date}-{slug}-{hash}.webp` — type subfolder mirrors content structure, slug prefix makes images easy to find, short hash ensures idempotency across re-syncs. SVGs are kept as-is; all raster images are resized to 794px and converted to WebP at quality 85.
+3. The markdown URL is rewritten to `/images/notion/{type}/filename.webp`
 4. The sync workflow stages `src/images` along with content files, so downloaded images are committed and deployed
 
 Images already downloaded on a previous sync run are not re-downloaded (idempotent). Since `src/images/` is passthrough-copied by Eleventy, the files are served from the root at `/images/notion/`.

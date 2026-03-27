@@ -83,7 +83,9 @@ function buildNotionIndex() {
 // Skips download if the file already exists (idempotent across runs).
 // SVGs are saved as-is; all other formats are resized to 794px wide and
 // converted to WebP at quality 85 for fast loading.
-function downloadImage(url, redirectCount) {
+// imageDir  — absolute dir to save into (e.g. src/images/notion/ideas)
+// slugPrefix — post slug prefix for the filename (e.g. 2026-03-26-my-post)
+function downloadImage(url, imageDir, slugPrefix, redirectCount) {
   if ((redirectCount || 0) > 5) return Promise.resolve(null);
 
   return new Promise((resolve) => {
@@ -97,13 +99,13 @@ function downloadImage(url, redirectCount) {
     const safeExt = allowedExts.includes(ext) ? ext : '.jpg';
     const isSvg = safeExt === '.svg';
 
-    // Stable filename: MD5 of the URL origin+path (query params change on each fetch)
-    // Non-SVGs are always stored as .webp after processing
+    // Stable filename: {slugPrefix}-{hash}, hash of URL origin+path for idempotency
     const stableKey = urlObj.origin + urlObj.pathname;
-    const hash = crypto.createHash('md5').update(stableKey).digest('hex').slice(0, 12);
-    const filename = isSvg ? `${hash}.svg` : `${hash}.webp`;
-    const filepath = path.join(IMAGE_DIR, filename);
-    const webPath  = `/images/notion/${filename}`;
+    const hash = crypto.createHash('md5').update(stableKey).digest('hex').slice(0, 8);
+    const filename = isSvg ? `${slugPrefix}-${hash}.svg` : `${slugPrefix}-${hash}.webp`;
+    const filepath = path.join(imageDir, filename);
+    const typeDir  = path.basename(imageDir);
+    const webPath  = `/images/notion/${typeDir}/${filename}`;
 
     // Already downloaded — skip
     if (fs.existsSync(filepath)) return resolve(webPath);
@@ -117,7 +119,7 @@ function downloadImage(url, redirectCount) {
       if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307) {
         file.close();
         fs.unlink(tmpPath, () => {});
-        return downloadImage(res.headers.location, (redirectCount || 0) + 1).then(resolve);
+        return downloadImage(res.headers.location, imageDir, slugPrefix, (redirectCount || 0) + 1).then(resolve);
       }
 
       if (res.statusCode !== 200) {
@@ -156,8 +158,11 @@ function downloadImage(url, redirectCount) {
 }
 
 // Find all external image URLs in markdown, download them, rewrite to local paths
-async function localiseImages(body) {
-  fs.mkdirSync(IMAGE_DIR, { recursive: true });
+// type       — content type (ideas / notes / shots) — used for the subfolder
+// slugPrefix — post date+slug — used as filename prefix
+async function localiseImages(body, type, slugPrefix) {
+  const imageDir = path.join(IMAGE_DIR, type);
+  fs.mkdirSync(imageDir, { recursive: true });
 
   // Match ![alt](https://...) — capture alt and url separately
   const imageRegex = /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g;
@@ -169,7 +174,7 @@ async function localiseImages(body) {
 
   for (const item of matches) {
     try {
-      const localPath = await downloadImage(item.url);
+      const localPath = await downloadImage(item.url, imageDir, slugPrefix);
       if (localPath) {
         body = body.replace(item.full, `![${item.alt}](${localPath})`);
         console.log(`    image  ${localPath}`);
@@ -248,8 +253,12 @@ async function sync() {
         const mdResult = n2m.toMarkdownString(mdBlocks);
         const rawBody  = typeof mdResult === 'string' ? mdResult : (mdResult?.parent || '');
 
+        // ── Compute slug early — needed for image filenames ──
+        const slug       = slugOverride ? slugify(slugOverride) : slugify(title);
+        const slugPrefix = `${date}-${slug}`;
+
         // ── Download images and rewrite URLs to local paths ──
-        const body = await localiseImages(sanitiseBody(rawBody).trim());
+        const body = await localiseImages(sanitiseBody(rawBody).trim(), type, slugPrefix);
 
         // ── Build front matter ──
         const fm = [
@@ -274,8 +283,7 @@ async function sync() {
         if (existingPath) {
           filepath = existingPath;
         } else {
-          const slug     = slugOverride ? slugify(slugOverride) : slugify(title);
-          const filename = `${date}-${slug}.md`;
+          const filename = `${slugPrefix}.md`;
           fs.mkdirSync(dir, { recursive: true });
           filepath = path.join(dir, filename);
         }
