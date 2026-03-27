@@ -143,7 +143,7 @@ export NOTION_DATABASE_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 node scripts/sync-notion.js
 ```
 
-**Image caveat:** Notion image URLs are signed S3 links that expire in ~1 hour. Images in synced posts will break after expiry. Store images in `src/images/` and reference them manually if you need permanent images.
+**Images:** Notion image URLs are signed S3 links that expire in ~1 hour. The sync script automatically downloads every image to `src/images/notion/` and rewrites the markdown URL to the local path, so images are permanent in the deployed site.
 
 See `CLAUDE.md` for the full Notion database schema and setup checklist.
 

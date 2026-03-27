@@ -597,13 +597,16 @@ Each synced file contains two hidden front matter fields:
 
 A page is only re-written when Notion reports a newer `last_edited_time`.
 
-### Notion image URLs expire
+### Notion image handling
 
-Images embedded in Notion pages are served as signed S3 URLs (e.g. `prod-files-secure.s3.amazonaws.com/...`). These URLs expire in approximately one hour. `notion-to-md` converts them to standard markdown image syntax, but they will 404 on the live site after expiry.
+Images embedded in Notion pages are served as signed S3 URLs that expire in ~1 hour. The sync script handles this automatically:
 
-**Current limitation:** the sync script does not download images. If you include images in a Notion post, they will render correctly immediately after sync but break within an hour.
+1. After converting a page to markdown, all `![alt](https://...)` URLs are detected
+2. Each image is downloaded to `src/images/notion/{hash}{ext}` (hash of the URL path for a stable filename across re-syncs)
+3. The markdown URL is rewritten to `/images/notion/filename.ext`
+4. The sync workflow stages `src/images` along with content files, so downloaded images are committed and deployed
 
-**Workaround:** upload images to `src/images/` in the repo and reference them as `/images/filename.jpg` using a raw HTML `<img>` tag in the Notion page body — Notion renders this as a code block which `notion-to-md` passes through as-is.
+Images already downloaded on a previous sync run are not re-downloaded (idempotent). Since `src/images/` is passthrough-copied by Eleventy, the files are served from the root at `/images/notion/`.
 
 ### Sanitisation
 

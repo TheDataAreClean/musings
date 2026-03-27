@@ -13,6 +13,11 @@
  *   Publication date is taken from the page's built-in "Created time".
  *   Updated date is taken from the page's built-in "Last edited time".
  *
+ * Images:
+ *   Notion image URLs are signed S3 links that expire in ~1 hour. This script
+ *   downloads every image found in the page body to src/images/notion/ and
+ *   rewrites the markdown URL to the local path, so images are permanent.
+ *
  * Env vars required:
  *   NOTION_TOKEN       — Notion integration token
  *   NOTION_DATABASE_ID — ID of the database to sync from
@@ -20,13 +25,17 @@
 
 const { Client } = require('@notionhq/client');
 const { NotionToMarkdown } = require('notion-to-md');
-const fs = require('fs');
+const fs   = require('fs');
 const path = require('path');
+const https = require('https');
+const http  = require('http');
+const crypto = require('crypto');
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
-const VALID_DIRS = ['src/ideas', 'src/notes', 'src/shots'];
+const VALID_DIRS  = ['src/ideas', 'src/notes', 'src/shots'];
+const IMAGE_DIR   = 'src/images/notion';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -66,6 +75,90 @@ function buildNotionIndex() {
     }
   }
   return index;
+}
+
+// Download a single image URL → src/images/notion/{hash}{ext}
+// Returns the local web path (/images/notion/...) or null on failure.
+// Skips download if the file already exists (idempotent across runs).
+function downloadImage(url, redirectCount) {
+  if ((redirectCount || 0) > 5) return Promise.resolve(null);
+
+  return new Promise((resolve) => {
+    let urlObj;
+    try { urlObj = new URL(url); } catch (_) { return resolve(null); }
+
+    // Derive extension from the URL path (strip query string first)
+    const rawName = urlObj.pathname.split('/').pop() || '';
+    const ext = path.extname(rawName.split('?')[0]).toLowerCase() || '.jpg';
+    const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.avif'];
+    const safeExt = allowedExts.includes(ext) ? ext : '.jpg';
+
+    // Stable filename: MD5 of the URL origin+path (query params change on each fetch)
+    const stableKey = urlObj.origin + urlObj.pathname;
+    const hash = crypto.createHash('md5').update(stableKey).digest('hex').slice(0, 12);
+    const filename = `${hash}${safeExt}`;
+    const filepath = path.join(IMAGE_DIR, filename);
+    const webPath  = `/images/notion/${filename}`;
+
+    // Already downloaded — skip
+    if (fs.existsSync(filepath)) return resolve(webPath);
+
+    const protocol = url.startsWith('https') ? https : http;
+    const file = fs.createWriteStream(filepath);
+
+    const req = protocol.get(url, (res) => {
+      // Follow redirects
+      if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307) {
+        file.close();
+        fs.unlink(filepath, () => {});
+        return downloadImage(res.headers.location, (redirectCount || 0) + 1).then(resolve);
+      }
+
+      if (res.statusCode !== 200) {
+        file.close();
+        fs.unlink(filepath, () => {});
+        return resolve(null);
+      }
+
+      res.pipe(file);
+      file.on('finish', () => { file.close(); resolve(webPath); });
+    });
+
+    req.on('error', () => {
+      file.close();
+      fs.unlink(filepath, () => {});
+      resolve(null);
+    });
+  });
+}
+
+// Find all external image URLs in markdown, download them, rewrite to local paths
+async function localiseImages(body) {
+  fs.mkdirSync(IMAGE_DIR, { recursive: true });
+
+  // Match ![alt](https://...) — capture alt and url separately
+  const imageRegex = /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g;
+  const matches = [];
+  let m;
+  while ((m = imageRegex.exec(body)) !== null) {
+    matches.push({ full: m[0], alt: m[1], url: m[2] });
+  }
+
+  for (const item of matches) {
+    try {
+      const localPath = await downloadImage(item.url);
+      if (localPath) {
+        body = body.replace(item.full, `![${item.alt}](${localPath})`);
+        console.log(`    image  ${localPath}`);
+      } else {
+        console.warn(`    warn   could not download image: ${item.url.slice(0, 80)}`);
+      }
+    } catch (err) {
+      console.warn(`    warn   image error: ${err.message}`);
+    }
+  }
+
+  return body;
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -130,7 +223,9 @@ async function sync() {
         const mdBlocks = await n2m.pageToMarkdown(page.id);
         const mdResult = n2m.toMarkdownString(mdBlocks);
         const rawBody  = typeof mdResult === 'string' ? mdResult : (mdResult?.parent || '');
-        const body     = sanitiseBody(rawBody).trim();
+
+        // ── Download images and rewrite URLs to local paths ──
+        const body = await localiseImages(sanitiseBody(rawBody).trim());
 
         // ── Build front matter ──
         const fm = [
