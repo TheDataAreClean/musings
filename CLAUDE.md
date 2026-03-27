@@ -237,6 +237,7 @@ Run through this before every push to the remote.
 - [ ] `npm run build` completes with zero errors and zero warnings
 - [ ] `_site/` is not committed — it is in `.gitignore`
 - [ ] Browser console is clean on dev server — no JS errors, no 404s in the network tab
+- [ ] `version` in `package.json` and `package-lock.json` matches the release tag being pushed — update with `npm version <tag> --no-git-tag-version` before committing
 
 ### Content
 - [ ] All new posts have correct front matter (`title`, `date`, `tags`)
