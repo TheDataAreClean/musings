@@ -9,7 +9,7 @@ eleventyExcludeFromCollections: true
   <subtitle>{{ site.author }}</subtitle>
   <link href="{{ site.url }}/ideas/feed.xml" rel="self"/>
   <link href="{{ site.url }}/ideas/"/>
-  <updated>{% if collections.ideas.length %}{{ collections.ideas[0].date | isoDate }}{% else %}{{ site.buildTime | isoDate }}{% endif %}</updated>
+  <updated>{% if collections.ideas.length %}{{ collections.ideas[0].date | atomDate }}{% else %}{{ buildTime | atomDate }}{% endif %}</updated>
   <id>{{ site.url }}/ideas/</id>
   <author>
     <name>{{ site.author }}</name>
@@ -19,7 +19,7 @@ eleventyExcludeFromCollections: true
     <title>{{ post.data.title }}</title>
     <link href="{{ site.url }}{{ post.url }}"/>
     <id>{{ site.url }}{{ post.url }}</id>
-    <updated>{{ post.date | isoDate }}</updated>
+    <updated>{{ post.date | atomDate }}</updated>
     {% if post.data.description %}
     <summary>{{ post.data.description }}</summary>
     {% endif %}

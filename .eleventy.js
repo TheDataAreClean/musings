@@ -60,6 +60,13 @@ module.exports = function (eleventyConfig) {
     return new Date(date).toISOString().split("T")[0];
   });
 
+  eleventyConfig.addFilter("atomDate", function (date) {
+    if (!date) return "";
+    return new Date(date).toISOString();
+  });
+
+  eleventyConfig.addGlobalData("buildTime", () => new Date());
+
   eleventyConfig.addFilter("groupByYear", function (posts) {
     const groups = {};
     posts.forEach((post) => {

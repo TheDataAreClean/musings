@@ -4,10 +4,12 @@ title: About
 date: 2025-01-01
 ---
 
-I'm a writer and maker. This is where I keep my works and ideas.
+I am a curious individual who likes to dip their toes in every pond.
 
-The site is built to look like a living document. It is plain and white and tries not to perform anything except the content.
+The site is built to look like a living document, and keep the focus on the content of its pages.
 
 ---
+
+More about me at [thedataareclean.com](https://www.thedataareclean.com).
 
 You can reach me at [hello@thedataareclean.com](mailto:hello@thedataareclean.com).
