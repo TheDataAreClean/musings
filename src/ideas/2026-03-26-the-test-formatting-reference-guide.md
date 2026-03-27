@@ -1,13 +1,13 @@
 ---
 title: A complete formatting reference
 date: 2026-03-26
-updated: 2026-03-26
+updated: 2026-03-27
 description: "Every element this document format supports, in one place."
 tags:
   - meta
   - design
 notion_id: 32fa5f73-735d-806c-8982-f508ecea9baf
-notion_last_edited: 2026-03-26T16:19:00.000Z
+notion_last_edited: 2026-03-27T02:31:00.000Z
 ---
 
 This document exists to show every formatting element this site can render. It is a reference and a test. The content is real where it can be; instrumental where it must be.
@@ -162,7 +162,7 @@ Use `<hr class="page-break">` to insert one. A plain `---` in the body renders a
 An image, constrained to the document width:
 
 
-![sample.svg](https://prod-files-secure.s3.us-west-2.amazonaws.com/739020b0-af35-4d8b-b730-bb8292bdb363/7a0ce7e6-4a9a-424c-b43d-f5613ecf4d37/sample.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466VOM5HIVW%2F20260326%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260326T162216Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEAAaCXVzLXdlc3QtMiJIMEYCIQD%2F6TCGyGY%2B7cEPTQaVm%2BB%2FkVOrhlOQhWNEC2HnagsoegIhAOjGd4Iqi6g%2BDjCwFdmX1Cs2PvxuOlwzgB86zkXQY9QxKogECMn%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMNjM3NDIzMTgzODA1IgyJEy6R4ZKTmWo38RQq3AME55j8aYGRdrCI56qc0lgffexXsLp9e0DAky0WWY8VNambSSuZULUqz6nI7PsxCUKtoETChH1e69DJ8Qly%2FmvW9LNT0VYxH4bdrij1MCUGOM7aMxxn5dDf3HpeziDQ%2FZuCA0jRdx29HS8qkKcWNnDaXEAMh4xhbj%2BxRT15SpjwolhLnofrEDgfBz3XP5KsclDAWOay0kNZKyXZ5IoLQ42tqIYsoEzAt7XFeHaOMSh9N7dmOV5Fak02N4d2uhKSD4oGFfvWVATxKUL4dgvqo37U5WYmpOtntAj3V93WbfEQGP7jDIy9noj4SlHt%2BHJkDCz%2FH4tY4hunC2nbrv3Jri1ObR%2BBDAUv05enjF5fvvresV%2BGTMbxdSnjG9lb8xeUevQ31SaUjjkly%2FiKB1gunmVIMO1qh9iWSzMnKbQl6hS7KKpz0TOGV6LfKKY6mYOE3uqkJ8RVEqWHgvYwBLXdJcnYIRHLA0Ye7sM%2FRFlJl%2Br9FeHRl%2BmPUzmDihebXonsrk3rGSB7bLXyOfQqbA2sHCi8SHExT%2B1s15oLINb4sGKXz5KDCtu1p05xHhiKYY2YnaC3BLCqBpGF7FdxaUL3ypiBgvN5nAGYjfYTugTFWmcPepdGU98ml4pXqYJcMjCPsZXOBjqkATgf5LMMWOEOPYiPnBIF8pGhTfLCMpC2if1zfM%2FyV%2BUW6IiGHVSb5tamjoj5HErlHtTx8Lev8MeTFPmu8u0KUngzzj7JMXbmEZqylmcONYr4W4dylqUYRb1sDWv3VLrcawwFW7jWoxMWa4aLrQXZ6VMMTxl0ePRMTkxlbFX5OS2B6FckLQOTRjkjxLQsOjIek1f4Qda3OZ8kpOO%2BkhYmqGVLPgUQ&X-Amz-Signature=77d8d304ab66367dd700e15eaf7e20812445a1a1c10f6ea623b4f1938ad030f3&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject)
+![sample.svg](/images/notion/e17169b9b922.svg)
 
 
 Images are block-level. They sit on their own line with vertical spacing above and below. They do not float. Captions are not built in — a following paragraph in _italic_ can serve as one.
