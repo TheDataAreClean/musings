@@ -588,11 +588,12 @@ The Notion database must have these properties:
 |---|---|---|
 | Title | Title | Required |
 | Type | Select | Required — `ideas`, `notes`, or `shots` |
+| Date | Date | Required — publication date; also used as filename prefix |
 | Tags | Multi-select | Optional |
 | Description | Text | Optional — used for OG description on ideas |
 | Status | Select | Required — only `Ready` pages are synced |
 
-Publication date is read from Notion's built-in **Created time**. The `updated` front matter field is read from Notion's built-in **Last edited time**. No manual Date or Updated properties are needed.
+The `updated` front matter field is read from Notion's built-in **Last edited time** — no manual Updated property needed.
 
 ### Idempotency
 

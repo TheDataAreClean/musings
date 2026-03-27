@@ -10,7 +10,7 @@
  *   Description — Text       (optional — used for OG description on ideas)
  *   Status      — Select     only pages with Status = "Ready" are synced
  *
- *   Publication date is taken from the page's built-in "Created time".
+ *   Date        — Date       Required — publication date (manual field)
  *   Updated date is taken from the page's built-in "Last edited time".
  *
  * Images:
@@ -190,7 +190,7 @@ async function sync() {
       try {
         // ── Read properties ──
         const title       = page.properties.Title?.title?.[0]?.plain_text?.trim();
-        const date        = page.created_time.split('T')[0];
+        const date        = page.properties.Date?.date?.start;
         const type        = page.properties.Type?.select?.name?.toLowerCase().trim();
         const tags        = (page.properties.Tags?.multi_select || []).map(t => t.name);
         const description = page.properties.Description?.rich_text?.[0]?.plain_text?.trim() || '';
@@ -198,8 +198,8 @@ async function sync() {
         const lastEdited  = page.last_edited_time;
 
         // ── Validate ──
-        if (!title || !type) {
-          console.log(`  skip  ${page.id} — missing title or type`);
+        if (!title || !type || !date) {
+          console.log(`  skip  ${page.id} — missing title, type, or date`);
           skipped++; continue;
         }
 
