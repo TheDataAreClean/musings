@@ -391,12 +391,14 @@ git checkout -b hotfix/feed-xml v1.1.0
 | `v1.0.0` | `fd6e9e6` | **Site reaches definitive form** — nav inside document, full typographic flattening |
 | `v1.1.0` | `cd79212` | Add — ideas, notes, shots, tag pages, mobile layout, GitHub Pages deployment |
 | `v1.1.1` | `766923b` | Docs — README and CLAUDE.md updated for shots and current state |
+| `v1.1.2` | `7e04895` | Docs — add release history to CLAUDE.md |
 | `v2.0.0` | `ecec5a4` | **Notion becomes the canonical authoring layer** — CMS sync, daily Action, idempotent pipeline |
 | `v2.0.1` | `bc2e3fd` | Fix — codebase review: bugs, dead tokens, docs gaps |
 | `v2.1.0` | `98c762e` | Add — auto-download Notion images to src/images/notion/ on sync |
 | `v2.1.1` | `2ed7951` | Add — og:url, og:site_name, twitter:card, theme-color meta tags |
+| `v2.1.2` | `97d65eb` | Fix — pre-push review: typos, feed RFC 3339 datetime, package.json version sync |
 
-The current release is **v2.1.1**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. A v3.0.0 would require a complete visual overhaul.
+The current release is **v2.1.2**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. A v3.0.0 would require a complete visual overhaul.
 
 ---
 
