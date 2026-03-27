@@ -1,13 +1,13 @@
 ---
 title: A complete formatting reference
-date: 2026-03-26
+date: 2026-03-01
 updated: 2026-03-27
 description: "Every element this document format supports, in one place."
 tags:
   - meta
   - design
 notion_id: 32fa5f73-735d-806c-8982-f508ecea9baf
-notion_last_edited: 2026-03-27T02:31:00.000Z
+notion_last_edited: 2026-03-27T09:12:00.000Z
 ---
 
 This document exists to show every formatting element this site can render. It is a reference and a test. The content is real where it can be; instrumental where it must be.
