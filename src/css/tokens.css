@@ -6,12 +6,10 @@
   /* Application surface */
   --color-app-bg:         #c8c8c8;   /* the desk — grey surface behind the page */
   --color-app-chrome:     #f0f0f0;   /* titlebar / menubar / toolbar background */
-  --color-app-border:     #000000;
   --color-app-border-soft:#b0b0b0;
 
   /* Page */
   --color-page-bg:        #ffffff;
-  --color-page-shadow:    none;
 
   /* Content */
   --color-text:           #000000;

@@ -451,7 +451,6 @@ body {
   .app-canvas {
     padding-left: var(--space-2);
     padding-right: var(--space-2);
-    box-shadow: none;
   }
 
   .doc-page {
@@ -555,10 +554,6 @@ body {
 .doc-body h3:target {
   background: var(--color-mark);
 }
-
-/* ==========================================================================
-   STATUS BAR — static decoration only
-   ========================================================================== */
 
 /* ==========================================================================
    STATUS BAR — static decoration only

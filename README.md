@@ -128,9 +128,35 @@ Yellow and green dots are non-interactive `<span>` elements. All chrome is `aria
 
 ---
 
+## Notion CMS
+
+Content is authored in a Notion database and synced to the repo automatically.
+
+**How it works:** `.github/workflows/sync.yml` runs daily at midnight UTC (and on manual trigger). It calls `scripts/sync-notion.js`, which queries Notion for pages with **Status = Ready**, converts them to markdown, and commits new/changed files to `src/{type}/`. That commit triggers `deploy.yml`, deploying the updated site.
+
+**Required GitHub Secrets:** `NOTION_TOKEN` + `NOTION_DATABASE_ID`
+
+**Run locally:**
+```sh
+export NOTION_TOKEN=secret_xxx
+export NOTION_DATABASE_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+node scripts/sync-notion.js
+```
+
+**Image caveat:** Notion image URLs are signed S3 links that expire in ~1 hour. Images in synced posts will break after expiry. Store images in `src/images/` and reference them manually if you need permanent images.
+
+See `CLAUDE.md` for the full Notion database schema and setup checklist.
+
+---
+
 ## Deployment
 
-Pushes to `main` trigger the GitHub Actions workflow (`.github/workflows/deploy.yml`), which builds with Eleventy and deploys to GitHub Pages.
+Two GitHub Actions workflows handle deployment:
+
+| Workflow | Trigger | Action |
+|---|---|---|
+| `deploy.yml` | Push to `main` or manual | Build Eleventy → deploy to GitHub Pages |
+| `sync.yml` | Daily midnight UTC or manual | Sync Notion → commit → trigger deploy |
 
 Custom domain: DNS `CNAME musings → thedataareclean.github.io`. The `src/CNAME` file is passthrough-copied into `_site/` at build time.
 

@@ -391,8 +391,9 @@ git checkout -b hotfix/feed-xml v1.1.0
 | `v1.0.0` | `fd6e9e6` | **Site reaches definitive form** — nav inside document, full typographic flattening |
 | `v1.1.0` | `cd79212` | Add — ideas, notes, shots, tag pages, mobile layout, GitHub Pages deployment |
 | `v1.1.1` | `766923b` | Docs — README and CLAUDE.md updated for shots and current state |
+| `v1.2.0` | `ecec5a4` | Add — Notion CMS sync (daily GitHub Action + sync script) |
 
-The current release is **v1.1.1**. The v1 design identity is the word-processor aesthetic established at v1.0.0. A v2.0.0 would require a complete visual overhaul.
+The current release is **v1.2.0**. The v1 design identity is the word-processor aesthetic established at v1.0.0. A v2.0.0 would require a complete visual overhaul.
 
 ---
 
@@ -556,7 +557,7 @@ Eleventy does not generate a `404.html` by default. Add `src/404.md` with `perma
 npm audit          # Check for known vulnerabilities in devDependencies
 npm outdated       # List available updates
 ```
-All dependencies are `devDependencies` — they run at build time only; nothing is shipped to the browser. The full dependency surface is: Eleventy, `markdown-it-anchor`, `markdown-it-attrs`, `markdown-it-footnote`, `@notionhq/client`, `notion-to-md`.
+All dependencies are `devDependencies` — they run at build time only; nothing is shipped to the browser. The full dependency surface is: Eleventy, `markdown-it-anchor`, `markdown-it-attrs`, `markdown-it-footnote`, `@notionhq/client@2.2.3` (pinned — v5 removed `databases.query`), `notion-to-md`.
 
 When updating Eleventy, check the [Eleventy changelog](https://www.11ty.dev/docs/changelog/) for breaking changes in collection APIs, filter signatures, and template engine versions before upgrading.
 
@@ -595,6 +596,14 @@ Each synced file contains two hidden front matter fields:
 - `notion_last_edited` — Notion's `last_edited_time`; if unchanged, the page is skipped
 
 A page is only re-written when Notion reports a newer `last_edited_time`.
+
+### Notion image URLs expire
+
+Images embedded in Notion pages are served as signed S3 URLs (e.g. `prod-files-secure.s3.amazonaws.com/...`). These URLs expire in approximately one hour. `notion-to-md` converts them to standard markdown image syntax, but they will 404 on the live site after expiry.
+
+**Current limitation:** the sync script does not download images. If you include images in a Notion post, they will render correctly immediately after sync but break within an hour.
+
+**Workaround:** upload images to `src/images/` in the repo and reference them as `/images/filename.jpg` using a raw HTML `<img>` tag in the Notion page body — Notion renders this as a code block which `notion-to-md` passes through as-is.
 
 ### Sanitisation
 

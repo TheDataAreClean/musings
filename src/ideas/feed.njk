@@ -9,7 +9,7 @@ eleventyExcludeFromCollections: true
   <subtitle>{{ site.author }}</subtitle>
   <link href="{{ site.url }}/ideas/feed.xml" rel="self"/>
   <link href="{{ site.url }}/ideas/"/>
-  <updated>{{ collections.ideas[0].date | isoDate }}</updated>
+  <updated>{% if collections.ideas.length %}{{ collections.ideas[0].date | isoDate }}{% else %}{{ site.buildTime | isoDate }}{% endif %}</updated>
   <id>{{ site.url }}/ideas/</id>
   <author>
     <name>{{ site.author }}</name>
