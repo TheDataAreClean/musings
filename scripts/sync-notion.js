@@ -281,7 +281,22 @@ async function sync() {
         // ── Write file ──
         let filepath;
         if (existingPath) {
-          filepath = existingPath;
+          const newFilepath = path.join(dir, `${slugPrefix}.md`);
+          if (existingPath !== newFilepath) {
+            // Slug or type changed — rename the file to match the new path
+            if (fs.existsSync(newFilepath)) {
+              console.warn(`  warn    cannot rename ${existingPath} — ${newFilepath} already exists`);
+              filepath = existingPath;
+            } else {
+              fs.mkdirSync(dir, { recursive: true });
+              fs.renameSync(existingPath, newFilepath);
+              notionIndex[page.id] = newFilepath;
+              console.log(`  rename  ${existingPath} → ${newFilepath}`);
+              filepath = newFilepath;
+            }
+          } else {
+            filepath = existingPath;
+          }
         } else {
           const filename = `${slugPrefix}.md`;
           fs.mkdirSync(dir, { recursive: true });
