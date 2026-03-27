@@ -30,6 +30,7 @@ const path = require('path');
 const https = require('https');
 const http  = require('http');
 const crypto = require('crypto');
+const sharp  = require('sharp');
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const n2m = new NotionToMarkdown({ notionClient: notion });
@@ -80,6 +81,8 @@ function buildNotionIndex() {
 // Download a single image URL → src/images/notion/{hash}{ext}
 // Returns the local web path (/images/notion/...) or null on failure.
 // Skips download if the file already exists (idempotent across runs).
+// SVGs are saved as-is; all other formats are resized to 794px wide and
+// converted to WebP at quality 85 for fast loading.
 function downloadImage(url, redirectCount) {
   if ((redirectCount || 0) > 5) return Promise.resolve(null);
 
@@ -92,11 +95,13 @@ function downloadImage(url, redirectCount) {
     const ext = path.extname(rawName.split('?')[0]).toLowerCase() || '.jpg';
     const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.avif'];
     const safeExt = allowedExts.includes(ext) ? ext : '.jpg';
+    const isSvg = safeExt === '.svg';
 
     // Stable filename: MD5 of the URL origin+path (query params change on each fetch)
+    // Non-SVGs are always stored as .webp after processing
     const stableKey = urlObj.origin + urlObj.pathname;
     const hash = crypto.createHash('md5').update(stableKey).digest('hex').slice(0, 12);
-    const filename = `${hash}${safeExt}`;
+    const filename = isSvg ? `${hash}.svg` : `${hash}.webp`;
     const filepath = path.join(IMAGE_DIR, filename);
     const webPath  = `/images/notion/${filename}`;
 
@@ -104,29 +109,47 @@ function downloadImage(url, redirectCount) {
     if (fs.existsSync(filepath)) return resolve(webPath);
 
     const protocol = url.startsWith('https') ? https : http;
-    const file = fs.createWriteStream(filepath);
+    const tmpPath  = filepath + '.tmp';
+    const file     = fs.createWriteStream(tmpPath);
 
     const req = protocol.get(url, (res) => {
       // Follow redirects
       if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307) {
         file.close();
-        fs.unlink(filepath, () => {});
+        fs.unlink(tmpPath, () => {});
         return downloadImage(res.headers.location, (redirectCount || 0) + 1).then(resolve);
       }
 
       if (res.statusCode !== 200) {
         file.close();
-        fs.unlink(filepath, () => {});
+        fs.unlink(tmpPath, () => {});
         return resolve(null);
       }
 
       res.pipe(file);
-      file.on('finish', () => { file.close(); resolve(webPath); });
+      file.on('finish', () => {
+        file.close();
+        if (isSvg) {
+          // SVGs: just rename, no processing needed
+          fs.rename(tmpPath, filepath, (err) => {
+            if (err) { fs.unlink(tmpPath, () => {}); return resolve(null); }
+            resolve(webPath);
+          });
+        } else {
+          // Raster images: resize to page width and convert to WebP
+          sharp(tmpPath)
+            .resize({ width: 794, withoutEnlargement: true })
+            .webp({ quality: 85 })
+            .toFile(filepath)
+            .then(() => { fs.unlink(tmpPath, () => {}); resolve(webPath); })
+            .catch(() => { fs.unlink(tmpPath, () => {}); resolve(null); });
+        }
+      });
     });
 
     req.on('error', () => {
       file.close();
-      fs.unlink(filepath, () => {});
+      fs.unlink(tmpPath, () => {});
       resolve(null);
     });
   });
