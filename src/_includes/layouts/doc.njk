@@ -11,10 +11,11 @@ ogType: article
     <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/shots/">Shots</a> · <a href="/about/">About</a>
   </p>
 
+  {% if description %}<p class="doc-description">{{ description }}</p>{% endif %}
+
   <p class="doc-meta">
     {% if date %}
       <time datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
-      {% if updated %} · Updated <time datetime="{{ updated | isoDate }}">{{ updated | readableDate }}</time>{% endif %}
       · {{ content | wordcount }} words
       · {{ content | readtime }} min read
     {% endif %}

@@ -504,6 +504,17 @@ body {
 }
 
 /* ==========================================================================
+   DOCUMENT DESCRIPTION — subtitle line between title and meta
+   ========================================================================== */
+
+.doc-description {
+  font-size: var(--text-base);
+  color: var(--color-muted);
+  margin-bottom: var(--space-2);
+  line-height: var(--leading-doc);
+}
+
+/* ==========================================================================
    DOCUMENT NAV — inside the doc, under the title, just plain links
    ========================================================================== */
 

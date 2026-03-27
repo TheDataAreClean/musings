@@ -194,6 +194,7 @@ async function sync() {
         const type        = page.properties.Type?.select?.name?.toLowerCase().trim();
         const tags        = (page.properties.Tags?.multi_select || []).map(t => t.name);
         const description = page.properties.Description?.rich_text?.[0]?.plain_text?.trim() || '';
+        const slugOverride = page.properties.Slug?.rich_text?.[0]?.plain_text?.trim() || '';
         const updatedDate = page.last_edited_time.split('T')[0];
         const lastEdited  = page.last_edited_time;
 
@@ -250,7 +251,7 @@ async function sync() {
         if (existingPath) {
           filepath = existingPath;
         } else {
-          const slug     = slugify(title);
+          const slug     = slugOverride ? slugify(slugOverride) : slugify(title);
           const filename = `${date}-${slug}.md`;
           fs.mkdirSync(dir, { recursive: true });
           filepath = path.join(dir, filename);

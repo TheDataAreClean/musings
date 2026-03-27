@@ -589,6 +589,7 @@ The Notion database must have these properties:
 | Title | Title | Required |
 | Type | Select | Required — `ideas`, `notes`, or `shots` |
 | Date | Date | Required — publication date; also used as filename prefix |
+| Slug | Text | Optional — overrides the auto-generated slug; `my-custom-slug` → `2026-03-26-my-custom-slug.md` |
 | Tags | Multi-select | Optional |
 | Description | Text | Optional — used for OG description on ideas |
 | Status | Select | Required — only `Ready` pages are synced |
