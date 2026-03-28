@@ -112,9 +112,16 @@ module.exports = function (eleventyConfig) {
       }
       const aUpdated = a.data.updated ? new Date(a.data.updated) : null;
       const bUpdated = b.data.updated ? new Date(b.data.updated) : null;
-      if (aUpdated && bUpdated) return bUpdated - aUpdated;
-      if (aUpdated) return -1;
-      if (bUpdated) return 1;
+      if (aUpdated && bUpdated) {
+        const updatedDiff = bUpdated - aUpdated;
+        if (updatedDiff !== 0) return updatedDiff;
+      } else if (aUpdated) return -1;
+      else if (bUpdated) return 1;
+      const aEdited = a.data.notion_last_edited ? new Date(a.data.notion_last_edited) : null;
+      const bEdited = b.data.notion_last_edited ? new Date(b.data.notion_last_edited) : null;
+      if (aEdited && bEdited) return bEdited - aEdited;
+      if (aEdited) return -1;
+      if (bEdited) return 1;
       return 0;
     });
   }
