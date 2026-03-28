@@ -95,10 +95,17 @@ Font and zoom persist for the browser session via `sessionStorage` (keys: `musin
 A4 at 96dpi: `--page-width: 794px`, `--page-pad-v: 80px`, `--page-pad-h: 96px`, `min-height: 297mm`.
 
 ### Content collections
-- `ideas` — `src/ideas/**/*.md`, sorted newest first
-- `notes` — `src/notes/**/*.md`, sorted newest first
-- `shots` — `src/shots/**/*.md`, sorted newest first
-- `feed` — all three merged and sorted newest first (home page)
+- `ideas` — `src/ideas/**/*.md`
+- `notes` — `src/notes/**/*.md`
+- `shots` — `src/shots/**/*.md`
+- `feed` — all three merged (home page)
+
+All four collections use the same `sortPosts` function in `.eleventy.js`:
+1. Posts with a `date` come before undated posts
+2. Within dated posts: `date` descending
+3. Tie-break: `updated` descending (full ISO datetime)
+4. Final tie-break: `notion_last_edited` descending (always present on Notion-synced posts)
+5. Undated posts at the end
 
 ---
 
@@ -274,8 +281,10 @@ The Atom feed at `/ideas/feed.xml` includes only ideas — intentional. Notes ar
 ### Eleventy config (`.eleventy.js`)
 - Collections use `getFilteredByGlob` — verify glob paths match directory structure
 - `markdownTemplateEngine: "njk"` — Nunjucks runs on all `.md` files; `{#` trap applies
-- `atomDate` filter returns full ISO 8601 datetime (used by feed); `isoDate` returns date-only (used for display and `datetime` attributes)
+- `isoDate` returns `YYYY-MM-DD` in IST (`Asia/Kolkata`); `readableDate` returns human-readable in IST — both use `en-CA` / `en-GB` locale with `timeZone: "Asia/Kolkata"`
+- `atomDate` returns full UTC ISO 8601 — correct for Atom feed RFC 3339; do not apply IST to this filter
 - `buildTime` global data available for feed fallback
+- `sortPosts` shared function handles all four collection sorts — see Content collections above
 - `pagebreak` is non-paired (returns `<div>`); `callout` and `marginnote` are paired and call `md.render()`
 
 ### Templates
@@ -359,13 +368,13 @@ A no-op run (nothing changed in Notion) produces no commit and no deploy.
 | Description | Text | Optional — shown as subtitle on article pages and used for OG meta |
 | Status | Select | Required — only `Ready` pages are synced |
 
-`updated` front matter comes from Notion's built-in **Last edited time** — no manual property needed.
+`updated` front matter comes from Notion's built-in **Last edited time** — stored as a full ISO datetime (e.g. `2026-03-28T03:24:00.000Z`), not date-only. This gives the sort function time-level precision when breaking ties between same-day posts. No manual property needed.
 
 ### Idempotency
 
 Each synced file stores:
 - `notion_id` — used to match existing files on subsequent runs
-- `notion_last_edited` — if unchanged, the page is skipped entirely
+- `notion_last_edited` — if unchanged, the page is skipped entirely; also used as the final sort tiebreaker when two posts share the same `updated` datetime
 
 Images use a hash of the S3 URL origin+path as a stable key — not re-downloaded if the file already exists.
 
@@ -451,8 +460,9 @@ git checkout -b hotfix v2.1.0       # branch from a past release
 | `v2.1.2` | `97d65eb` | Fix — pre-push review: typos, feed RFC 3339 datetime, package.json version sync |
 | `v2.1.3` | `a01d12b` | Update — sync script reads manual Date property instead of page created_time |
 | `v2.2.0` | `b8fdc43` | Add — article description display, Slug override property, local test content convention |
+| `v2.3.0` | `7598ace` | Update — three-tier sort (date → updated → notion_last_edited), IST display dates, updated stored as full datetime, mobile toolbar dropdown fix |
 
-Current release: **v2.2.0**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
+Current release: **v2.3.0**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
 
 ---
 
