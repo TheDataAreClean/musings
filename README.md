@@ -36,7 +36,7 @@ Three collections, all under `src/`:
 |---|---|---|---|
 | Ideas | `src/ideas/` | `→` | Long-form essays |
 | Notes | `src/notes/` | `·` | Short observations |
-| Shots | `src/shots/` | `○` | Photography |
+| Snaps | `src/snaps/` | `○` | Photography |
 
 ### Creating a post
 
@@ -61,7 +61,7 @@ tags:
 ---
 ```
 
-**Shot** — `src/shots/YYYY-MM-DD-slug.md`:
+**Shot** — `src/snaps/YYYY-MM-DD-slug.md`:
 ```yaml
 ---
 title: Place or subject
@@ -72,7 +72,7 @@ tags:
 ---
 ```
 
-The `ideas`, `notes`, and `shots` collection tags are set by the directory data files — no need to repeat them in front matter. Layout is also automatic.
+The `ideas`, `notes`, and `snaps` collection tags are set by the directory data files — no need to repeat them in front matter. Layout is also automatic.
 
 ---
 

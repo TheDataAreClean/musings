@@ -8,7 +8,7 @@ ogType: article
   <p class="doc-title">{{ title }}</p>
 
   <p class="doc-nav">
-    <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/shots/">Shots</a> · <a href="/about/">About</a>
+    <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/snaps/">Snaps</a> · <a href="/about/">About</a>
   </p>
 
   {% if description %}<p class="doc-description">{{ description }}</p>{% endif %}
@@ -20,7 +20,7 @@ ogType: article
       · {{ content | readtime }} min read
     {% endif %}
     {% if tags %}
-      {% for tag in tags %}{% if tag != "ideas" and tag != "notes" and tag != "shots" %} · <a href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endif %}{% endfor %}
+      {% for tag in tags %}{% if tag != "ideas" and tag != "notes" and tag != "snaps" %} · <a href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endif %}{% endfor %}
     {% endif %}
   </p>
 
@@ -31,8 +31,8 @@ ogType: article
         {{ content | safe }}
       </div>
 
-      {% if tags and ("shots" in tags) %}
-        {% set allPosts = collections.shots %}
+      {% if tags and ("snaps" in tags) %}
+        {% set allPosts = collections.snaps %}
       {% elif tags and ("notes" in tags) %}
         {% set allPosts = collections.notes %}
       {% else %}

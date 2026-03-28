@@ -1,0 +1,29 @@
+---
+layout: layouts/base.njk
+title: Snaps
+---
+
+<div class="doc-page">
+
+  <p class="doc-title">Snaps</p>
+
+  <p class="doc-nav">
+    <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/snaps/">Snaps</a> · <a href="/about/">About</a>
+  </p>
+
+  <p class="doc-meta">{{ collections.snaps | length }} snaps</p>
+
+  {% if collections.snaps.length %}
+  <div class="post-list">
+    {% for post in collections.snaps %}
+    <div class="post-list__item">
+      <p class="post-list__title"><a href="{{ post.url }}">{{ post.data.title }}</a></p>
+      <p class="post-list__line2">{% for tag in post.data.tags %}{% if tag != "snaps" %}<a class="post-tag" href="/tags/{{ tag }}/">{{ tag }}</a>{% endif %}{% endfor %}<time datetime="{{ post.date | isoDate }}">{{ post.date | isoDate }}</time></p>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No snaps yet.</p>
+  {% endif %}
+
+</div>

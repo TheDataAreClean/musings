@@ -7,4 +7,4 @@ notion_id: 330a5f73-735d-805d-8d93-fa0eac3d2bb3
 notion_last_edited: 2026-03-28T03:22:00.000Z
 ---
 
-![image.jpeg](/images/notion/shots/2026-03-19-extreme-photography-2faf99c2.webp)
+![image.jpeg](/images/notion/snaps/2026-03-19-extreme-photography-2faf99c2.webp)

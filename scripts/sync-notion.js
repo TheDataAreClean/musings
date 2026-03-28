@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 /**
- * Sync content from a Notion database into src/{ideas,notes,shots}/.
+ * Sync content from a Notion database into src/{ideas,notes,snaps}/.
  *
  * Notion database properties expected:
  *   Title       — Title
- *   Type        — Select     "ideas" | "notes" | "shots"
+ *   Type        — Select     "ideas" | "notes" | "snaps" (legacy: "shots" maps to "snaps")
  *   Tags        — Multi-select (optional)
  *   Description — Text       (optional — used for OG description on ideas)
  *   Status      — Select     only pages with Status = "Ready" are synced
@@ -35,7 +35,7 @@ const sharp  = require('sharp');
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
-const VALID_DIRS  = ['src/ideas', 'src/notes', 'src/shots'];
+const VALID_DIRS  = ['src/ideas', 'src/notes', 'src/snaps'];
 const IMAGE_DIR   = 'src/images/notion';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -158,7 +158,7 @@ function downloadImage(url, imageDir, slugPrefix, redirectCount) {
 }
 
 // Find all external image URLs in markdown, download them, rewrite to local paths
-// type       — content type (ideas / notes / shots) — used for the subfolder
+// type       — content type (ideas / notes / snaps) — used for the subfolder
 // slugPrefix — post date+slug — used as filename prefix
 async function localiseImages(body, type, slugPrefix) {
   const imageDir = path.join(IMAGE_DIR, type);
@@ -219,7 +219,8 @@ async function sync() {
         // ── Read properties ──
         const title       = page.properties.Title?.title?.[0]?.plain_text?.trim();
         const date        = page.properties.Date?.date?.start;
-        const type        = page.properties.Type?.select?.name?.toLowerCase().trim();
+        const rawType     = page.properties.Type?.select?.name?.toLowerCase().trim();
+        const type        = rawType === 'shots' ? 'snaps' : rawType; // legacy alias
         const tags        = (page.properties.Tags?.multi_select || []).map(t => t.name);
         const description = page.properties.Description?.rich_text?.[0]?.plain_text?.trim() || '';
         const slugOverride = page.properties.Slug?.rich_text?.[0]?.plain_text?.trim() || '';

@@ -8,7 +8,7 @@ pagination:
     - all
     - ideas
     - notes
-    - shots
+    - snaps
     - feed
 permalink: /tags/{{ tag }}/
 eleventyExcludeFromCollections: true
@@ -19,7 +19,7 @@ eleventyExcludeFromCollections: true
   <p class="doc-title">{{ tag }}</p>
 
   <p class="doc-nav">
-    <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/shots/">Shots</a> · <a href="/about/">About</a>
+    <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/snaps/">Snaps</a> · <a href="/about/">About</a>
   </p>
 
   <p class="doc-meta">{{ collections[tag] | length }} {% if collections[tag] | length == 1 %}post{% else %}posts{% endif %} tagged "{{ tag }}"</p>
@@ -30,7 +30,7 @@ eleventyExcludeFromCollections: true
     {% for post in taggedPosts %}
     <div class="post-list__item">
       <p class="post-list__title">
-        <span class="post-sigil">{% if post.data.tags and "ideas" in post.data.tags %}→{% elif post.data.tags and "shots" in post.data.tags %}○{% else %}·{% endif %}</span><a href="{{ post.url }}">{{ post.data.title }}</a>
+        <span class="post-sigil">{% if post.data.tags and "ideas" in post.data.tags %}→{% elif post.data.tags and "snaps" in post.data.tags %}○{% else %}·{% endif %}</span><a href="{{ post.url }}">{{ post.data.title }}</a>
       </p>
       <p class="post-list__line2"><time datetime="{{ post.date | isoDate }}">{{ post.date | isoDate }}</time></p>
     </div>

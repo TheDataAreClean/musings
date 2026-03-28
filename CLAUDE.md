@@ -33,7 +33,7 @@ src/
   _includes/
     layouts/
       base.njk         # Shell: chrome, script — all pages wrap this
-      doc.njk          # Single post/page layout (ideas + notes + shots + about)
+      doc.njk          # Single post/page layout (ideas + notes + snaps + about)
       home.njk         # Home page layout (feed list)
   css/
     main.css           # @import manifest — order is load order
@@ -52,9 +52,9 @@ src/
     notes.json         # Directory data: layout + tags for all notes
     index.njk          # Notes listing page
     *.md               # Individual notes
-  shots/
-    shots.json         # Directory data: layout + tags for all shots
-    index.njk          # Shots listing page
+  snaps/
+    snaps.json         # Directory data: layout + tags for all snaps
+    index.njk          # Snaps listing page
     *.md               # Individual shot posts
   images/              # Static images (passthrough copied)
   fonts/               # Static fonts (passthrough copied)
@@ -97,7 +97,7 @@ A4 at 96dpi: `--page-width: 794px`, `--page-pad-v: 80px`, `--page-pad-h: 96px`, 
 ### Content collections
 - `ideas` — `src/ideas/**/*.md`
 - `notes` — `src/notes/**/*.md`
-- `shots` — `src/shots/**/*.md`
+- `snaps` — `src/snaps/**/*.md`
 - `feed` — all three merged (home page)
 
 All four collections use the same `sortPosts` function in `.eleventy.js`:
@@ -113,7 +113,7 @@ All four collections use the same `sortPosts` function in `.eleventy.js`:
 
 ### Front matter
 
-Tags and layout are inherited from the directory data file (`ideas.json` / `notes.json` / `shots.json`) — only add extra tags if needed.
+Tags and layout are inherited from the directory data file (`ideas.json` / `notes.json` / `snaps.json`) — only add extra tags if needed.
 
 **Ideas** (long-form essays):
 ```yaml
@@ -132,7 +132,7 @@ date: 2026-03-26
 ---
 ```
 
-**Shots** (photography):
+**Snaps** (photography):
 ```yaml
 ---
 title: Place or subject
@@ -261,7 +261,7 @@ The Atom feed at `/ideas/feed.xml` includes only ideas — intentional. Notes ar
 - [ ] Validate feed at [validator.w3.org/feed](https://validator.w3.org/feed) after any template change
 
 ### Spot checks
-- [ ] Home page sigils correct — `→` ideas, `·` notes, `○` shots
+- [ ] Home page sigils correct — `→` ideas, `·` notes, `○` snaps
 - [ ] One idea, one note, one shot — content renders correctly
 - [ ] Font and zoom easter eggs work on live domain
 - [ ] Chrome inactive state triggers on tab switch
@@ -290,7 +290,7 @@ The Atom feed at `/ideas/feed.xml` includes only ideas — intentional. Notes ar
 ### Templates
 - `base.njk` — chrome HTML and inline `<script>` live here; changes affect every page
 - `doc.njk` — element order: title → nav → description (if present) → meta → body → post-nav; prev/next uses `findIndex` against the correct collection by tag
-- `home.njk` — uses `collections.feed`; sigil by tag: `→` ideas, `○` shots, `·` notes (fallback)
+- `home.njk` — uses `collections.feed`; sigil by tag: `→` ideas, `○` snaps, `·` notes (fallback)
 - `feed.njk` — must have `layout: false`; uses `atomDate` not `isoDate`
 
 ### Inline JS (`base.njk` script block)
@@ -361,7 +361,7 @@ A no-op run (nothing changed in Notion) produces no commit and no deploy.
 | Property | Type | Notes |
 |---|---|---|
 | Title | Title | Required |
-| Type | Select | Required — `ideas`, `notes`, or `shots` |
+| Type | Select | Required — `ideas`, `notes`, or `snaps` |
 | Date | Date | Required — publication date; used as filename prefix |
 | Slug | Text | Optional — overrides auto-generated slug; changing it renames the file |
 | Tags | Multi-select | Optional |
@@ -450,8 +450,8 @@ git checkout -b hotfix v2.1.0       # branch from a past release
 | `v0.2.0` | `3264e75` | Redesign — word-processor chrome, unformatted doc aesthetic |
 | `v0.2.1` | `6f0881b` | Fix — app chrome five targeted improvements |
 | `v1.0.0` | `fd6e9e6` | **Site reaches definitive form** — nav inside document, full typographic flattening |
-| `v1.1.0` | `cd79212` | Add — ideas, notes, shots, tag pages, mobile layout, GitHub Pages deployment |
-| `v1.1.1` | `766923b` | Docs — README and CLAUDE.md updated for shots and current state |
+| `v1.1.0` | `cd79212` | Add — ideas, notes, snaps, tag pages, mobile layout, GitHub Pages deployment |
+| `v1.1.1` | `766923b` | Docs — README and CLAUDE.md updated for snaps and current state |
 | `v1.1.2` | `7e04895` | Docs — add release history to CLAUDE.md |
 | `v2.0.0` | `ecec5a4` | **Notion becomes the canonical authoring layer** — CMS sync, daily Action, idempotent pipeline |
 | `v2.0.1` | `bc2e3fd` | Fix — codebase review: bugs, dead tokens, docs gaps |

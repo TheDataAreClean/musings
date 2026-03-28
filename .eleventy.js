@@ -134,15 +134,15 @@ module.exports = function (eleventyConfig) {
     return sortPosts(collectionApi.getFilteredByGlob("src/notes/**/*.md"));
   });
 
-  eleventyConfig.addCollection("shots", function (collectionApi) {
-    return sortPosts(collectionApi.getFilteredByGlob("src/shots/**/*.md"));
+  eleventyConfig.addCollection("snaps", function (collectionApi) {
+    return sortPosts(collectionApi.getFilteredByGlob("src/snaps/**/*.md"));
   });
 
   eleventyConfig.addCollection("feed", function (collectionApi) {
     return sortPosts([
       ...collectionApi.getFilteredByGlob("src/ideas/**/*.md"),
       ...collectionApi.getFilteredByGlob("src/notes/**/*.md"),
-      ...collectionApi.getFilteredByGlob("src/shots/**/*.md"),
+      ...collectionApi.getFilteredByGlob("src/snaps/**/*.md"),
     ]);
   });
 
