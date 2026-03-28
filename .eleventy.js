@@ -98,30 +98,43 @@ module.exports = function (eleventyConfig) {
   });
 
   // Collections
+  // Sort: dated posts newest first, tie-break by updated desc, undated posts at end
+  function sortPosts(posts) {
+    return posts.sort((a, b) => {
+      const aHasDate = !!a.date;
+      const bHasDate = !!b.date;
+      if (aHasDate !== bHasDate) return aHasDate ? -1 : 1;
+      if (aHasDate && bHasDate) {
+        const dateDiff = b.date - a.date;
+        if (dateDiff !== 0) return dateDiff;
+      }
+      const aUpdated = a.data.updated ? new Date(a.data.updated) : null;
+      const bUpdated = b.data.updated ? new Date(b.data.updated) : null;
+      if (aUpdated && bUpdated) return bUpdated - aUpdated;
+      if (aUpdated) return -1;
+      if (bUpdated) return 1;
+      return 0;
+    });
+  }
+
   eleventyConfig.addCollection("ideas", function (collectionApi) {
-    return collectionApi
-      .getFilteredByGlob("src/ideas/**/*.md")
-      .sort((a, b) => b.date - a.date);
+    return sortPosts(collectionApi.getFilteredByGlob("src/ideas/**/*.md"));
   });
 
   eleventyConfig.addCollection("notes", function (collectionApi) {
-    return collectionApi
-      .getFilteredByGlob("src/notes/**/*.md")
-      .sort((a, b) => b.date - a.date);
+    return sortPosts(collectionApi.getFilteredByGlob("src/notes/**/*.md"));
   });
 
   eleventyConfig.addCollection("shots", function (collectionApi) {
-    return collectionApi
-      .getFilteredByGlob("src/shots/**/*.md")
-      .sort((a, b) => b.date - a.date);
+    return sortPosts(collectionApi.getFilteredByGlob("src/shots/**/*.md"));
   });
 
   eleventyConfig.addCollection("feed", function (collectionApi) {
-    return [
+    return sortPosts([
       ...collectionApi.getFilteredByGlob("src/ideas/**/*.md"),
       ...collectionApi.getFilteredByGlob("src/notes/**/*.md"),
       ...collectionApi.getFilteredByGlob("src/shots/**/*.md"),
-    ].sort((a, b) => b.date - a.date);
+    ]);
   });
 
   // Shortcodes

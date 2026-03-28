@@ -430,7 +430,6 @@ body {
   .app-toolbar {
     height: auto;
     flex-wrap: nowrap;
-    overflow: hidden;
   }
 
   .app-toolbar__break,
