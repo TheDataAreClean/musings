@@ -47,17 +47,19 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.addFilter("readableDate", function (date) {
     if (!date) return "";
-    const d = new Date(date);
-    return d.toLocaleDateString("en-GB", {
+    return new Date(date).toLocaleDateString("en-GB", {
       year: "numeric",
       month: "long",
       day: "numeric",
+      timeZone: "Asia/Kolkata",
     });
   });
 
   eleventyConfig.addFilter("isoDate", function (date) {
     if (!date) return "";
-    return new Date(date).toISOString().split("T")[0];
+    return new Date(date).toLocaleDateString("en-CA", {
+      timeZone: "Asia/Kolkata",
+    });
   });
 
   eleventyConfig.addFilter("atomDate", function (date) {
