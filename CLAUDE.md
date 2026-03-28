@@ -460,9 +460,11 @@ git checkout -b hotfix v2.1.0       # branch from a past release
 | `v2.1.2` | `97d65eb` | Fix — pre-push review: typos, feed RFC 3339 datetime, package.json version sync |
 | `v2.1.3` | `a01d12b` | Update — sync script reads manual Date property instead of page created_time |
 | `v2.2.0` | `b8fdc43` | Add — article description display, Slug override property, local test content convention |
-| `v2.3.0` | `7598ace` | Update — three-tier sort (date → updated → notion_last_edited), IST display dates, updated stored as full datetime, mobile toolbar dropdown fix |
+| `v2.2.1` | `4b32d7d` | Fix — tag URL normalisation, version sync, checklist update |
+| `v2.2.2` | `5f4196c` | Fix — image optimisation via sharp, slug rename on change |
+| `v2.2.3` | `114ab43` | Fix — three-tier sort order, IST display dates, updated stored as full datetime |
 
-Current release: **v2.3.0**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
+Current release: **v2.2.3**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
 
 ---
 
