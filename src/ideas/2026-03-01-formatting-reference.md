@@ -7,7 +7,7 @@ tags:
   - meta
   - design
 notion_id: 32fa5f73-735d-806c-8982-f508ecea9baf
-notion_last_edited: 2026-03-27T09:12:00.000Z
+notion_last_edited: 2026-03-27T09:41:00.000Z
 ---
 
 This document exists to show every formatting element this site can render. It is a reference and a test. The content is real where it can be; instrumental where it must be.
@@ -162,7 +162,7 @@ Use `<hr class="page-break">` to insert one. A plain `---` in the body renders a
 An image, constrained to the document width:
 
 
-![sample.svg](/images/notion/e17169b9b922.svg)
+![sample.svg](/images/notion/ideas/2026-03-01-formatting-reference-e17169b9.svg)
 
 
 Images are block-level. They sit on their own line with vertical spacing above and below. They do not float. Captions are not built in — a following paragraph in _italic_ can serve as one.
