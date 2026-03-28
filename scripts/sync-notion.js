@@ -223,7 +223,7 @@ async function sync() {
         const tags        = (page.properties.Tags?.multi_select || []).map(t => t.name);
         const description = page.properties.Description?.rich_text?.[0]?.plain_text?.trim() || '';
         const slugOverride = page.properties.Slug?.rich_text?.[0]?.plain_text?.trim() || '';
-        const updatedDate = page.last_edited_time.split('T')[0];
+        const updatedDate = page.last_edited_time;
         const lastEdited  = page.last_edited_time;
 
         // ── Validate ──
