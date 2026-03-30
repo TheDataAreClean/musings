@@ -474,7 +474,7 @@ git checkout -b hotfix v2.1.0       # branch from a past release
 | `v2.2.1` | `4b32d7d` | Fix — tag URL normalisation, version sync, checklist update |
 | `v2.2.2` | `5f4196c` | Fix — image optimisation via sharp, slug rename on change |
 | `v2.2.3` | `114ab43` | Fix — three-tier sort order, IST display dates, updated stored as full datetime |
-| `v2.2.4` | TBD | Fix — favicon mobile support (ICO, apple-touch-icon, manifest), tag highlight on article pages, CLAUDE.md refresh |
+| `v2.2.4` | `1a58904` | Fix — favicon mobile support (ICO, apple-touch-icon, manifest), tag highlight on article pages, CLAUDE.md refresh |
 
 Current release: **v2.2.4**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
 
