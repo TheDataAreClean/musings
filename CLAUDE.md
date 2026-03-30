@@ -298,7 +298,7 @@ The Atom feed at `/ideas/feed.xml` includes only ideas — intentional. Notes ar
 
 ### Templates
 - `base.njk` — chrome HTML and inline `<script>` live here; changes affect every page
-- `doc.njk` — element order: title → nav → description (if present) → meta → body → post-nav; prev/next uses `findIndex` against the correct collection by tag; tag links use `class="post-tag"` for yellow highlight
+- `doc.njk` — element order: title → nav → description (if present) → meta → body → post-nav; prev/next uses `findIndex` against the correct collection by tag; tag links use `class="post-tag"` for yellow highlight with black text
 - `home.njk` — uses `collections.feed`; sigil by tag: `→` ideas, `○` snaps, `·` notes (fallback)
 - `feed.njk` — must have `layout: false`; uses `atomDate` not `isoDate`
 
