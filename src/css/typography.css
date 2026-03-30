@@ -19,7 +19,7 @@
   color: var(--color-text);
   margin-top: var(--space-6);
   margin-bottom: 0;
-  scroll-margin-top: calc(var(--chrome-h) + var(--space-6));
+  scroll-margin-top: calc(var(--chrome-h) + var(--space-6)); /* keeps anchor targets below sticky chrome — update --chrome-h tokens if any chrome layer height changes */
 }
 
 .doc-body > h2:first-child,

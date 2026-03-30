@@ -10,6 +10,4 @@ The site is built to look like a living document, and keep the focus on the cont
 
 ---
 
-More about me at [thedataareclean.com](https://www.thedataareclean.com).
-
-You can reach me at [hello@thedataareclean.com](mailto:hello@thedataareclean.com).
+More about me at [here](https://www.thedataareclean.com). You can reach me at [hello@thedataareclean.com](mailto:hello@thedataareclean.com).

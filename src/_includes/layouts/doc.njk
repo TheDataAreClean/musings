@@ -20,7 +20,7 @@ ogType: article
       · {{ content | readtime }} min read
     {% endif %}
     {% if tags %}
-      {% for tag in tags %}{% if tag != "ideas" and tag != "notes" and tag != "snaps" %} · <a href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endif %}{% endfor %}
+      {% for tag in tags %}{% if tag != "ideas" and tag != "notes" and tag != "snaps" %} · <a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endif %}{% endfor %}
     {% endif %}
   </p>
 
@@ -31,6 +31,7 @@ ogType: article
         {{ content | safe }}
       </div>
 
+      {# Resolve the correct collection for prev/next by the post's type tag #}
       {% if tags and ("snaps" in tags) %}
         {% set allPosts = collections.snaps %}
       {% elif tags and ("notes" in tags) %}

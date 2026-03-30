@@ -98,6 +98,7 @@
   color: var(--color-muted);
 }
 
+/* Yellow highlight — used on post list sigils and article page tag links */
 .post-tag {
   background: var(--color-mark);
   color: var(--color-text);
