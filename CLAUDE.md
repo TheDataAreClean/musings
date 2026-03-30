@@ -57,7 +57,12 @@ src/
     index.njk          # Snaps listing page
     *.md               # Individual shot posts
   images/              # Static images (passthrough copied)
+    icon-192.png       # Web app manifest icon (192×192, generated from favicon.svg)
   fonts/               # Static fonts (passthrough copied)
+  favicon.svg          # SVG favicon — used by modern desktop browsers
+  favicon.ico          # ICO favicon — used by bookmark managers, RSS readers, older browsers
+  apple-touch-icon.png # iOS Safari home screen icon (180×180, generated from favicon.svg)
+  manifest.json        # Web app manifest — Android Chrome "Add to Home Screen"
   CNAME                # Custom domain — passthrough copied to _site/
   index.md             # Home page content (uses home.njk layout)
   about.md             # About page (uses doc.njk layout)
@@ -220,6 +225,9 @@ The Atom feed at `/ideas/feed.xml` includes only ideas — intentional. Notes ar
 - [ ] `_site/` not committed
 - [ ] Browser console clean on dev server — no JS errors, no 404s
 - [ ] `version` in `package.json` and `package-lock.json` matches the release tag — update with `npm version <tag> --no-git-tag-version`
+- [ ] CLAUDE.md updated — file structure, passthrough copies, release history, any changed behaviour
+- [ ] README.md updated — stack details, content types, shortcodes, CSS line count
+- [ ] Inline comments reviewed — stale comments removed or updated; new non-obvious logic commented
 
 ### Content
 - [ ] All new posts have `title`, `date`, correct tags
@@ -248,6 +256,7 @@ The Atom feed at `/ideas/feed.xml` includes only ideas — intentional. Notes ar
 - [ ] Canonical and OG tags correct in built HTML
 - [ ] `_site/ideas/feed.xml` is valid XML — open in browser
 - [ ] `feed.njk` has `layout: false`
+- [ ] `_site/favicon.ico`, `_site/favicon.svg`, `_site/apple-touch-icon.png`, `_site/manifest.json` all present
 
 ---
 
@@ -289,7 +298,7 @@ The Atom feed at `/ideas/feed.xml` includes only ideas — intentional. Notes ar
 
 ### Templates
 - `base.njk` — chrome HTML and inline `<script>` live here; changes affect every page
-- `doc.njk` — element order: title → nav → description (if present) → meta → body → post-nav; prev/next uses `findIndex` against the correct collection by tag
+- `doc.njk` — element order: title → nav → description (if present) → meta → body → post-nav; prev/next uses `findIndex` against the correct collection by tag; tag links use `class="post-tag"` for yellow highlight
 - `home.njk` — uses `collections.feed`; sigil by tag: `→` ideas, `○` snaps, `·` notes (fallback)
 - `feed.njk` — must have `layout: false`; uses `atomDate` not `isoDate`
 
@@ -302,7 +311,7 @@ The Atom feed at `/ideas/feed.xml` includes only ideas — intentional. Notes ar
 ### CSS
 Load order: `tokens.css` → `reset.css` → `doc-chrome.css` → `typography.css` → `components.css` → `print.css`
 
-- `--chrome-h` = 34 + 26 + 32 + 22 = **114px** — must stay in sync with individual height tokens
+- `--chrome-h` uses `calc(--titlebar-h + --menubar-h + --toolbar-h + --ruler-h)` = 34 + 26 + 32 + 22 = **114px** — update individual tokens if any chrome height changes; `--chrome-h` updates automatically
 - `.doc-body hr:not(.page-break)` — `:not` is load-bearing
 - `.doc-layout` must stay `grid-template-columns: 1fr` — second column breaks page-break bleed
 - Spacing: `--space-{n}` tokens only, no raw `px` in `typography.css` or `components.css`
@@ -317,7 +326,9 @@ Load order: `tokens.css` → `reset.css` → `doc-chrome.css` → `typography.cs
 - `src/CNAME` is passthrough-copied to `_site/CNAME` — required for the custom domain to survive deploys
 
 ### Passthrough copies
-`src/fonts/`, `src/css/`, `src/images/` — any new asset type needs a corresponding `addPassthroughCopy` in `.eleventy.js`.
+Directories: `src/fonts/`, `src/css/`, `src/images/`.
+Individual files: `src/favicon.svg`, `src/favicon.ico`, `src/apple-touch-icon.png`, `src/manifest.json`, `src/CNAME`.
+Any new asset type needs a corresponding `addPassthroughCopy` in `.eleventy.js`.
 
 ### Dependencies
 All are `devDependencies` — build-time only, nothing shipped to the browser.
@@ -463,8 +474,9 @@ git checkout -b hotfix v2.1.0       # branch from a past release
 | `v2.2.1` | `4b32d7d` | Fix — tag URL normalisation, version sync, checklist update |
 | `v2.2.2` | `5f4196c` | Fix — image optimisation via sharp, slug rename on change |
 | `v2.2.3` | `114ab43` | Fix — three-tier sort order, IST display dates, updated stored as full datetime |
+| `v2.2.4` | TBD | Fix — favicon mobile support (ICO, apple-touch-icon, manifest), tag highlight on article pages, CLAUDE.md refresh |
 
-Current release: **v2.2.3**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
+Current release: **v2.2.4**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
 
 ---
 

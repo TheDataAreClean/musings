@@ -10,7 +10,7 @@ Personal blog at [musings.thedataareclean.com](https://musings.thedataareclean.c
 |---|---|
 | Generator | [Eleventy 3.x](https://www.11ty.dev/) |
 | Templates | Nunjucks + Markdown |
-| Styling | Vanilla CSS (~650 lines across 6 files) |
+| Styling | Vanilla CSS (~1,200 lines across 6 files) |
 | JavaScript | Minimal inline script — font switcher, zoom, stoplight easter eggs |
 | Fonts | Arial (system font — no loading) |
 | Hosting | GitHub Pages + custom domain |
@@ -61,7 +61,7 @@ tags:
 ---
 ```
 
-**Shot** — `src/snaps/YYYY-MM-DD-slug.md`:
+**Snap** — `src/snaps/YYYY-MM-DD-slug.md`:
 ```yaml
 ---
 title: Place or subject
