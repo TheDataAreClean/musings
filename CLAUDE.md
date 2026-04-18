@@ -213,11 +213,8 @@ CSS `zoom` applies to `.app-canvas` only. Sticky chrome (titlebar, menubar, tool
 ### `scroll-margin-top` on headings
 Headings use `scroll-margin-top: calc(var(--chrome-h) + var(--space-6))`. `--chrome-h` must equal `--titlebar-h + --menubar-h + --toolbar-h + --ruler-h` (34 + 26 + 32 + 22 = **114px**). Update this if any chrome height changes.
 
-### Feeds
-- `/feed.xml` — combined Atom feed (ideas + notes + snaps), 20 most recent posts across all types
-- `/ideas/feed.xml` — ideas-only Atom feed, 20 most recent ideas
-
-Both use `atomDate` (full UTC ISO 8601) and `layout: false`.
+### Feed
+`/feed.xml` — combined Atom feed (ideas + notes + snaps), 20 most recent posts. Uses `atomDate` (full UTC ISO 8601) and `layout: false`.
 
 ---
 
@@ -257,7 +254,7 @@ Both use `atomDate` (full UTC ISO 8601) and `layout: false`.
 ### Infrastructure
 - [ ] `site.url` in `site.json` — no trailing slash
 - [ ] Canonical and OG tags correct in built HTML
-- [ ] `_site/feed.xml` and `_site/ideas/feed.xml` are valid XML — open in browser
+- [ ] `_site/feed.xml` is valid XML — open in browser
 - [ ] `feed.njk` has `layout: false`
 - [ ] `_site/favicon.ico`, `_site/favicon.svg`, `_site/apple-touch-icon.png`, `_site/manifest.json` all present
 
@@ -269,8 +266,8 @@ Both use `atomDate` (full UTC ISO 8601) and `layout: false`.
 - [ ] Deploy completes in Actions tab
 - [ ] Live URL shows latest change; hard refresh if needed (`Cmd+Shift+R`)
 - [ ] Canonical URL in `<head>` matches actual URL
-- [ ] Feeds at `/feed.xml` and `/ideas/feed.xml` parse in browser
-- [ ] Validate feeds at [validator.w3.org/feed](https://validator.w3.org/feed) after any template change
+- [ ] Feed at `/feed.xml` parses in browser
+- [ ] Validate feed at [validator.w3.org/feed](https://validator.w3.org/feed) after any template change
 
 ### Spot checks
 - [ ] Home page sigils correct — `→` ideas, `·` notes, `○` snaps
