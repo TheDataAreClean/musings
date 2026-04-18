@@ -6,7 +6,7 @@
   <title>{% if title and title != "Home" %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
   <meta name="description" content="{{ description or site.description }}">
   <meta name="author" content="{{ site.author }}">
-  <meta property="og:title" content="{% if title and title != site.title %}{{ title }} — Musings | TheDataAreClean{% else %}Musings | TheDataAreClean{% endif %}">
+  <meta property="og:title" content="{% if title and title != site.title %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}">
   <meta property="og:description" content="{{ description or site.description }}">
   <meta property="og:type" content="{{ ogType or 'website' }}">
   <meta property="og:url" content="{{ site.url }}{{ page.url }}">
@@ -14,7 +14,7 @@
   <meta name="twitter:card" content="summary">
   <meta name="theme-color" content="#f0f0f0">
   <link rel="canonical" href="{{ site.url }}{{ page.url }}">
-  <link rel="alternate" type="application/atom+xml" title="Musings | TheDataAreClean" href="/feed.xml">
+  <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="/feed.xml">
   {# Favicon stack: ICO for bookmark managers/RSS readers, SVG for modern browsers,
      apple-touch-icon for iOS Safari home screen, manifest for Android Chrome.
      All four are passthrough-copied from src/ — see .eleventy.js. #}
