@@ -478,7 +478,7 @@ git checkout -b hotfix v2.1.0       # branch from a past release
 | `v2.2.5` | `4c7b340` | Fix — scale down favicon, fix post-tag colour override |
 | `v2.3.0` | `afb1bbb` | Add — combined Atom feed at /feed.xml (ideas + notes + snaps), site.title as single source of truth |
 | `v2.3.1` | `469bb58` | Fix — browser tab uses shortTitle "Musings", full title retained for feed and OG |
-| `v2.4.0` | TBD | Add — RSS link in doc nav, feed category tags, shortTitle token, og:title home fix |
+| `v2.4.0` | `428c148` | Add — RSS link in doc nav, feed category tags, shortTitle token, og:title home fix |
 
 Current release: **v2.4.0**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
 
