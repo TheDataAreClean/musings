@@ -1,0 +1,66 @@
+backend:
+  name: github
+  repo: TheDataAreClean/musings
+  branch: main
+  auth_type: pkce
+  app_id: Ov23liT5WrkcBVep4jeR
+
+media_folder: src/images/uploads
+public_folder: /images/uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+
+  - name: ideas
+    label: Ideas
+    label_singular: Idea
+    folder: src/ideas
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DD", time_format: false, date_format: "YYYY-MM-DD" }
+      - { name: description, label: Description, widget: text, required: false, hint: "One sentence — shown as subtitle and used for OG meta." }
+      - name: tags
+        label: Tags
+        widget: list
+        required: false
+        hint: "Extra tags beyond 'ideas'. e.g. design, tech, personal"
+      - { name: body, label: Body, widget: markdown }
+
+  - name: notes
+    label: Notes
+    label_singular: Note
+    folder: src/notes
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DD", time_format: false, date_format: "YYYY-MM-DD" }
+      - { name: description, label: Description, widget: text, required: false, hint: "One sentence — shown as subtitle and used for OG meta." }
+      - name: tags
+        label: Tags
+        widget: list
+        required: false
+        hint: "Extra tags beyond 'notes'. e.g. personal, tech, create"
+      - { name: body, label: Body, widget: markdown }
+
+  - name: snaps
+    label: Snaps
+    label_singular: Snap
+    folder: src/snaps
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DD", time_format: false, date_format: "YYYY-MM-DD" }
+      - { name: description, label: Description, widget: text, required: false, hint: "One line of context." }
+      - name: tags
+        label: Tags
+        widget: list
+        required: false
+        hint: "Extra tags beyond 'snaps'. e.g. luru, family, street"
+      - { name: body, label: Body, widget: markdown, hint: "Upload your image via the media button, then add caption text below if needed." }
