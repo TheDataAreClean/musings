@@ -43,10 +43,10 @@ src/
     typography.css     # Document body typography
     components.css     # Post list, footnotes, callouts, post-nav
     print.css          # Print media query — strips chrome, shows URLs
+  feed.njk             # Combined Atom feed (XML) — must have layout: false
   ideas/
     ideas.json         # Directory data: layout + tags for all ideas
     index.njk          # Ideas listing page
-    feed.njk           # Atom feed (XML) — must have layout: false
     *.md               # Individual idea posts
   notes/
     notes.json         # Directory data: layout + tags for all notes
@@ -199,7 +199,7 @@ Titlebar and dots dim on `window.blur` / `visibilitychange`, restore on `window.
 Symptom: post renders blank or truncated with no build error. Check for `{#` anywhere in the file — prose, inline code, fenced blocks. All are processed by Nunjucks before Markdown.
 
 ### Feed template must have `layout: false`
-`feed.njk` is inside `ideas/` whose `ideas.json` applies `layout: layouts/doc.njk` to all files. Without `layout: false` in `feed.njk` front matter, XML output gets wrapped in HTML. Always confirm `feed.njk` has `layout: false`.
+`feed.njk` lives at the `src/` root. Without `layout: false` in its front matter, XML output gets wrapped in HTML. Always confirm `feed.njk` has `layout: false`.
 
 ### CSS specificity: `.page-break` vs `.doc-body hr`
 `.doc-body hr` (0-1-1) beats `.page-break` (0-1-0). All `hr` rules in `typography.css` are scoped to `.doc-body hr:not(.page-break)`. The `:not` is load-bearing.
@@ -214,7 +214,7 @@ CSS `zoom` applies to `.app-canvas` only. Sticky chrome (titlebar, menubar, tool
 Headings use `scroll-margin-top: calc(var(--chrome-h) + var(--space-6))`. `--chrome-h` must equal `--titlebar-h + --menubar-h + --toolbar-h + --ruler-h` (34 + 26 + 32 + 22 = **114px**). Update this if any chrome height changes.
 
 ### Feed
-`/feed.xml` — combined Atom feed (ideas + notes + snaps), 20 most recent posts. Uses `atomDate` (full UTC ISO 8601) and `layout: false`.
+`/feed.xml` — combined Atom feed (ideas + notes + snaps), 15 most recent posts. Uses `atomDate` (full UTC ISO 8601) and `layout: false`.
 
 ---
 
@@ -478,8 +478,9 @@ git checkout -b hotfix v2.1.0       # branch from a past release
 | `v2.2.5` | `4c7b340` | Fix — scale down favicon, fix post-tag colour override |
 | `v2.3.0` | `afb1bbb` | Add — combined Atom feed at /feed.xml (ideas + notes + snaps), site.title as single source of truth |
 | `v2.3.1` | `469bb58` | Fix — browser tab uses shortTitle "Musings", full title retained for feed and OG |
+| `v2.4.0` | TBD | Add — RSS link in doc nav, feed category tags, shortTitle token, og:title home fix |
 
-Current release: **v2.3.1**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
+Current release: **v2.4.0**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
 
 ---
 

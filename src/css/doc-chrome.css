@@ -176,16 +176,6 @@ body {
   color: var(--color-text);   /* black, not muted — real menus have black text */
 }
 
-.app-menubar__rss {
-  margin-left: auto;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.app-menubar__rss:hover {
-  text-decoration: underline;
-}
-
 /* ==========================================================================
    TOOLBAR — static decoration only
    Dense, realistic content. Dark text so items read as formatted, not disabled.

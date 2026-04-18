@@ -6,7 +6,7 @@
   <title>{% if title and title != "Home" %}{{ title }} — {{ site.shortTitle }}{% else %}{{ site.shortTitle }}{% endif %}</title>
   <meta name="description" content="{{ description or site.description }}">
   <meta name="author" content="{{ site.author }}">
-  <meta property="og:title" content="{% if title and title != site.title %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}">
+  <meta property="og:title" content="{% if title and title != "Home" %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}">
   <meta property="og:description" content="{{ description or site.description }}">
   <meta property="og:type" content="{{ ogType or 'website' }}">
   <meta property="og:url" content="{{ site.url }}{{ page.url }}">
@@ -37,16 +37,15 @@
         <span class="stoplight__green"></span>
       </div>
     </div>
-    <span class="app-titlebar__doc">{{ title or site.title }}</span>
+    <span class="app-titlebar__doc">{{ title or site.shortTitle }}</span>
     <span class="app-titlebar__saved">{{ site.chrome.saveState }}</span>
   </div>
 
-  {# Menu bar: dead text items + live RSS link pushed to the right #}
+  {# Menu bar: all items are dead text — black, readable, unresponsive #}
   <div class="app-menubar" aria-hidden="true">
     {% for item in site.chrome.menu %}
     <span class="app-menubar__item">{{ item }}</span>
     {% endfor %}
-    <a class="app-menubar__item app-menubar__rss" href="/feed.xml" tabindex="-1">RSS</a>
   </div>
 
   {# Toolbar: realistic content, denser, correct glyphs #}
