@@ -2,8 +2,7 @@ backend:
   name: github
   repo: TheDataAreClean/musings
   branch: main
-  auth_type: pkce
-  app_id: Ov23liT5WrkcBVep4jeR
+  base_url: https://sveltia-cms-auth.thedataareclean.workers.dev
 
 media_folder: src/images/uploads
 public_folder: /images/uploads
