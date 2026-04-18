@@ -472,12 +472,12 @@ git checkout -b hotfix v2.1.0       # branch from a past release
 | `v2.1.3` | `a01d12b` | Update — sync script reads manual Date property instead of page created_time |
 | `v2.2.0` | `b8fdc43` | Add — article description display, Slug override property, local test content convention |
 | `v2.2.1` | `4b32d7d` | Fix — tag URL normalisation, version sync, checklist update |
-| `v2.2.2` | `5f4196c` | Fix — image optimisation via sharp, slug rename on change |
-| `v2.2.3` | `114ab43` | Fix — three-tier sort order, IST display dates, updated stored as full datetime |
+| `v2.2.2` | `5f4196c` | Add — image optimisation via sharp, slug rename on change |
+| `v2.2.3` | `e9ba14c` | Fix — three-tier sort order, IST display dates, updated stored as full datetime |
 | `v2.2.4` | `1a58904` | Fix — favicon mobile support (ICO, apple-touch-icon, manifest), tag highlight on article pages, CLAUDE.md refresh |
 | `v2.2.5` | `4c7b340` | Fix — scale down favicon, fix post-tag colour override |
-| `v2.3.0` | `8bfa206` | Add — combined Atom feed at /feed.xml (ideas + notes + snaps), site.title as single source of truth |
-| `v2.3.1` | `643f222` | Fix — browser tab uses shortTitle "Musings", full title retained for feed and OG |
+| `v2.3.0` | `afb1bbb` | Add — combined Atom feed at /feed.xml (ideas + notes + snaps), site.title as single source of truth |
+| `v2.3.1` | `469bb58` | Fix — browser tab uses shortTitle "Musings", full title retained for feed and OG |
 
 Current release: **v2.3.1**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
 
