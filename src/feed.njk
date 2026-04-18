@@ -23,6 +23,9 @@ eleventyExcludeFromCollections: true
     {% if post.data.description %}
     <summary>{{ post.data.description }}</summary>
     {% endif %}
+    {% for tag in post.data.tags %}
+    <category term="{{ tag }}"/>
+    {% endfor %}
     <content type="html"><![CDATA[{{ post.templateContent | safe }}]]></content>
   </entry>
   {% endfor %}

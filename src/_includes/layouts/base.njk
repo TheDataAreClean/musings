@@ -41,11 +41,12 @@
     <span class="app-titlebar__saved">{{ site.chrome.saveState }}</span>
   </div>
 
-  {# Menu bar: all items are dead text — black, readable, unresponsive #}
+  {# Menu bar: dead text items + live RSS link pushed to the right #}
   <div class="app-menubar" aria-hidden="true">
     {% for item in site.chrome.menu %}
     <span class="app-menubar__item">{{ item }}</span>
     {% endfor %}
+    <a class="app-menubar__item app-menubar__rss" href="/feed.xml" tabindex="-1">RSS</a>
   </div>
 
   {# Toolbar: realistic content, denser, correct glyphs #}
