@@ -46,14 +46,17 @@ src/
   feed.njk             # Combined Atom feed (XML) — must have layout: false
   ideas/
     ideas.json         # Directory data: layout + tags for all ideas
+    ideas.11tydata.js  # Computed permalink: uses slug field when present
     index.njk          # Ideas listing page
     *.md               # Individual idea posts
   notes/
     notes.json         # Directory data: layout + tags for all notes
+    notes.11tydata.js  # Computed permalink: uses slug field when present
     index.njk          # Notes listing page
     *.md               # Individual notes
   snaps/
     snaps.json         # Directory data: layout + tags for all snaps
+    snaps.11tydata.js  # Computed permalink: uses slug field when present
     index.njk          # Snaps listing page
     *.md               # Individual shot posts
   images/              # Static images (passthrough copied)
@@ -70,9 +73,9 @@ src/
 .github/
   workflows/
     deploy.yml         # GitHub Actions: build Eleventy → deploy to GitHub Pages
-    sync.yml           # GitHub Actions: run Notion sync daily at midnight UTC
-scripts/
-  sync-notion.js       # Notion → markdown sync script (run by sync.yml)
+src/admin/
+  index.html           # Sveltia CMS entry point
+  config.yml           # Sveltia CMS collection definitions
 ```
 
 ---
@@ -109,8 +112,7 @@ All four collections use the same `sortPosts` function in `.eleventy.js`:
 1. Posts with a `date` come before undated posts
 2. Within dated posts: `date` descending
 3. Tie-break: `updated` descending (full ISO datetime)
-4. Final tie-break: `notion_last_edited` descending (always present on Notion-synced posts)
-5. Undated posts at the end
+4. Undated posts at the end
 
 ---
 
@@ -126,6 +128,7 @@ Tags and layout are inherited from the directory data file (`ideas.json` / `note
 title: The title
 date: 2026-03-26
 description: One sentence for OG, meta, and article subtitle.
+slug: optional-custom-url-slug
 ---
 ```
 
@@ -134,6 +137,7 @@ description: One sentence for OG, meta, and article subtitle.
 ---
 title: The title
 date: 2026-03-26
+slug: optional-custom-url-slug
 ---
 ```
 
@@ -143,8 +147,11 @@ date: 2026-03-26
 title: Place or subject
 date: 2026-03-26
 description: One line of context.
+slug: optional-custom-url-slug
 ---
 ```
+
+`slug` is optional. When omitted, the URL is derived from the filename (`YYYY-MM-DD-title-words`). When present, the URL becomes `/{type}/{date}-{slug}/` — computed by `{type}.11tydata.js`.
 
 ### Markdown extensions
 
@@ -293,7 +300,8 @@ Headings use `scroll-margin-top: calc(var(--chrome-h) + var(--space-6))`. `--chr
 - `isoDate` returns `YYYY-MM-DD` in IST (`Asia/Kolkata`); `readableDate` returns human-readable in IST — both use `en-CA` / `en-GB` locale with `timeZone: "Asia/Kolkata"`
 - `atomDate` returns full UTC ISO 8601 — correct for Atom feed RFC 3339; do not apply IST to this filter
 - `buildTime` global data available for feed fallback
-- `sortPosts` shared function handles all four collection sorts — see Content collections above
+- `sortPosts` shared function handles all four collection sorts — date desc, then `updated` desc, undated last
+- `{type}.11tydata.js` files in ideas/notes/snaps compute a custom permalink when `slug` is set in front matter
 - `pagebreak` is non-paired (returns `<div>`); `callout` and `marginnote` are paired and call `md.render()`
 
 ### Templates
@@ -339,9 +347,6 @@ All are `devDependencies` — build-time only, nothing shipped to the browser.
 | `markdown-it-anchor` | Heading anchors |
 | `markdown-it-attrs` | Custom attributes |
 | `markdown-it-footnote` | Footnotes |
-| `@notionhq/client` | Pinned to `2.2.3` — v5 removed `databases.query` |
-| `notion-to-md` | Notion blocks → Markdown |
-| `sharp` | Image resizing and WebP conversion at sync time |
 
 ```sh
 npm audit       # Check for vulnerabilities
@@ -350,67 +355,41 @@ npm outdated    # List available updates
 
 ---
 
-## Notion CMS sync
+## Sveltia CMS
 
-Content is authored in a Notion database and synced into the repo daily at midnight UTC, or manually via the Actions tab.
+Content is authored via [Sveltia CMS](https://sveltiacms.app) — a Git-based headless CMS. Every save is a commit to `main`, which triggers `deploy.yml`.
+
+### Access
+
+`https://musings.thedataareclean.com/admin/` — sign in with GitHub (OAuth via Cloudflare Worker).
 
 ### How it works
 
-1. Query Notion for all pages with **Status = "Ready"**
-2. For each page, validate required fields (`Title`, `Type`, `Date`)
-3. Compare `last_edited_time` to stored `notion_last_edited` — skip if unchanged
-4. Convert blocks to Markdown via `notion-to-md`; sanitise `{#` → `{ #`
-5. Compute slug from `Slug` property if set, otherwise from title; combine with date: `{date}-{slug}`
-6. Download images into `src/images/notion/{type}/{date}-{slug}-{hash}.webp` — raster images resized to 794px and converted to WebP at quality 85; SVGs passed through as-is
-7. Write `.md` file to `src/{type}/{date}-{slug}.md`; if slug changed, rename existing file
-8. Commit changed files and push to `main`, which triggers `deploy.yml`
+1. Author opens `/admin/`, authenticates with GitHub via the Cloudflare Worker OAuth proxy
+2. Sveltia reads `src/admin/config.yml` to discover collections (`ideas`, `notes`, `snaps`)
+3. Each save writes a Markdown file to the correct folder and commits to `main`
+4. `deploy.yml` triggers automatically — live within ~1 minute
 
-A no-op run (nothing changed in Notion) produces no commit and no deploy.
+### Slug behaviour
 
-### Notion database schema
+- **Filename** is always `YYYY-MM-DD-{auto-from-title}.md` — Sveltia derives this from the title
+- **URL slug** defaults to the filename slug. Set the optional `slug` field to override — `{type}.11tydata.js` builds the URL as `/{type}/{date}-{slug}/`
+- Leave the slug field blank to let the title drive the URL
 
-| Property | Type | Notes |
-|---|---|---|
-| Title | Title | Required |
-| Type | Select | Required — `ideas`, `notes`, or `snaps` |
-| Date | Date | Required — publication date; used as filename prefix |
-| Slug | Text | Optional — overrides auto-generated slug; changing it renames the file |
-| Tags | Multi-select | Optional |
-| Description | Text | Optional — shown as subtitle on article pages and used for OG meta |
-| Status | Select | Required — only `Ready` pages are synced |
+### OAuth infrastructure
 
-`updated` front matter comes from Notion's built-in **Last edited time** — stored as a full ISO datetime (e.g. `2026-03-28T03:24:00.000Z`), not date-only. This gives the sort function time-level precision when breaking ties between same-day posts. No manual property needed.
+Cloudflare Worker deployed at `https://sveltia-cms-auth.thedataareclean.workers.dev` — proxies GitHub OAuth flow. GitHub OAuth App callback URL must match.
 
-### Idempotency
+### Images
 
-Each synced file stores:
-- `notion_id` — used to match existing files on subsequent runs
-- `notion_last_edited` — if unchanged, the page is skipped entirely; also used as the final sort tiebreaker when two posts share the same `updated` datetime
+Upload via Sveltia's media button — files land in `src/images/uploads/` and are served from `/images/uploads/`.
 
-Images use a hash of the S3 URL origin+path as a stable key — not re-downloaded if the file already exists.
+### Setup checklist (new environment)
 
-### GitHub Secrets
-
-| Secret | Value |
-|---|---|
-| `NOTION_TOKEN` | Internal integration token from notion.so/my-integrations |
-| `NOTION_DATABASE_ID` | Database ID from the URL (32-char hex string) |
-
-### Running locally
-
-```sh
-export NOTION_TOKEN=secret_xxx
-export NOTION_DATABASE_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-node scripts/sync-notion.js
-```
-
-### Setup checklist
-
-- [ ] Create Notion internal integration — copy the token
-- [ ] Share database with the integration (`...` menu → Connections)
-- [ ] Add `NOTION_TOKEN` and `NOTION_DATABASE_ID` to GitHub Secrets
-- [ ] Set a page to `Ready` and trigger a manual sync to verify end-to-end
-- [ ] Confirm file appears in `src/{type}/` and deploy completes
+- [ ] GitHub OAuth App created with callback `https://sveltia-cms-auth.thedataareclean.workers.dev/callback`
+- [ ] Cloudflare Worker deployed with `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` secrets set
+- [ ] `src/admin/config.yml` `base_url` matches Worker URL
+- [ ] Open `/admin/` and sign in to verify end-to-end
 
 ---
 
@@ -479,8 +458,10 @@ git checkout -b hotfix v2.1.0       # branch from a past release
 | `v2.3.0` | `afb1bbb` | Add — combined Atom feed at /feed.xml (ideas + notes + snaps), site.title as single source of truth |
 | `v2.3.1` | `469bb58` | Fix — browser tab uses shortTitle "Musings", full title retained for feed and OG |
 | `v2.4.0` | `428c148` | Add — RSS link in doc nav, feed category tags, shortTitle token, og:title home fix |
+| `v2.5.0` | `f57aaba` | Add — Sveltia CMS, Cloudflare Worker OAuth, optional slug override |
+| `v3.0.0` | TBD | **Notion pipeline removed** — Git-based authoring via Sveltia CMS is the canonical layer |
 
-Current release: **v2.4.0**. The v2 era is defined by Notion as the canonical authoring layer. The v1 word-processor visual identity is unchanged. v3.0.0 requires a complete visual overhaul.
+Current release: **v3.0.0** (pending tag). The v3 era is defined by Sveltia CMS replacing Notion. The v1 word-processor visual identity is unchanged. v4.0.0 requires a complete visual overhaul.
 
 ---
 

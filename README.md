@@ -128,35 +128,27 @@ Yellow and green dots are non-interactive `<span>` elements. All chrome is `aria
 
 ---
 
-## Notion CMS
+## Sveltia CMS
 
-Content is authored in a Notion database and synced to the repo automatically.
+Content is authored via [Sveltia CMS](https://sveltiacms.app) — a mobile-friendly Git-based CMS.
 
-**How it works:** `.github/workflows/sync.yml` runs daily at midnight UTC (and on manual trigger). It calls `scripts/sync-notion.js`, which queries Notion for pages with **Status = Ready**, converts them to markdown, and commits new/changed files to `src/{type}/`. That commit triggers `deploy.yml`, deploying the updated site.
+**Access:** `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
 
-**Required GitHub Secrets:** `NOTION_TOKEN` + `NOTION_DATABASE_ID`
+**How it works:** Every save in the CMS commits a Markdown file directly to `main`, which triggers `deploy.yml`. The site is live within ~1 minute.
 
-**Run locally:**
-```sh
-export NOTION_TOKEN=secret_xxx
-export NOTION_DATABASE_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-node scripts/sync-notion.js
-```
+**Images:** Upload via the CMS media button — files land in `src/images/uploads/`.
 
-**Images:** Notion image URLs are signed S3 links that expire in ~1 hour. The sync script automatically downloads every image to `src/images/notion/` and rewrites the markdown URL to the local path, so images are permanent in the deployed site.
-
-See `CLAUDE.md` for the full Notion database schema and setup checklist.
+See `CLAUDE.md` for the OAuth setup details and slug override behaviour.
 
 ---
 
 ## Deployment
 
-Two GitHub Actions workflows handle deployment:
+One GitHub Actions workflow handles deployment:
 
 | Workflow | Trigger | Action |
 |---|---|---|
 | `deploy.yml` | Push to `main` or manual | Build Eleventy → deploy to GitHub Pages |
-| `sync.yml` | Daily midnight UTC or manual | Sync Notion → commit → trigger deploy |
 
 Custom domain: DNS `CNAME musings → thedataareclean.github.io`. The `src/CNAME` file is passthrough-copied into `_site/` at build time.
 

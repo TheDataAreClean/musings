@@ -6,8 +6,6 @@ description: I am hooked.
 tags:
   - tech
   - create
-notion_id: 331a5f73-735d-80e2-ac1b-e2ce5e62d25e
-notion_last_edited: 2026-03-28T08:36:00.000Z
 ---
 
 I have never felt so empowered and so burdened by a technology before. I am able to build things, and complete projects that have been stuck in my mind for over a decade.

@@ -20,13 +20,9 @@ eleventyExcludeFromCollections: true
     <link href="{{ site.url }}{{ post.url }}"/>
     <id>{{ site.url }}{{ post.url }}</id>
     <updated>{{ post.date | atomDate }}</updated>
-    {% if post.data.description %}
-    <summary>{{ post.data.description }}</summary>
-    {% endif %}
-    {% for tag in post.data.tags %}
-    <category term="{{ tag }}"/>
-    {% endfor %}
-    <content type="html"><![CDATA[{{ post.templateContent | safe }}]]></content>
+    {% if post.data.description %}<summary>{{ post.data.description }}</summary>
+    {% endif %}{% for tag in post.data.tags %}<category term="{{ tag }}"/>
+    {% endfor %}<content type="html"><![CDATA[{{ post.templateContent | safe }}]]></content>
   </entry>
   {% endfor %}
 </feed>

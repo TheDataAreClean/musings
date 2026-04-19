@@ -122,11 +122,6 @@ module.exports = function (eleventyConfig) {
         if (updatedDiff !== 0) return updatedDiff;
       } else if (aUpdated) return -1;
       else if (bUpdated) return 1;
-      const aEdited = a.data.notion_last_edited ? new Date(a.data.notion_last_edited) : null;
-      const bEdited = b.data.notion_last_edited ? new Date(b.data.notion_last_edited) : null;
-      if (aEdited && bEdited) return bEdited - aEdited;
-      if (aEdited) return -1;
-      if (bEdited) return 1;
       return 0;
     });
   }
