@@ -459,7 +459,7 @@ git checkout -b hotfix v2.1.0       # branch from a past release
 | `v2.3.1` | `469bb58` | Fix — browser tab uses shortTitle "Musings", full title retained for feed and OG |
 | `v2.4.0` | `428c148` | Add — RSS link in doc nav, feed category tags, shortTitle token, og:title home fix |
 | `v2.5.0` | `f57aaba` | Add — Sveltia CMS, Cloudflare Worker OAuth, optional slug override |
-| `v3.0.0` | TBD | **Notion pipeline removed** — Git-based authoring via Sveltia CMS is the canonical layer |
+| `v3.0.0` | `e31ca22` | **Notion pipeline removed** — Git-based authoring via Sveltia CMS is the canonical layer |
 
 Current release: **v3.0.0** (pending tag). The v3 era is defined by Sveltia CMS replacing Notion. The v1 word-processor visual identity is unchanged. v4.0.0 requires a complete visual overhaul.
 
