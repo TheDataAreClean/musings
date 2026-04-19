@@ -110,7 +110,7 @@ a.post-tag:visited {
   margin-right: var(--space-2);
 }
 
-a.post-tag:hover { text-decoration: underline; }
+a.post-tag:hover { text-decoration: none; }
 
 /* --------------------------------------------------------------------------
    Archive
