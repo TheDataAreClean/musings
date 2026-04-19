@@ -6,7 +6,7 @@ tags:
   - family
 ---
 
-![IMG_6358.jpeg](/images/notion/snaps/2026-03-29-scotland-yard-3a18dc5b.webp)
+![IMG_6358.jpeg](/images/uploads/2026-03-29-scotland-yard-3a18dc5b.webp)
 
 
 I let go of a good lead in the game. Still annoyed about it. 😛

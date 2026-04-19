@@ -160,7 +160,7 @@ Use `<hr class="page-break">` to insert one. A plain `---` in the body renders a
 An image, constrained to the document width:
 
 
-![sample.svg](/images/notion/ideas/2026-03-01-formatting-reference-e17169b9.svg)
+![sample.svg](/images/uploads/2026-03-01-formatting-reference-e17169b9.svg)
 
 
 Images are block-level. They sit on their own line with vertical spacing above and below. They do not float. Captions are not built in — a following paragraph in _italic_ can serve as one.
