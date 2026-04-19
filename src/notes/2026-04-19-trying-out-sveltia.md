@@ -7,4 +7,6 @@ tags:
   - tech
 ---
 
-Got suggested this pretty neat CMS at my first [IndieWebClub Bangalore](https://blr.indiewebclub.org) meetup. This is me trying it out!
+Got suggested this pretty neat [CMS](https://sveltiacms.app/en/) at my first [IndieWebClub Bangalore](https://blr.indiewebclub.org) meetup.
+
+This should make my life easier! 🤞🏽
