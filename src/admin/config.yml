@@ -1,3 +1,6 @@
+site_name: Musings
+logo_url: /favicon-512.png
+
 backend:
   name: github
   repo: TheDataAreClean/musings
