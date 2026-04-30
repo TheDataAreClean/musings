@@ -12,6 +12,7 @@ All runnable commands. Source: `package.json`.
 | Dev server | `npm run dev` |
 | Build | `npm run build` |
 | Clean build output | `npm run clean` |
+| Convert uploads to WebP | `npm run webp` |
 | Check vulnerabilities | `npm audit` |
 | List available updates | `npm outdated` |
 

@@ -12,8 +12,9 @@ async function convertAll() {
       const src = path.join(uploadsDir, file);
       const dest = path.join(uploadsDir, path.basename(file, path.extname(file)) + ".webp");
       if (fs.existsSync(dest)) return;
-      await sharp(src).webp({ quality: 82 }).toFile(dest);
-      console.log(`converted: ${file} → ${path.basename(dest)}`);
+      await sharp(src).rotate().webp({ quality: 82 }).toFile(dest);
+      fs.unlinkSync(src);
+      console.log(`converted: ${file} → ${path.basename(dest)} (original removed)`);
     })
   );
 }

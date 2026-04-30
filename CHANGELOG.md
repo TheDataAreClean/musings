@@ -6,7 +6,15 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+—
+
+---
+
+## 2026-04-30 (v3.1.1)
+
 - feat: image captions via markdown — `![alt](url "Caption")` renders as `<figure>` with `<figcaption>`; caption font follows the doc font switcher
+- infra: WebP conversion in deploy pipeline — `npm run webp` converts uploads before build, auto-rotates via EXIF, deletes originals; images rendered as `<picture>` with WebP-only src (no JPEG fallback)
+- fix: feed timestamps now capture actual publish time — Sveltia date widget stores full datetime (`YYYY-MM-DDTHH:mm:ssZ`) instead of date-only
 
 ---
 

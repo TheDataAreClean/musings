@@ -186,7 +186,9 @@ Session persistence: `sessionStorage` only — resets on new tab by design.
 
 ### Deployment
 
-`deploy.yml` triggers on push to `main` — `npm ci && npm run build` → deploys `_site/` to GitHub Pages.
+`deploy.yml` triggers on push to `main` — `npm ci → npm run webp → npm run build` → deploys `_site/` to GitHub Pages.
+
+`npm run webp` (`scripts/convert-webp.js`) converts all JPEG/PNG in `src/images/uploads/` to WebP (quality 82), auto-rotates via EXIF orientation, then deletes the original. Existing `.webp` files are skipped. Images render as `<picture>` with a WebP `<source>` and `<img src>` also pointing to WebP — no JPEG fallback is kept.
 
 `src/CNAME` is passthrough-copied to `_site/CNAME` — required for the custom domain to survive deploys.
 

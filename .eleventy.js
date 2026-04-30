@@ -14,7 +14,8 @@ function webpSrc(src) {
 // Wraps an img tag in a <picture> with a WebP source when available
 function pictureTag(src, alt, title) {
   const webp = webpSrc(src);
-  let img = `<img src="${src}" alt="${alt}"`;
+  const imgSrc = webp || src;
+  let img = `<img src="${imgSrc}" alt="${alt}"`;
   if (title) img += ` title="${title}"`;
   img += `>`;
   if (!webp) return img;
