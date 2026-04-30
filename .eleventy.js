@@ -3,6 +3,35 @@ const markdownItFootnote = require("markdown-it-footnote");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItAttrs = require("markdown-it-attrs");
 
+// Wraps lone images in <figure>; uses title attribute as <figcaption>
+function markdownItFigures(md) {
+  md.core.ruler.push("implicit_figures", (state) => {
+    for (let i = 1; i < state.tokens.length - 1; i++) {
+      const tok = state.tokens[i];
+      if (tok.type !== "inline") continue;
+      if (!tok.children || tok.children.length !== 1) continue;
+      if (tok.children[0].type !== "image") continue;
+      if (state.tokens[i - 1].type !== "paragraph_open") continue;
+      if (state.tokens[i + 1].type !== "paragraph_close") continue;
+
+      const img = tok.children[0];
+      const src = img.attrGet("src") || "";
+      const alt = img.children ? img.children.map((t) => t.content).join("") : "";
+      const title = img.attrGet("title") || "";
+
+      let html = `<figure>\n<img src="${src}" alt="${alt}"`;
+      if (title) html += ` title="${title}"`;
+      html += `>\n`;
+      if (title) html += `<figcaption>${title}</figcaption>\n`;
+      html += `</figure>`;
+
+      state.tokens[i - 1] = Object.assign(new state.Token("html_block", "", 0), { content: "" });
+      state.tokens[i] = Object.assign(new state.Token("html_block", "", 0), { content: html });
+      state.tokens[i + 1] = Object.assign(new state.Token("html_block", "", 0), { content: "" });
+    }
+  });
+}
+
 module.exports = function (eleventyConfig) {
   // Markdown configuration
   const md = markdownIt({
@@ -21,7 +50,8 @@ module.exports = function (eleventyConfig) {
           .trim()
           .replace(/\s+/g, "-"),
     })
-    .use(markdownItAttrs);
+    .use(markdownItAttrs)
+    .use(markdownItFigures);
 
   eleventyConfig.setLibrary("md", md);
 
