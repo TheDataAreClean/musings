@@ -4,7 +4,8 @@ slug: best-notebook
 date: 2026-04-30
 description: The joy of fresh pages!
 tags:
-  - personal,writing
+  - personal
+  - writing
 ---
 
 Bumbling with excitement today, because I am starting a new notebook tomorrow. Not just any notebook, the best notebook (limited) money can buy.
