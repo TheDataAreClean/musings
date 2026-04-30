@@ -6,7 +6,7 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
-—
+- feat: image captions via markdown — `![alt](url "Caption")` renders as `<figure>` with `<figcaption>`; caption font follows the doc font switcher
 
 ---
 

@@ -161,6 +161,7 @@ Page break: `<hr class="page-break">` renders as a grey desk gap.
 | Footnotes | `markdown-it-footnote` | `[^1]` inline + `[^1]: text` at bottom |
 | Heading anchors | `markdown-it-anchor` | Auto-generated; override with `{ #id }` (space required) |
 | Custom attributes | `markdown-it-attrs` | `{ .class }`, `{ data-x="y" }` on any block |
+| Image figures | custom (`markdownItFigures` in `.eleventy.js`) | Lone images wrapped in `<figure>`; title text becomes `<figcaption>` — `![alt](url "Caption")` |
 
 ---
 
