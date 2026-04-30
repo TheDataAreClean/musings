@@ -16,6 +16,6 @@ I have been journaling almost daily for over half a decade now, and it has taken
 
 ![](/images/uploads/IMG_6586.jpeg "My trials (with many errors) along the way.")
 
-This [Zafiro Scholar Notebook](https://www.amazon.in/Scholar-Zafiro-Premium-Notebook-Natural/dp/B0977BDG64/) is a tenth of the price. Sure its slightly thinner, but I can still buy many more of them.
+This [Zafiro Scholar Notebook](https://www.amazon.in/Scholar-Zafiro-Premium-Notebook-Natural/dp/B0977BDG64/) is a tenth of the price. Sure it's slightly thinner, but I can afford to buy many more of them.
 
-I have over 5 more left in my stack, just in case I don't find them again for a while. I hope not!
+I have over 5 more left in my stack, scared that I won't ever find them again. I hope not!
