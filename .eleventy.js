@@ -3,8 +3,27 @@ const markdownItFootnote = require("markdown-it-footnote");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItAttrs = require("markdown-it-attrs");
 
-// Wraps lone images in <figure>; uses title attribute as <figcaption>
+// Returns a WebP path for uploads, otherwise the original src
+function webpSrc(src) {
+  if (!src.startsWith("/images/uploads/")) return null;
+  const ext = src.match(/\.[^.]+$/)?.[0] || "";
+  if (!ext || ext.toLowerCase() === ".webp") return null;
+  return src.slice(0, -ext.length) + ".webp";
+}
+
+// Wraps an img tag in a <picture> with a WebP source when available
+function pictureTag(src, alt, title) {
+  const webp = webpSrc(src);
+  let img = `<img src="${src}" alt="${alt}"`;
+  if (title) img += ` title="${title}"`;
+  img += `>`;
+  if (!webp) return img;
+  return `<picture>\n<source srcset="${webp}" type="image/webp">\n${img}\n</picture>`;
+}
+
+// Wraps lone images in <figure>; uses title attribute as <figcaption>; serves WebP via <picture>
 function markdownItFigures(md) {
+  // Lone images → <figure> with optional <figcaption>
   md.core.ruler.push("implicit_figures", (state) => {
     for (let i = 1; i < state.tokens.length - 1; i++) {
       const tok = state.tokens[i];
@@ -19,9 +38,7 @@ function markdownItFigures(md) {
       const alt = img.children ? img.children.map((t) => t.content).join("") : "";
       const title = img.attrGet("title") || "";
 
-      let html = `<figure>\n<img src="${src}" alt="${alt}"`;
-      if (title) html += ` title="${title}"`;
-      html += `>\n`;
+      let html = `<figure>\n${pictureTag(src, alt, title)}\n`;
       if (title) html += `<figcaption>${title}</figcaption>\n`;
       html += `</figure>`;
 
@@ -30,6 +47,15 @@ function markdownItFigures(md) {
       state.tokens[i + 1] = Object.assign(new state.Token("html_block", "", 0), { content: "" });
     }
   });
+
+  // Inline images (not lone in a paragraph) → <picture>
+  md.renderer.rules.image = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    const src = token.attrGet("src") || "";
+    const alt = self.renderInlineAsText(token.children, options, env);
+    const title = token.attrGet("title") || "";
+    return pictureTag(src, alt, title);
+  };
 }
 
 module.exports = function (eleventyConfig) {
