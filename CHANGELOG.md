@@ -6,6 +6,12 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+—
+
+---
+
+## 2026-05-01 (v3.2.1)
+
 - feat: subtitles on Notes, Ideas, Snaps index pages via `doc-description` class
 - fix: RSS link now appears on all section index pages (was home-only)
 - fix: about page no longer shows date, word count, or tags (`hideMeta: true`)
