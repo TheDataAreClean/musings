@@ -94,7 +94,7 @@ home.njk      Home/feed listing (wraps base.njk)
 feed.njk      Atom XML — must have layout: false
 ```
 
-`doc.njk` element order: title → nav → description (if present) → meta → body → post-nav
+`doc.njk` element order: title → nav → description (if present) → meta (omitted if `hideMeta: true`) → body → post-nav
 
 `home.njk` sigils by tag: `→` ideas, `○` snaps, `·` notes (fallback).
 
@@ -168,7 +168,7 @@ Page break: `<hr class="page-break">` renders as a grey desk gap.
 | `limit` / `offset` | array, n | Slice helpers |
 | `findIndex` | array, page | Index of current page in collection |
 
-**Nav include:** `src/_includes/nav.njk` — shared navigation used by all pages. Set `{% set navRss = true %}` before including to show the RSS link (home and post pages only).
+**Nav include:** `src/_includes/nav.njk` — shared navigation used by all pages. Set `{% set navRss = true %}` before including to show the RSS link (home, section index, and post pages).
 
 ---
 
