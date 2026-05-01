@@ -6,9 +6,7 @@ layout: layouts/base.njk
 
   <p class="doc-title">{{ site.shortTitle }}</p>
 
-  <p class="doc-nav">
-    <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/snaps/">Snaps</a> · <a href="/about/">About</a> · <a href="/feed.xml">RSS</a>
-  </p>
+  {% set navRss = true %}{% include "nav.njk" %}
 
   <div class="doc-body">
     {{ content | safe }}
@@ -19,9 +17,9 @@ layout: layouts/base.njk
     {% for post in collections.feed %}
     <div class="post-list__item">
       <p class="post-list__title">
-        <span class="post-sigil">{% if "ideas" in post.data.tags %}→{% elif "snaps" in post.data.tags %}○{% else %}·{% endif %}</span><a href="{{ post.url }}">{{ post.data.title }}</a>
+        <span class="post-sigil">{{ post.data.tags | postSigil }}</span><a href="{{ post.url }}">{{ post.data.title }}</a>
       </p>
-      <p class="post-list__line2">{% for tag in post.data.tags %}{% if tag != "ideas" and tag != "notes" and tag != "snaps" %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endif %}{% endfor %}<time datetime="{{ post.date | isoDate }}">{{ post.date | isoDate }}</time></p>
+      <p class="post-list__line2">{% for tag in post.data.tags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endfor %}<time datetime="{{ post.date | isoDate }}">{{ post.date | isoDate }}</time></p>
     </div>
     {% endfor %}
   </div>

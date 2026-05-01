@@ -3,11 +3,11 @@ const markdownItFootnote = require("markdown-it-footnote");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItAttrs = require("markdown-it-attrs");
 
-// Returns a WebP path for uploads, otherwise the original src
+// Returns a WebP path for convertible uploads (jpg/jpeg/png), otherwise null
 function webpSrc(src) {
   if (!src.startsWith("/images/uploads/")) return null;
-  const ext = src.match(/\.[^.]+$/)?.[0] || "";
-  if (!ext || ext.toLowerCase() === ".webp") return null;
+  const ext = (src.match(/\.[^.]+$/)?.[0] || "").toLowerCase();
+  if (![".jpg", ".jpeg", ".png"].includes(ext)) return null;
   return src.slice(0, -ext.length) + ".webp";
 }
 
@@ -95,17 +95,30 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/manifest.json");
 
   // Filters
+  function stripHtml(content) {
+    return content ? content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "";
+  }
+
   eleventyConfig.addFilter("wordcount", function (content) {
-    if (!content) return 0;
-    const text = content.replace(/<[^>]*>/g, " ");
-    return text.split(/\s+/).filter(Boolean).length;
+    return stripHtml(content).split(/\s+/).filter(Boolean).length;
   });
 
   eleventyConfig.addFilter("readtime", function (content) {
-    if (!content) return 1;
-    const text = content.replace(/<[^>]*>/g, " ");
-    const words = text.split(/\s+/).filter(Boolean).length;
+    const words = stripHtml(content).split(/\s+/).filter(Boolean).length;
     return Math.max(1, Math.ceil(words / 200));
+  });
+
+  const COLLECTION_TAGS = ["ideas", "notes", "snaps"];
+
+  eleventyConfig.addFilter("collectionTags", function (tags) {
+    return (tags || []).filter((t) => !COLLECTION_TAGS.includes(t));
+  });
+
+  eleventyConfig.addFilter("postSigil", function (tags) {
+    if (!tags) return "·";
+    if (tags.includes("ideas")) return "→";
+    if (tags.includes("snaps")) return "○";
+    return "·";
   });
 
   eleventyConfig.addFilter("readableDate", function (date) {

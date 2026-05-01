@@ -13,6 +13,7 @@ All runnable commands. Source: `package.json`.
 | Build | `npm run build` |
 | Clean build output | `npm run clean` |
 | Convert uploads to WebP | `npm run webp` |
+| Backfill post datetimes from git | `npm run backfill` |
 | Check vulnerabilities | `npm audit` |
 | List available updates | `npm outdated` |
 
@@ -24,3 +25,4 @@ All runnable commands. Source: `package.json`.
 - Build output → `_site/` (not committed)
 - `npm run clean` deletes `_site/` only — safe to run before a fresh build
 - `npm ci` is used in CI (`deploy.yml`) — prefer `npm install` locally
+- `npm run build` automatically runs `prebuild` first (backfill + webp) — no need to call them separately in CI

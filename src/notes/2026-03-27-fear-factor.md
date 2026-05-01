@@ -1,6 +1,6 @@
 ---
 title: Fear factor
-date: 2026-03-27
+date: 2026-03-27T01:54:18+00:00
 updated: 2026-03-28T03:23:00.000Z
 description: I don’t feel in control.
 tags:

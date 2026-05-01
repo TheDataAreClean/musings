@@ -18,17 +18,15 @@ eleventyExcludeFromCollections: true
 
   <p class="doc-title"><mark>{{ tag }}</mark></p>
 
-  <p class="doc-nav">
-    <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/snaps/">Snaps</a> · <a href="/about/">About</a>
-  </p>
+  {% include "nav.njk" %}
 
-  {% set taggedPosts = collections[tag] | sort(true, false, "date") %}
+  {% set taggedPosts = collections[tag] | sort(true, false, "date") %}{# sort: reverse=true, caseSensitive=false, attr="date" #}
   {% if taggedPosts.length %}
   <div class="post-list">
     {% for post in taggedPosts %}
     <div class="post-list__item">
       <p class="post-list__title">
-        <span class="post-sigil">{% if post.data.tags and "ideas" in post.data.tags %}→{% elif post.data.tags and "snaps" in post.data.tags %}○{% else %}·{% endif %}</span><a href="{{ post.url }}">{{ post.data.title }}</a>
+        <span class="post-sigil">{{ post.data.tags | postSigil }}</span><a href="{{ post.url }}">{{ post.data.title }}</a>
       </p>
       <p class="post-list__line2"><time datetime="{{ post.date | isoDate }}">{{ post.date | isoDate }}</time></p>
     </div>

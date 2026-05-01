@@ -1,7 +1,7 @@
 ---
 title: Working like a dog
 slug: work-dog
-date: 2026-04-30
+date: 2026-04-30T20:06:08+05:30
 description: ''
 tags:
   - cat

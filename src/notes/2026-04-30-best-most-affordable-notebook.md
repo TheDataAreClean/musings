@@ -1,7 +1,7 @@
 ---
 title: Best (most affordable) notebook
 slug: best-notebook
-date: 2026-04-30
+date: 2026-04-30T18:31:22+05:30
 description: The joy of fresh pages!
 tags:
   - personal

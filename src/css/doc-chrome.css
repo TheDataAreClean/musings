@@ -121,14 +121,6 @@ body {
     0 1px 1px         rgba(0,0,0,0.12);
 }
 
-/* Left: application identifier — like Google Docs wordmark */
-.app-titlebar__app {
-  font-size: var(--text-xs);
-  color: var(--color-muted);
-  font-weight: 400;
-  white-space: nowrap;
-}
-
 /* Centre: current document title */
 .app-titlebar__doc {
   font-weight: 700;

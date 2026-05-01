@@ -1,6 +1,6 @@
 ---
 title: Self expression
-date: 2026-04-11
+date: 2026-04-11T02:11:57+00:00
 updated: 2026-04-11T17:54:00.000Z
 description: Powered by LLMs?
 tags:

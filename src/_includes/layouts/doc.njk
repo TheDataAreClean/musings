@@ -7,9 +7,7 @@ ogType: article
 
   <p class="doc-title">{{ title }}</p>
 
-  <p class="doc-nav">
-    <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/snaps/">Snaps</a> · <a href="/about/">About</a> · <a href="/feed.xml">RSS</a>
-  </p>
+  {% set navRss = true %}{% include "nav.njk" %}
 
   {% if description %}<p class="doc-description">{{ description }}</p>{% endif %}
 
@@ -19,7 +17,7 @@ ogType: article
       · {{ content | wordcount }} words
       · {{ content | readtime }} min read
     {% endif %}
-    {% if tags %}· {% for tag in tags %}{% if tag != "ideas" and tag != "notes" and tag != "snaps" %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endif %}{% endfor %}{% endif %}
+    {% if tags %}· {% for tag in tags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endfor %}{% endif %}
   </p>
 
   <div class="doc-layout">

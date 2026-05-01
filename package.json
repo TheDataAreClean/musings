@@ -1,13 +1,15 @@
 {
   "name": "musings",
-  "version": "3.1.2",
+  "version": "3.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "eleventy --serve --watch --port=8081",
+    "prebuild": "node scripts/backfill-dates.js && node scripts/convert-webp.js",
     "build": "eleventy",
     "clean": "rm -rf _site",
-    "webp": "node scripts/convert-webp.js"
+    "webp": "node scripts/convert-webp.js",
+    "backfill": "node scripts/backfill-dates.js"
   },
   "keywords": [],
   "author": "",

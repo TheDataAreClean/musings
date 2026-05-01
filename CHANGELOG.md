@@ -10,6 +10,21 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-05-01 (v3.2.0)
+
+- infra: date backfill system — `scripts/backfill-dates.js` fills git creation time into date-only front matter; runs as `prebuild` hook before every build; fixes same-day post ordering
+- infra: `prebuild` npm hook chains backfill + webp so `npm run build` handles everything; deploy.yml simplified to two steps
+- fix: snaps index tag filter now correctly excludes all collection tags (was only excluding `snaps`)
+- fix: SVG images no longer served as broken WebP paths
+- fix: `manifest.json` icon corrected from missing `icon-192.png` to existing `favicon-512.png`
+- refactor: nav extracted to `src/_includes/nav.njk` — single source across all 6 pages
+- refactor: `collectionTags` and `postSigil` Eleventy filters replace duplicated inline logic
+- refactor: shared `stripHtml` helper consolidates `wordcount` and `readtime` filters
+- feat: `src/404.md` — 404 page now exists
+- chore: dead CSS selector `.app-titlebar__app` removed
+
+---
+
 ## 2026-05-01 (v3.1.2)
 
 - fix: dot separator restored between read time and tags on post page

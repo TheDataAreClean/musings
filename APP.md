@@ -152,6 +152,24 @@ Defined in `.eleventy.js`:
 Section break: `---` in body renders as `* * *`.
 Page break: `<hr class="page-break">` renders as a grey desk gap.
 
+**Template filters (`.eleventy.js`):**
+
+| Filter | Input | Output |
+|---|---|---|
+| `collectionTags` | `tags` array | Tags with `ideas`, `notes`, `snaps` removed |
+| `postSigil` | `tags` array | `→` ideas · `○` snaps · `·` notes (default) |
+| `wordcount` | HTML string | Word count (strips tags first) |
+| `readtime` | HTML string | Minutes to read at 200 wpm |
+| `readableDate` | date | "30 April 2026" in IST |
+| `isoDate` | date | `YYYY-MM-DD` in IST |
+| `atomDate` | date | UTC ISO 8601 for Atom feed |
+| `groupByYear` | posts array | Posts grouped by year, descending |
+| `excerpt` | HTML string | First 200 chars, tags stripped |
+| `limit` / `offset` | array, n | Slice helpers |
+| `findIndex` | array, page | Index of current page in collection |
+
+**Nav include:** `src/_includes/nav.njk` — shared navigation used by all pages. Set `{% set navRss = true %}` before including to show the RSS link (home and post pages only).
+
 ---
 
 ## Markdown extensions

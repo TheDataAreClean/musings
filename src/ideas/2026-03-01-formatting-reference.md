@@ -1,6 +1,6 @@
 ---
 title: A complete formatting reference
-date: 2026-03-01
+date: 2026-03-01T20:41:38+05:30
 updated: 2026-03-27
 description: "Every element this document format supports, in one place."
 tags:
