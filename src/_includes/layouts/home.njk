@@ -8,9 +8,7 @@ layout: layouts/base.njk
 
   {% set navRss = true %}{% include "nav.njk" %}
 
-  <div class="doc-body">
-    {{ content | safe }}
-  </div>
+  {% if description %}<p class="doc-description">{{ description }}</p>{% endif %}
 
   {% if collections.feed.length %}
   <div class="post-list">

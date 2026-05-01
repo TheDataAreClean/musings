@@ -2,6 +2,7 @@
 layout: layouts/doc.njk
 title: About
 date: 2025-01-01
+hideMeta: true
 ---
 
 I am a curious individual who likes to dip their toes in every pond.

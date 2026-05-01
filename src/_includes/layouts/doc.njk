@@ -11,6 +11,7 @@ ogType: article
 
   {% if description %}<p class="doc-description">{{ description }}</p>{% endif %}
 
+  {% if not hideMeta %}
   <p class="doc-meta">
     {% if date %}
       <time datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
@@ -19,6 +20,7 @@ ogType: article
     {% endif %}
     {% if tags %}· {% for tag in tags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endfor %}{% endif %}
   </p>
+  {% endif %}
 
   <div class="doc-layout">
 

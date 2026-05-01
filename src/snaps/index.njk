@@ -7,7 +7,9 @@ title: Snaps
 
   <p class="doc-title">Snaps</p>
 
-  {% include "nav.njk" %}
+  {% set navRss = true %}{% include "nav.njk" %}
+
+  <p class="doc-description">Moments that stuck.</p>
 
   {% if collections.snaps.length %}
   <div class="post-list">

@@ -7,7 +7,9 @@ title: Ideas
 
   <p class="doc-title">Ideas</p>
 
-  {% include "nav.njk" %}
+  {% set navRss = true %}{% include "nav.njk" %}
+
+  <p class="doc-description">Things felt deeply.</p>
 
   {% if collections.ideas.length %}
   <div class="post-list">
