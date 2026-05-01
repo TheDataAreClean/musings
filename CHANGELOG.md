@@ -10,6 +10,16 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-05-01 (v3.1.2)
+
+- fix: dot separator restored between read time and tags on post page
+- fix: tag spacing on post page now matches home page (CSS margin, no leading spaces)
+- fix: tag page count line removed — title and list are sufficient
+- fix: counts removed from Ideas, Notes, Snaps index pages
+- feat: tag name highlighted in yellow on tag page via `<mark>`
+
+---
+
 ## 2026-04-30 (v3.1.1)
 
 - feat: image captions via markdown — `![alt](url "Caption")` renders as `<figure>` with `<figcaption>`; caption font follows the doc font switcher

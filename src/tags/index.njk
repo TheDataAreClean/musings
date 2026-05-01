@@ -16,13 +16,11 @@ eleventyExcludeFromCollections: true
 
 <div class="doc-page">
 
-  <p class="doc-title">{{ tag }}</p>
+  <p class="doc-title"><mark>{{ tag }}</mark></p>
 
   <p class="doc-nav">
     <a href="/">Home</a> · <a href="/ideas/">Ideas</a> · <a href="/notes/">Notes</a> · <a href="/snaps/">Snaps</a> · <a href="/about/">About</a>
   </p>
-
-  <p class="doc-meta">{{ collections[tag] | length }} {% if collections[tag] | length == 1 %}post{% else %}posts{% endif %} tagged "{{ tag }}"</p>
 
   {% set taggedPosts = collections[tag] | sort(true, false, "date") %}
   {% if taggedPosts.length %}

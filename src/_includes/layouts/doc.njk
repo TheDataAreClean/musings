@@ -19,9 +19,7 @@ ogType: article
       · {{ content | wordcount }} words
       · {{ content | readtime }} min read
     {% endif %}
-    {% if tags %}
-      {% for tag in tags %}{% if tag != "ideas" and tag != "notes" and tag != "snaps" %} · <a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endif %}{% endfor %}
-    {% endif %}
+    {% if tags %}· {% for tag in tags %}{% if tag != "ideas" and tag != "notes" and tag != "snaps" %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endif %}{% endfor %}{% endif %}
   </p>
 
   <div class="doc-layout">

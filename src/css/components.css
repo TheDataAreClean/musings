@@ -98,8 +98,14 @@
   color: var(--color-muted);
 }
 
-/* Yellow highlight — used on post list sigils and article page tag links.
-   a.post-tag specificity (0-1-1) is needed to beat .doc-meta a (0-1-1) in doc-chrome.css
+/* Yellow highlight — used on post list sigils, article page tag links, and tag page title. */
+mark {
+  background: var(--color-mark);
+  color: var(--color-text);
+  padding: 0 2px;
+}
+
+/* a.post-tag specificity (0-1-1) is needed to beat .doc-meta a (0-1-1) in doc-chrome.css
    via load order; plain .post-tag (0-1-0) loses. */
 a.post-tag,
 a.post-tag:visited {
