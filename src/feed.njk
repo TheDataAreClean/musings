@@ -22,7 +22,8 @@ eleventyExcludeFromCollections: true
     <updated>{{ post.date | atomDate }}</updated>
     {% if post.data.description %}<summary>{{ post.data.description }}</summary>
     {% endif %}{% for tag in post.data.tags %}<category term="{{ tag }}"/>
-    {% endfor %}<content type="html"><![CDATA[{{ post.templateContent | safe }}]]></content>
+    {% endfor %}<content type="html"><![CDATA[{{ post.templateContent | safe }}{% if post.data.tags and post.data.tags.length %}
+<p style="margin-top:1.5em;color:#6b7280;font-size:0.875em;">{{ post.data.tags | join(' · ') }}</p>{% endif %}]]></content>
   </entry>
   {% endfor %}
 </feed>

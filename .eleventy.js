@@ -3,19 +3,18 @@ const markdownItFootnote = require("markdown-it-footnote");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItAttrs = require("markdown-it-attrs");
 
-// Returns a WebP path for convertible uploads (jpg/jpeg/png), otherwise null
+// Returns a WebP path for convertible uploads (jpg/jpeg/png/heic), otherwise null
 function webpSrc(src) {
   if (!src.startsWith("/images/uploads/")) return null;
   const ext = (src.match(/\.[^.]+$/)?.[0] || "").toLowerCase();
-  if (![".jpg", ".jpeg", ".png"].includes(ext)) return null;
+  if (![".jpg", ".jpeg", ".png", ".heic"].includes(ext)) return null;
   return src.slice(0, -ext.length) + ".webp";
 }
 
 // Wraps an img tag in a <picture> with a WebP source when available
 function pictureTag(src, alt, title) {
   const webp = webpSrc(src);
-  const imgSrc = webp || src;
-  let img = `<img src="${imgSrc}" alt="${alt}"`;
+  let img = `<img src="${src}" alt="${alt}"`;
   if (title) img += ` title="${title}"`;
   img += `>`;
   if (!webp) return img;
@@ -60,6 +59,11 @@ function markdownItFigures(md) {
 }
 
 module.exports = function (eleventyConfig) {
+  const isDev = process.env.ELEVENTY_RUN_MODE !== "build";
+  function filterDrafts(posts) {
+    return isDev ? posts : posts.filter((p) => !p.data.draft);
+  }
+
   // Markdown configuration
   const md = markdownIt({
     html: true,
@@ -198,23 +202,23 @@ module.exports = function (eleventyConfig) {
   }
 
   eleventyConfig.addCollection("ideas", function (collectionApi) {
-    return sortPosts(collectionApi.getFilteredByGlob("src/ideas/**/*.md"));
+    return sortPosts(filterDrafts(collectionApi.getFilteredByGlob("src/ideas/**/*.md")));
   });
 
   eleventyConfig.addCollection("notes", function (collectionApi) {
-    return sortPosts(collectionApi.getFilteredByGlob("src/notes/**/*.md"));
+    return sortPosts(filterDrafts(collectionApi.getFilteredByGlob("src/notes/**/*.md")));
   });
 
   eleventyConfig.addCollection("snaps", function (collectionApi) {
-    return sortPosts(collectionApi.getFilteredByGlob("src/snaps/**/*.md"));
+    return sortPosts(filterDrafts(collectionApi.getFilteredByGlob("src/snaps/**/*.md")));
   });
 
   eleventyConfig.addCollection("feed", function (collectionApi) {
-    return sortPosts([
+    return sortPosts(filterDrafts([
       ...collectionApi.getFilteredByGlob("src/ideas/**/*.md"),
       ...collectionApi.getFilteredByGlob("src/notes/**/*.md"),
       ...collectionApi.getFilteredByGlob("src/snaps/**/*.md"),
-    ]);
+    ]));
   });
 
   // Shortcodes

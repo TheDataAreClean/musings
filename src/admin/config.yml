@@ -26,6 +26,7 @@ collections:
       - { name: title, label: Title, widget: string }
       - { name: slug, label: Slug, widget: string, required: false, hint: "Optional — overrides the URL slug. Leave blank to auto-derive from title. Lowercase, hyphens only." }
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm" }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Hidden from feed and listings. The post URL still works for preview." }
       - { name: description, label: Description, widget: text, required: false, hint: "One sentence — shown as subtitle and used for OG meta." }
       - name: tags
         label: Tags
@@ -44,6 +45,7 @@ collections:
       - { name: title, label: Title, widget: string }
       - { name: slug, label: Slug, widget: string, required: false, hint: "Optional — overrides the URL slug. Leave blank to auto-derive from title. Lowercase, hyphens only." }
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm" }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Hidden from feed and listings. The post URL still works for preview." }
       - { name: description, label: Description, widget: text, required: false, hint: "One sentence — shown as subtitle and used for OG meta." }
       - name: tags
         label: Tags
@@ -62,6 +64,7 @@ collections:
       - { name: title, label: Title, widget: string }
       - { name: slug, label: Slug, widget: string, required: false, hint: "Optional — overrides the URL slug. Leave blank to auto-derive from title. Lowercase, hyphens only." }
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm" }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Hidden from feed and listings. The post URL still works for preview." }
       - { name: description, label: Description, widget: text, required: false, hint: "One line of context." }
       - name: tags
         label: Tags

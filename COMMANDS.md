@@ -14,6 +14,7 @@ All runnable commands. Source: `package.json`.
 | Clean build output | `npm run clean` |
 | Convert uploads to WebP | `npm run webp` |
 | Backfill post datetimes from git | `npm run backfill` |
+| Backfill slug → permalink in front matter | `node scripts/backfill-permalink.js` |
 | Check vulnerabilities | `npm audit` |
 | List available updates | `npm outdated` |
 
@@ -47,4 +48,4 @@ git push && git push origin vx.y.z
 - Build output → `_site/` (not committed)
 - `npm run clean` deletes `_site/` only — safe to run before a fresh build
 - `npm ci` is used in CI (`deploy.yml`) — prefer `npm install` locally
-- `npm run build` automatically runs `prebuild` first (backfill + webp) — no need to call them separately in CI
+- `npm run build` automatically runs `prebuild` first (backfill-dates + convert-webp + backfill-permalink) — no need to call them separately in CI

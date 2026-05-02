@@ -1,11 +1,11 @@
 {
   "name": "musings",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "eleventy --serve --watch --port=8081",
-    "prebuild": "node scripts/backfill-dates.js && node scripts/convert-webp.js",
+    "prebuild": "node scripts/backfill-dates.js && node scripts/convert-webp.js && node scripts/backfill-permalink.js",
     "build": "eleventy",
     "clean": "rm -rf _site",
     "webp": "node scripts/convert-webp.js",

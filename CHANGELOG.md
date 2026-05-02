@@ -10,6 +10,18 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-05-02 (v3.3.0)
+
+- feat: draft support — `draft: true` in front matter hides a post from home feed, section pages, and RSS while keeping the URL live for preview; `Draft` toggle added to Sveltia CMS for all three sections
+- feat: RSS content footer — post tags rendered as visible text at the bottom of each Atom entry
+- feat: slug → permalink backfill — `scripts/backfill-permalink.js` (runs as part of `prebuild`) writes a `permalink` into front matter when `slug` is set; date prefix is preserved from the filename
+- fix: HEIC image support — `convert-webp.js` now converts HEIC uploads to WebP alongside JPEG/PNG
+- fix: markdown image references automatically updated to `.webp` paths after conversion, so posts always reference the file that exists
+- fix: `<img>` fallback in `<picture>` element now uses the original source path (not the `.webp` path), so images degrade correctly before conversion runs
+- fix: broken `*.11tydata.js` directory data files (silently ignored by Eleventy 3.x) replaced with correct `.json` files; layout and tags were not being applied to any post
+
+---
+
 ## 2026-05-01 (v3.2.1)
 
 - feat: subtitles on Notes, Ideas, Snaps index pages via `doc-description` class

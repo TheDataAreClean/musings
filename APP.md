@@ -43,7 +43,7 @@ No build tools, no bundler. Eleventy templates produce static HTML; all CSS and 
 
 **Sort order** (all collections): dated posts desc → `updated` desc as tie-break → undated last.
 
-**Permalink computation:** `{type}.11tydata.js` in each content directory. When `slug` is set in front matter, URL is `/{type}/{date}-{slug}/`. Without it, the filename drives the URL.
+**Permalink computation:** `scripts/backfill-permalink.js` runs as part of `prebuild`. When `slug` is set in front matter, it writes `permalink: /{type}/{date}-{slug}/` directly into the file. Without `slug`, the filename drives the URL. Do not set `permalink` manually — the script manages it.
 
 **Front matter per type:**
 
@@ -52,7 +52,8 @@ Ideas (long-form):
 title: The title
 date: 2026-03-26
 description: One sentence for OG, meta, and article subtitle.
-slug: optional-custom-url-slug
+slug: optional-custom-url-slug   # omit to use filename
+draft: true                      # omit to publish
 ```
 
 Notes (short observations):
@@ -60,6 +61,7 @@ Notes (short observations):
 title: The title
 date: 2026-03-26
 slug: optional-custom-url-slug
+draft: true
 ```
 
 Snaps (photography):
@@ -68,6 +70,7 @@ title: Place or subject
 date: 2026-03-26
 description: One line of context.
 slug: optional-custom-url-slug
+draft: true
 ```
 
 Tags and layout are inherited from directory data files — do not repeat them in front matter.
@@ -206,7 +209,10 @@ Session persistence: `sessionStorage` only — resets on new tab by design.
 
 `deploy.yml` triggers on push to `main` — `npm ci → npm run webp → npm run build` → deploys `_site/` to GitHub Pages.
 
-`npm run webp` (`scripts/convert-webp.js`) converts all JPEG/PNG in `src/images/uploads/` to WebP (quality 82), auto-rotates via EXIF orientation, then deletes the original. Existing `.webp` files are skipped. Images render as `<picture>` with a WebP `<source>` and `<img src>` also pointing to WebP — no JPEG fallback is kept.
+`npm run build` runs `prebuild` automatically, which chains three scripts:
+1. `backfill-dates.js` — fills git creation time into date-only front matter
+2. `convert-webp.js` — converts JPEG/PNG/HEIC in `src/images/uploads/` to WebP (quality 82, auto-rotates via EXIF), deletes the original, then updates all markdown references in content files from the old extension to `.webp`. Existing `.webp` files are skipped.
+3. `backfill-permalink.js` — writes `permalink` to front matter for any post with a `slug` field
 
 `src/CNAME` is passthrough-copied to `_site/CNAME` — required for the custom domain to survive deploys.
 
@@ -242,3 +248,4 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 | `markdown-it-anchor` | Heading anchors |
 | `markdown-it-attrs` | Custom attributes |
 | `markdown-it-footnote` | Footnotes |
+| `sharp` | Image conversion — JPEG/PNG/HEIC → WebP in `convert-webp.js` |
