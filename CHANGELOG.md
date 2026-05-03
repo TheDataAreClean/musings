@@ -10,6 +10,14 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-05-03 (v3.3.1)
+
+- fix: image filenames now use the post's `slug` front matter field (e.g. `2026-05-02-year-offline-{hash}.webp`) instead of the raw filename stem; falls back to filename stem when no slug is set
+- fix: `convert-webp.js` renames existing WebP uploads that don't match the naming convention, in addition to newly converted files
+- content: "FY 2025-26, offline" — blob image placeholders replaced with uploaded photos, typo fixed, photos link added
+
+---
+
 ## 2026-05-02 (v3.3.0)
 
 - feat: draft support — `draft: true` in front matter hides a post from home feed, section pages, and RSS while keeping the URL live for preview; `Draft` toggle added to Sveltia CMS for all three sections
