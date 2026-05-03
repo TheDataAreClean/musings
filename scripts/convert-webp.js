@@ -1,4 +1,5 @@
 const sharp = require("sharp");
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -24,31 +25,61 @@ function getMdFiles() {
 
 async function convertAll() {
   const files = fs.readdirSync(uploadsDir);
+  const mdFiles = getMdFiles();
 
-  // Convert any originals that don't yet have a webp counterpart
+  // Read all md contents once — used for post map and ref updates
+  const original = new Map(mdFiles.map((f) => [f, fs.readFileSync(f, "utf8")]));
+
+  // Build image filename → post file map from md contents
+  const imagePostMap = new Map();
+  for (const [mdFile, content] of original) {
+    for (const match of content.matchAll(/\(\/images\/uploads\/([^)"\s]+)/g)) {
+      const name = path.basename(match[1]);
+      if (!imagePostMap.has(name)) imagePostMap.set(name, mdFile);
+    }
+  }
+
+  // Convert originals, naming output after the referencing post
   const toConvert = files.filter((f) => convertExts.has(path.extname(f).toLowerCase()));
+  const renames = new Map(); // old filename → new webp filename
+
   await Promise.all(
     toConvert.map(async (file) => {
       const src = path.join(uploadsDir, file);
-      const base = path.basename(file, path.extname(file));
+      const buf = fs.readFileSync(src);
+      const hash = crypto.createHash("sha256").update(buf).digest("hex").slice(0, 8);
+
+      const postFile = imagePostMap.get(file);
+      const base = postFile
+        ? `${path.basename(postFile, ".md")}-${hash}`
+        : `${path.basename(file, path.extname(file))}-${hash}`;
+
       const dest = path.join(uploadsDir, base + ".webp");
       if (fs.existsSync(dest)) return;
       await sharp(src).rotate().webp({ quality: 82 }).toFile(dest);
       fs.unlinkSync(src);
-      console.log(`converted: ${file} → ${base}.webp (original removed)`);
+      renames.set(file, base + ".webp");
+      console.log(`converted: ${file} → ${base}.webp`);
     })
   );
 
-  // Fix any markdown still referencing old extensions — read all files once into memory
-  const mdFiles = getMdFiles();
-  const original = new Map(mdFiles.map((f) => [f, fs.readFileSync(f, "utf8")]));
+  // Update markdown refs in one pass — newly renamed + stale extension refs
   const updated = new Map(original);
 
-  const webpFiles = new Set([
+  for (const [oldName, newName] of renames) {
+    for (const mdFile of mdFiles) {
+      const content = updated.get(mdFile);
+      if (content.includes(oldName)) {
+        updated.set(mdFile, content.split(oldName).join(newName));
+      }
+    }
+  }
+
+  const allWebp = new Set([
     ...files.filter((f) => f.endsWith(".webp")),
-    ...toConvert.map((f) => path.basename(f, path.extname(f)) + ".webp"),
+    ...renames.values(),
   ]);
-  for (const webpFile of webpFiles) {
+  for (const webpFile of allWebp) {
     const base = path.basename(webpFile, ".webp");
     for (const mdFile of mdFiles) {
       let content = updated.get(mdFile);
