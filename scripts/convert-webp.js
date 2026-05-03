@@ -10,6 +10,7 @@ const contentDirs = [
   path.join(__dirname, "../src/snaps"),
 ];
 const convertExts = new Set([".jpg", ".jpeg", ".png", ".heic"]);
+const correctName = /^\d{4}-\d{2}-\d{2}-.+-[0-9a-f]{8}$/;
 
 function getMdFiles() {
   return contentDirs.flatMap((dir) => {
@@ -39,10 +40,10 @@ async function convertAll() {
     }
   }
 
-  // Convert originals, naming output after the referencing post
-  const toConvert = files.filter((f) => convertExts.has(path.extname(f).toLowerCase()));
-  const renames = new Map(); // old filename → new webp filename
+  const renames = new Map(); // old filename → new filename
 
+  // Convert originals (JPEG/PNG/HEIC → WebP), naming after the referencing post
+  const toConvert = files.filter((f) => convertExts.has(path.extname(f).toLowerCase()));
   await Promise.all(
     toConvert.map(async (file) => {
       const src = path.join(uploadsDir, file);
@@ -63,7 +64,27 @@ async function convertAll() {
     })
   );
 
-  // Update markdown refs in one pass — newly renamed + stale extension refs
+  // Rename existing WebP files that don't follow the naming convention
+  const existingWebp = files.filter((f) => f.endsWith(".webp"));
+  for (const file of existingWebp) {
+    const base = path.basename(file, ".webp");
+    if (correctName.test(base)) continue;
+
+    const postFile = imagePostMap.get(file);
+    if (!postFile) continue; // orphan — no post context to derive a name
+
+    const src = path.join(uploadsDir, file);
+    const hash = crypto.createHash("sha256").update(fs.readFileSync(src)).digest("hex").slice(0, 8);
+    const newBase = `${path.basename(postFile, ".md")}-${hash}`;
+    const dest = path.join(uploadsDir, newBase + ".webp");
+
+    if (fs.existsSync(dest)) continue;
+    fs.renameSync(src, dest);
+    renames.set(file, newBase + ".webp");
+    console.log(`renamed:   ${file} → ${newBase}.webp`);
+  }
+
+  // Update markdown refs in one pass — all renames + stale extension refs
   const updated = new Map(original);
 
   for (const [oldName, newName] of renames) {

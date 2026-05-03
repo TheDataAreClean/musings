@@ -9,4 +9,4 @@ tags:
   - street
 ---
 
-![](/images/uploads/IDG_20260501_114340_157.webp "They really don’t want us here.")
+![](/images/uploads/2026-05-01-you-re-not-welcome-c69af97d.webp "They really don’t want us here.")
