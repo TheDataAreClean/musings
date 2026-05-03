@@ -9,4 +9,4 @@ tags:
   - luru
 ---
 
-![](/images/uploads/2026-04-30-working-like-a-dog-9eae244b.webp "These clothes are not going to stitch themselves!")
+![](/images/uploads/2026-04-30-work-dog-9eae244b.webp "These clothes are not going to stitch themselves!")

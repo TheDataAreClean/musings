@@ -5,4 +5,4 @@ updated: 2026-03-28T07:53:00.000Z
 description: "Excited and nervous!"
 ---
 
-![image.jpeg](/images/uploads/2026-03-19-extreme-photography-2faf99c2.webp)
+![image.jpeg](/images/uploads/2026-03-19-extreme-photography-9b576356.webp)

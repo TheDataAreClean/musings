@@ -10,7 +10,6 @@ const contentDirs = [
   path.join(__dirname, "../src/snaps"),
 ];
 const convertExts = new Set([".jpg", ".jpeg", ".png", ".heic"]);
-const correctName = /^\d{4}-\d{2}-\d{2}-.+-[0-9a-f]{8}$/;
 
 function getMdFiles() {
   return contentDirs.flatMap((dir) => {
@@ -22,6 +21,16 @@ function getMdFiles() {
       return [];
     }
   });
+}
+
+// Returns the canonical base name for a post: {date}-{slug} if slug is set, else filename stem
+function postBaseName(postFile, content) {
+  const dateMatch = path.basename(postFile).match(/^(\d{4}-\d{2}-\d{2})-/);
+  const datePrefix = dateMatch ? dateMatch[1] : null;
+  const slugMatch = content && content.match(/^slug:\s*(.+)$/m);
+  const slug = slugMatch ? slugMatch[1].trim().replace(/^["']|["']$/g, "") : null;
+  if (datePrefix && slug) return `${datePrefix}-${slug}`;
+  return path.basename(postFile, ".md");
 }
 
 async function convertAll() {
@@ -42,7 +51,7 @@ async function convertAll() {
 
   const renames = new Map(); // old filename → new filename
 
-  // Convert originals (JPEG/PNG/HEIC → WebP), naming after the referencing post
+  // Convert originals (JPEG/PNG/HEIC → WebP), naming after the referencing post's slug
   const toConvert = files.filter((f) => convertExts.has(path.extname(f).toLowerCase()));
   await Promise.all(
     toConvert.map(async (file) => {
@@ -52,7 +61,7 @@ async function convertAll() {
 
       const postFile = imagePostMap.get(file);
       const base = postFile
-        ? `${path.basename(postFile, ".md")}-${hash}`
+        ? `${postBaseName(postFile, original.get(postFile))}-${hash}`
         : `${path.basename(file, path.extname(file))}-${hash}`;
 
       const dest = path.join(uploadsDir, base + ".webp");
@@ -64,20 +73,19 @@ async function convertAll() {
     })
   );
 
-  // Rename existing WebP files that don't follow the naming convention
+  // Rename existing WebP files that don't match the expected post-based slug name
   const existingWebp = files.filter((f) => f.endsWith(".webp"));
   for (const file of existingWebp) {
-    const base = path.basename(file, ".webp");
-    if (correctName.test(base)) continue;
-
     const postFile = imagePostMap.get(file);
     if (!postFile) continue; // orphan — no post context to derive a name
 
     const src = path.join(uploadsDir, file);
     const hash = crypto.createHash("sha256").update(fs.readFileSync(src)).digest("hex").slice(0, 8);
-    const newBase = `${path.basename(postFile, ".md")}-${hash}`;
-    const dest = path.join(uploadsDir, newBase + ".webp");
+    const newBase = `${postBaseName(postFile, original.get(postFile))}-${hash}`;
 
+    if (path.basename(file, ".webp") === newBase) continue; // already correct
+
+    const dest = path.join(uploadsDir, newBase + ".webp");
     if (fs.existsSync(dest)) continue;
     fs.renameSync(src, dest);
     renames.set(file, newBase + ".webp");

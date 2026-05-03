@@ -7,7 +7,7 @@ tags:
   - luru
 ---
 
-![image.png](/images/uploads/2026-03-27-tender-cocnut-3289c535.webp)
+![image.png](/images/uploads/2026-03-27-tender-cocnut-eaad6b9b.webp)
 
 
 No nonsense, focus on one flavour, and doing it well.
