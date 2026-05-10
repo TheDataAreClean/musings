@@ -11,6 +11,17 @@ ogType: article
 
   {% if description %}<p class="doc-description">{{ description }}</p>{% endif %}
 
+  {% if tags and ("snaps" in tags) %}
+    {% set sectionLabel = "snaps" %}
+    {% set sectionUrl = "/snaps/" %}
+  {% elif tags and ("notes" in tags) %}
+    {% set sectionLabel = "notes" %}
+    {% set sectionUrl = "/notes/" %}
+  {% else %}
+    {% set sectionLabel = "ideas" %}
+    {% set sectionUrl = "/ideas/" %}
+  {% endif %}
+
   {% if not hideMeta %}
   <p class="doc-meta">
     {% if date %}
@@ -18,7 +29,7 @@ ogType: article
       · {{ content | wordcount }} words
       · {{ content | readtime }} min read
     {% endif %}
-    {% if tags %}· {% for tag in tags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endfor %}{% endif %}
+    · <a class="post-tag" href="{{ sectionUrl }}">{{ sectionLabel }}</a>{% for tag in tags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endfor %}
   </p>
   {% endif %}
 
@@ -29,29 +40,14 @@ ogType: article
         {{ content | safe }}
       </div>
 
-      {# Resolve the correct collection for prev/next by the post's type tag #}
-      {% if tags and ("snaps" in tags) %}
-        {% set allPosts = collections.snaps %}
-      {% elif tags and ("notes" in tags) %}
-        {% set allPosts = collections.notes %}
-      {% else %}
-        {% set allPosts = collections.ideas %}
-      {% endif %}
-      {% set postIndex = allPosts | findIndex(page) %}
-      {% if postIndex >= 0 %}
       <nav class="post-nav" aria-label="Post navigation">
         <div class="post-nav__prev">
-          {% if allPosts[postIndex + 1] %}
-          <a href="{{ allPosts[postIndex + 1].url }}">← {{ allPosts[postIndex + 1].data.title }}</a>
-          {% endif %}
+          <a href="{{ sectionUrl }}">← More {{ sectionLabel }}</a>
         </div>
         <div class="post-nav__next">
-          {% if allPosts[postIndex - 1] %}
-          <a href="{{ allPosts[postIndex - 1].url }}">{{ allPosts[postIndex - 1].data.title }} →</a>
-          {% endif %}
+          <a href="/">All posts →</a>
         </div>
       </nav>
-      {% endif %}
     </div>
 
 

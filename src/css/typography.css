@@ -91,12 +91,18 @@
    -------------------------------------------------------------------------- */
 
 .doc-body blockquote {
-  margin: var(--space-4) var(--space-8);
+  margin: var(--space-6) 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 2px solid var(--color-border-soft);
 }
 
 .doc-body blockquote p {
   text-indent: 0;
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.doc-body blockquote p:last-child {
+  margin-bottom: 0;
 }
 
 /* --------------------------------------------------------------------------
