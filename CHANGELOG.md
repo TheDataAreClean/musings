@@ -6,7 +6,10 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
-—
+- feat: post nav — prev/next title arrows replaced with "← More [section]" and "All posts →" links
+- feat: section name shown as first tag in post meta line, linking to the section index
+- fix: blockquote styles — left border, even padding, inter-paragraph spacing corrected
+- chore: removed empty `src/fonts/` passthrough from Eleventy config
 
 ---
 
