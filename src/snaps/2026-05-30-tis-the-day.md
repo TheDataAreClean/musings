@@ -6,7 +6,7 @@ draft: false
 description: ''
 tags:
   - luru
-  - indiewebclub
+  - indieweb
 ---
 
 ![](/images/uploads/IDG_20260530_132004_750.jpeg)
