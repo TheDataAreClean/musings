@@ -5,8 +5,7 @@ date: 2026-05-30T13:15:00+05:30
 draft: false
 description: ''
 tags:
-  - '- luru'
-  - '- indiewebclub'
+  - luruindiewebclub
 ---
 
 ![](/images/uploads/IDG_20260530_132004_750.jpeg)
