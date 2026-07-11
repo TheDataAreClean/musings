@@ -5,8 +5,8 @@ date: 2026-07-11T08:26:00+05:30
 draft: false
 description: Reflections on an eventful nine months to VizChitra 2026.
 tags:
-  - '- people'
-  - '- community'
+  - people
+  - community
 ---
 
 Now that [VizChitra](https://vizchitra.com/2026) has ended, and I have come out of a six-month hibernation to meet friends and catch up with family again, one question keeps popping up in every conversation: “So, how was VizChitra?”
@@ -17,9 +17,9 @@ But as I was sharing some thoughts about VizChitra with a couple of colleagues t
 
 The conference itself felt like a good consolation prize.
 
----
+***
 
-![](/images/uploads/IMG_7645.jpeg "The almighty editorial team. ")
+![](/images/uploads/IMG_7645.jpeg "The almighty editorial team.")
 
 ![](/images/uploads/ad042070-6245-49c2-9743-338ec0735315.jpeg "Favourite person!")
 
