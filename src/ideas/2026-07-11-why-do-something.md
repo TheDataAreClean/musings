@@ -1,6 +1,6 @@
 ---
 title: Why do something?
-slug: ''
+slug: vizchitra-2026
 date: 2026-07-11T08:26:00+05:30
 draft: false
 description: Reflections on an eventful nine months to VizChitra 2026.
