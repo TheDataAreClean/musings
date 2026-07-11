@@ -23,4 +23,4 @@ The conference itself felt like a good consolation prize.
 
 ![](/images/uploads/ad042070-6245-49c2-9743-338ec0735315.jpeg "Favourite person!")
 
-![](/images/uploads/f00da9de-2c32-4f31-b544-b5327bc4ee3c.jpeg "And some new friends made along there way.")
+![](/images/uploads/f00da9de-2c32-4f31-b544-b5327bc4ee3c.jpeg "And some new friends made along the way.")
