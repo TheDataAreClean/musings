@@ -6,6 +6,10 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+---
+
+## 2026-07-20 (v3.4.0)
+
 - feat: post nav — prev/next title arrows replaced with "← More [section]" and "All posts →" links
 - feat: section name shown as first tag in post meta line, linking to the section index
 - feat: RSS feed — post description now rendered as visible text at the top of each entry's content, not just the `<summary>` field
