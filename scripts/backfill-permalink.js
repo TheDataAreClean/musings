@@ -22,6 +22,7 @@ for (const { dir, name } of sections) {
     const slugMatch = fm.match(/^slug:\s*(.+)$/m);
     if (!slugMatch) continue;
     const slug = slugMatch[1].trim().replace(/^["']|["']$/g, "");
+    if (!slug) continue;
 
     const dateMatch = file.match(/^(\d{4}-\d{2}-\d{2})-/);
     const datePrefix = dateMatch ? `${dateMatch[1]}-` : "";

@@ -8,8 +8,13 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 - feat: post nav — prev/next title arrows replaced with "← More [section]" and "All posts →" links
 - feat: section name shown as first tag in post meta line, linking to the section index
+- feat: RSS feed — post description now rendered as visible text at the top of each entry's content, not just the `<summary>` field
 - fix: blockquote styles — left border, even padding, inter-paragraph spacing corrected
+- fix: `backfill-permalink.js` — an empty/blank `slug` field (e.g. `slug: ''`, which Sveltia CMS writes when the field is left blank) is now treated as unset instead of producing a malformed permalink like `/snaps/2026-05-04-/`
+- fix: RSS feed — images/figures now get inline spacing since feed readers don't load `main.css`
 - chore: removed empty `src/fonts/` passthrough from Eleventy config
+- content: "Tis the day!" and "Noted" — cleared stray empty `slug` field left by Sveltia CMS
+- content: "Why do something?" moved from Ideas to Notes; permalink updated to `/notes/2026-07-11-vizchitra-2026/`
 
 ---
 

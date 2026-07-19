@@ -1,6 +1,7 @@
 ---
 title: Why do something?
 slug: vizchitra-2026
+permalink: /notes/2026-07-11-vizchitra-2026/
 date: 2026-07-11T08:26:00+05:30
 draft: false
 description: Reflections on an eventful nine months to VizChitra 2026.
@@ -19,8 +20,8 @@ The conference itself felt like a good consolation prize.
 
 ***
 
-![](/images/uploads/IMG_7645.jpeg "The almighty editorial team.")
+![](/images/uploads/2026-07-11-vizchitra-2026-94f9ceca.webp "The almighty editorial team.")
 
-![](/images/uploads/ad042070-6245-49c2-9743-338ec0735315.jpeg "Favourite person!")
+![](/images/uploads/2026-07-11-vizchitra-2026-8ab7acb6.webp "Favourite person!")
 
-![](/images/uploads/f00da9de-2c32-4f31-b544-b5327bc4ee3c.jpeg "And some new friends made along the way.")
+![](/images/uploads/2026-07-11-vizchitra-2026-1233f4b7.webp "And some new friends made along the way.")

@@ -146,6 +146,12 @@ module.exports = function (eleventyConfig) {
     return new Date(date).toISOString();
   });
 
+  // Feed readers ignore main.css, so bake in the post-photo spacing inline
+  eleventyConfig.addFilter("rssContent", function (content) {
+    if (!content) return content;
+    return content.replace(/<figure>/g, '<figure style="margin: 2rem 0 3rem;">');
+  });
+
   eleventyConfig.addGlobalData("buildTime", () => new Date());
 
   eleventyConfig.addFilter("groupByYear", function (posts) {
