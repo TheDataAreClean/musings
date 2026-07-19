@@ -1,6 +1,5 @@
 ---
 title: Tis the day!
-slug: ''
 date: 2026-05-30T13:15:00+05:30
 draft: false
 description: ''
@@ -9,6 +8,6 @@ tags:
   - indieweb
 ---
 
-![](/images/uploads/IDG_20260530_132004_750.jpeg)
+![](/images/uploads/2026-05-30-tis-the-day-a0ca9dce.webp)
 
 Join us — [https://blr.indiewebclub.org/](https://blr.indiewebclub.org/) !
