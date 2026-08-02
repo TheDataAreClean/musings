@@ -8,6 +8,14 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-08-02 (v3.6.1)
+
+- fix: `nav.njk` — site nav (`Home · Ideas · Notes · Snaps · About · RSS`) now a semantic `<nav>` element instead of `<p class="doc-nav">`, so readability-style content extractors (used by RSS readers' "fetch full page" fallback for sparse entries) correctly exclude it instead of folding it into extracted article content
+- docs: `CLAUDE.md` trimmed of codebase-derivable content (stack facts, file map, a fact already in `.gitignore`)
+- chore: pre-push checklist and release workflow moved from `CLAUDE.md` into `.claude/skills/release/SKILL.md`, loaded on demand instead of every session
+
+---
+
 ## 2026-08-02 (v3.6.0)
 
 - feat: `deploy.yml` — CI now auto-commits `prebuild`'s output (WebP conversions, backfilled dates/permalinks) back to `main` after every build, so generated content no longer requires a manual local build-and-push cycle to land in the repo
