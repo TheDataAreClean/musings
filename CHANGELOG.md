@@ -8,6 +8,14 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-08-02 (v3.6.0)
+
+- feat: `deploy.yml` — CI now auto-commits `prebuild`'s output (WebP conversions, backfilled dates/permalinks) back to `main` after every build, so generated content no longer requires a manual local build-and-push cycle to land in the repo
+- infra: `deploy.yml` permissions scoped per-job instead of workflow-wide — only `build` holds `contents: write` (needed for the auto-commit), only `deploy` holds `pages`/`id-token: write`
+- fix: `deploy.yml` auto-commit step rebases (`git pull --rebase`) before pushing, so a concurrent push (e.g. from Sveltia CMS) doesn't fail the build
+
+---
+
 ## 2026-08-02 (v3.5.0)
 
 - feat: `robots.txt` added — disallows all crawlers, with explicit entries for named AI/LLM crawlers (GPTBot, ClaudeBot, CCBot, Google-Extended, PerplexityBot, and others)
