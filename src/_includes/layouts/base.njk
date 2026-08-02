@@ -6,6 +6,7 @@
   <title>{% if title and title != "Home" %}{{ title }} — {{ site.shortTitle }}{% else %}{{ site.shortTitle }}{% endif %}</title>
   <meta name="description" content="{{ description or site.description }}">
   <meta name="author" content="{{ site.author }}">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
   <meta property="og:title" content="{% if title and title != "Home" %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}">
   <meta property="og:description" content="{{ description or site.description }}">
   <meta property="og:type" content="{{ ogType or 'website' }}">

@@ -8,6 +8,13 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-08-02 (v3.5.0)
+
+- feat: `robots.txt` added — disallows all crawlers, with explicit entries for named AI/LLM crawlers (GPTBot, ClaudeBot, CCBot, Google-Extended, PerplexityBot, and others)
+- feat: sitewide `<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">` added to `base.njk`
+
+---
+
 ## 2026-08-02 (v3.4.1)
 
 - fix: doc-body paragraph spacing — consecutive paragraphs (`p + p`) now have a small 8px gap instead of sitting fully flush against the indent
