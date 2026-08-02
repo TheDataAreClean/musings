@@ -45,7 +45,7 @@
 /* Paragraph indent after first — classic document convention */
 .doc-body p + p {
   text-indent: 1.5em;
-  margin-top: calc(-1 * var(--space-4));
+  margin-top: calc(var(--space-2) - var(--space-4));
 }
 
 /* No indent after structural breaks */

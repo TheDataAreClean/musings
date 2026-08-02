@@ -8,6 +8,12 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-08-02 (v3.4.1)
+
+- fix: doc-body paragraph spacing — consecutive paragraphs (`p + p`) now have a small 8px gap instead of sitting fully flush against the indent
+
+---
+
 ## 2026-07-20 (v3.4.0)
 
 - feat: post nav — prev/next title arrows replaced with "← More [section]" and "All posts →" links
