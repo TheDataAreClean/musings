@@ -9,4 +9,4 @@ tags:
   - luru
 ---
 
-![](/images/uploads/2026-08-02-taking-flight-c3fa3b25.webp)
+![](/images/uploads/2026-08-02-taking-flight-8dcd0286.webp)
