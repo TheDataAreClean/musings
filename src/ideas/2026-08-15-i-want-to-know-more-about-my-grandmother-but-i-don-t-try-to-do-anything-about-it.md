@@ -1,9 +1,9 @@
 ---
-title: I want to know more about my grandmother, but I don't try to do anything about it..
+title: I want to know more about my grandmother..
 slug: grandmother
 date: 2026-08-15T16:21:00+05:30
 draft: true
-description: I am not sure where to even start!
+description: .. but I don't try to do anything about it
 tags:
   - family
   - history
