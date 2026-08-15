@@ -21,7 +21,7 @@ I have never truly felt connected to the idea and celebration of Independence Da
 
 Today is also the day [The Partition](https://en.wikipedia.org/wiki/Partition_of_India) began. That is what I remember when I think of Independence Day. Growing up in my family, this was the part that felt more significant. My grandmother was 12 years old during the partition, and travelled through horrific circumstances, leaving behind a home that we now call Pakistan.
 
-The 15th of August was always just a public holiday to me. Partition was the part that felt real — even though I never knew the before, only the after, and how it shaped my family.
+The 15th of August was always just a public holiday to me. Partition was the part that felt real – even though I never knew the before, only the after, and how it shaped my family.
 
 ***
 
@@ -33,7 +33,7 @@ Growing older, I have come to better understand (or at least imagine) how that t
 
 ***
 
-As she has grown older, I crave a lucid conversation with my grandmother now. I want to retrace her journey and walk through it with her — the home she left, the effort she made to get here, the parts of it she could not fully share with us when we were younger. I want to sit with her, and archive our family's story before it's gone.
+As she has grown older, I crave a lucid conversation with my grandmother now. I want to retrace her journey and walk through it with her – the home she left, the effort she made to get here, the parts of it she could not fully share with us when we were younger. I want to sit with her, and archive our family's story before it's gone.
 
 I have been making some plans around this for nearly a year now. I want to record her stories as audio, add pictures from family albums where I can find them. But I am not actually doing it.
 
