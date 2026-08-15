@@ -1,6 +1,7 @@
 ---
 title: I want to know more about my grandmother, but I don't try to do anything about it..
 slug: grandmother
+permalink: /ideas/2026-08-15-grandmother/
 date: 2026-08-15T16:21:00+05:30
 draft: true
 description: I am not sure where to even start!
