@@ -1,8 +1,8 @@
 ---
 title: I want to know more about my grandmother..
 slug: grandmother
-date: 2026-08-16T02:10:00+05:30
-draft: true
+date: 2026-08-16T08:34:00+05:30
+draft: false
 description: .. but I don't do anything about it
 tags:
   - family
