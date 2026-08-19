@@ -11,8 +11,8 @@ Static site generator (Eleventy 3.x) → HTML + CSS + JS → GitHub Pages.
 No build tools, no bundler. Eleventy templates produce static HTML; all CSS and JS are served as-is.
 
 **Author/deploy flow:**
-1. Author writes `.md` in `src/` (directly or via Sveltia CMS)
-2. Commit to `main` triggers `deploy.yml`
+1. Author writes `.md` in `src/` via the Obsidian vault at the repo root (post templates in `obsidian-templates/`)
+2. Commit to `main` (via Obsidian Git, or manually) triggers `deploy.yml`
 3. GitHub Actions: `npm ci && npm run build` → `_site/`
 4. Pages deploys `_site/` to `musings.thedataareclean.com`
 
@@ -28,7 +28,7 @@ No build tools, no bundler. Eleventy templates produce static HTML; all CSS and 
 | JavaScript | Inline script in `base.njk` — no bundler |
 | Fonts | Arial (system); Georgia (user-switchable) |
 | Hosting | GitHub Pages + custom domain |
-| CMS | Sveltia CMS (Git-based, via Cloudflare Worker OAuth) |
+| Authoring | Obsidian vault (repo root) + Obsidian Git plugin |
 
 ---
 
@@ -47,11 +47,15 @@ No build tools, no bundler. Eleventy templates produce static HTML; all CSS and 
 
 **Front matter per type:**
 
+Field order convention: `title`, `description`, `date`, `tags`, `slug`, `permalink` (script-managed, see below), `draft` last.
+
 Ideas (long-form):
 ```yaml
 title: The title
-date: 2026-03-26
 description: One sentence for OG, meta, and article subtitle.
+date: 2026-03-26
+tags:
+  - design
 slug: optional-custom-url-slug   # omit to use filename
 draft: true                      # omit to publish
 ```
@@ -59,7 +63,10 @@ draft: true                      # omit to publish
 Notes (short observations):
 ```yaml
 title: The title
+description: One sentence — shown as subtitle and used for OG meta.
 date: 2026-03-26
+tags:
+  - personal
 slug: optional-custom-url-slug
 draft: true
 ```
@@ -67,13 +74,15 @@ draft: true
 Snaps (photography):
 ```yaml
 title: Place or subject
-date: 2026-03-26
 description: One line of context.
+date: 2026-03-26
+tags:
+  - luru
 slug: optional-custom-url-slug
 draft: true
 ```
 
-Tags and layout are inherited from directory data files — do not repeat them in front matter.
+Layout is inherited from directory data files — do not repeat it in front matter. `tags` beyond the collection tag (`ideas`/`notes`/`snaps`, also inherited) are freeform, e.g. `personal`, `tech`, `design`.
 
 ---
 

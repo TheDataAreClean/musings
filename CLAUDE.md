@@ -38,6 +38,12 @@ Font and zoom reset on a new tab by design. Do not upgrade to `localStorage` unl
 **Passthrough copies must be registered**
 Any new asset directory or file needs a corresponding `addPassthroughCopy` in `.eleventy.js`. Missing entries silently 404 in production.
 
+**Obsidian Git must pull before it pushes**
+`deploy.yml` has the CI bot push image-conversion/permalink-backfill commits back to `main` after every build. If the Obsidian Git plugin pushes without pulling first, the push is rejected. Use "Commit and Sync" (or an equivalent pull-then-push setting), not a raw push.
+
+**New posts default to `draft: true`**
+There is no separate draft pipeline — `draft` only hides a post from listings/feed, the URL still resolves once the file is on `main` (see `APP.md`). Post templates in `obsidian-templates/` default to `draft: true` for this reason; flip it to `false` only when actually publishing.
+
 ---
 
 ## Review triggers

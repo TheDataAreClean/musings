@@ -1,11 +1,11 @@
 ---
 title: A complete formatting reference
+description: Every element this document format supports, in one place.
 date: 2026-03-01T20:41:38+05:30
-updated: 2026-03-27
-description: "Every element this document format supports, in one place."
 tags:
   - meta
   - design
+draft: false
 ---
 
 This document exists to show every formatting element this site can render. It is a reference and a test. The content is real where it can be; instrumental where it must be.

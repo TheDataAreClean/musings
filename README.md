@@ -27,10 +27,12 @@ src/              Content, templates, CSS, JS, static assets
   _data/          Global data (site.json)
   images/         Static images
   fonts/          Static fonts
-  admin/          Sveltia CMS entry point + config
 .eleventy.js      Eleventy config — collections, filters, shortcodes
 .github/          Deploy workflow
+obsidian-templates/  Post templates for the Obsidian Templates plugin
 ```
+
+Authored from the Obsidian vault at the repo root — see `APP.md` for the flow.
 
 ---
 

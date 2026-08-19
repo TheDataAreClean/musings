@@ -1,11 +1,12 @@
 ---
 title: Self expression
-date: 2026-04-11T02:11:57+00:00
-updated: 2026-04-11T17:54:00.000Z
 description: Powered by LLMs?
+date: 2026-04-11T02:11:57+00:00
 tags:
   - personal
   - tech
+draft: false
+updated: 2026-04-11T17:54:00.000Z
 ---
 
 Incredibly thankful for the level of self expression I have been able to achieve with the advent of claude code. I still can’t fully process this feeling.

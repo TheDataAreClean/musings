@@ -1,11 +1,12 @@
 ---
 title: Claude Code
-date: 2026-03-28T02:05:37+00:00
-updated: 2026-03-28T08:36:00.000Z
 description: I am hooked.
+date: 2026-03-28T02:05:37+00:00
 tags:
   - tech
   - create
+draft: false
+updated: 2026-03-28T08:36:00.000Z
 ---
 
 I have never felt so empowered and so burdened by a technology before. I am able to build things, and complete projects that have been stuck in my mind for over a decade.

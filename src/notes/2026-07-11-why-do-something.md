@@ -1,13 +1,13 @@
 ---
 title: Why do something?
-slug: vizchitra-2026
-permalink: /notes/2026-07-11-vizchitra-2026/
-date: 2026-07-11T08:26:00+05:30
-draft: false
 description: Reflections on an eventful nine months to VizChitra 2026.
+date: 2026-07-11T08:26:00+05:30
 tags:
   - people
   - community
+slug: vizchitra-2026
+permalink: /notes/2026-07-11-vizchitra-2026/
+draft: false
 ---
 
 Now that [VizChitra](https://vizchitra.com/2026) has ended, and I have come out of a six-month hibernation to meet friends and catch up with family again, one question keeps popping up in every conversation: “So, how was VizChitra?”

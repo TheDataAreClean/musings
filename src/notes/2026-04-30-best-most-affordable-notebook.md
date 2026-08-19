@@ -1,12 +1,13 @@
 ---
 title: Best (most affordable) notebook
-slug: best-notebook
-permalink: /notes/2026-04-30-best-notebook/
-date: 2026-04-30T18:31:22+05:30
 description: The joy of fresh pages!
+date: 2026-04-30T18:31:22+05:30
 tags:
   - personal
   - writing
+slug: best-notebook
+permalink: /notes/2026-04-30-best-notebook/
+draft: false
 ---
 
 Bumbling with excitement today, because I am starting a new notebook tomorrow. Not just any notebook, the best notebook (limited) money can buy.
