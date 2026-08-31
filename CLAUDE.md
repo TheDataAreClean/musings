@@ -44,6 +44,9 @@ Any new asset directory or file needs a corresponding `addPassthroughCopy` in `.
 **New posts default to `draft: false` in Sveltia CMS**
 There is no separate draft pipeline — `draft` only hides a post from listings/feed, the URL still resolves once the file is on `main` (see `APP.md`). The `draft` field in `src/admin/config.yml` defaults to `false`, so a new post publishes immediately on save unless you tick Draft first.
 
+**`src/images` is a symlink — Sveltia CMS config must use the real path**
+`src/images` points at a top-level `images/` directory, not a real folder. Local builds and scripts resolve it fine (Node follows symlinks), but GitHub's Contents API — which Sveltia CMS uses — does not traverse it. `media_folder` in `src/admin/config.yml` must reference `images/uploads` directly, never `src/images/uploads`, or uploaded media silently stops showing up in the CMS.
+
 ---
 
 ## Review triggers

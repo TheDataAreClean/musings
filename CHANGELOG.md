@@ -8,6 +8,9 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 - chore: standardized front-matter field order across all 25 posts to `title`, `description`, `date`, `tags`, `slug`, `permalink`, `draft`
 - chore: `draft: false` made explicit on all 24 existing posts (previously implicit-by-omission on most)
+- infra: `src/images` is now a symlink to a top-level `images/` directory (vault-root, matching Obsidian's attachment location) instead of a real nested folder
+- fix: Sveltia CMS `media_folder` pointed at `src/images/uploads`, which resolves locally through the symlink above but 404s via GitHub's Contents API (symlinks aren't traversed) — media wasn't showing in the CMS; pointed at the real path `images/uploads` instead
+- fix: reverted an incomplete migration off Sveltia CMS to Obsidian-based authoring — `src/admin/` was restored, unused `obsidian-templates/` removed, docs (`APP.md`, `README.md`, `CLAUDE.md`) corrected back to describe Sveltia as the authoring path
 
 ---
 

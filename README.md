@@ -25,7 +25,7 @@ src/              Content, templates, CSS, JS, static assets
   css/            All stylesheets (6 files)
   _includes/      Nunjucks layouts
   _data/          Global data (site.json)
-  images/         Static images
+  images/         Static images (symlink → top-level images/, see APP.md)
   fonts/          Static fonts
   admin/          Sveltia CMS entry point + config
 .eleventy.js      Eleventy config — collections, filters, shortcodes

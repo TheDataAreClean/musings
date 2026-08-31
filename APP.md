@@ -232,6 +232,8 @@ Files: `src/favicon.svg`, `src/favicon.ico`, `src/apple-touch-icon.png`, `src/ma
 
 Any new asset type needs a corresponding `addPassthroughCopy` in `.eleventy.js`.
 
+`src/images` is a symlink to a top-level `images/` directory (vault-root, alongside the Obsidian vault's other files), not a real nested folder. Node resolves it transparently for local builds and scripts, so `src/images/uploads/` is a valid filesystem path — but tools that read the repo through GitHub's API (Sveltia CMS) see only `images/uploads/` as a real git path; `src/images/uploads/` 404s there.
+
 ### Sveltia CMS
 
 Access: `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
@@ -239,7 +241,7 @@ Access: `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
 - Cloudflare Worker at `https://sveltia-cms-auth.thedataareclean.workers.dev` proxies the GitHub OAuth flow
 - GitHub OAuth App callback URL must point to the Worker
 - Every CMS save commits a Markdown file to `main`, which triggers `deploy.yml`
-- Images land in `src/images/uploads/` and are served from `/images/uploads/`
+- `media_folder` in `config.yml` is `images/uploads` (the real path, not the `src/images` symlink — see above); served from `/images/uploads/`
 
 ### Feed
 
