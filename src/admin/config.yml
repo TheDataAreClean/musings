@@ -7,7 +7,7 @@ backend:
   branch: main
   base_url: https://sveltia-cms-auth.thedataareclean.workers.dev
 
-media_folder: src/images/uploads
+media_folder: images/uploads
 public_folder: /images/uploads
 
 slug:
