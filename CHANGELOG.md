@@ -6,9 +6,8 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
-- chore: replaced Sveltia CMS with Obsidian-based authoring — removed `src/admin/` and its passthrough copy; content is now written directly in the Obsidian vault at the repo root, synced via the Obsidian Git plugin; added `obsidian-templates/` with per-collection post templates (defaulting to `draft: true`)
-- chore: standardized front-matter field order across all 25 posts and the three templates to `title`, `description`, `date`, `tags`, `slug`, `permalink`, `draft` — `notes` template gained `description` (Sveltia's original schema and every existing note already used it; `APP.md`'s documented spec was stale); templates gained an empty `slug` field (never `permalink`, which stays script-only)
-- chore: `draft: false` made explicit on all 24 existing posts (previously implicit-by-omission on most) so the field shows as a toggle in Obsidian's Properties panel on every post, not just the ones Sveltia had already touched
+- chore: standardized front-matter field order across all 25 posts to `title`, `description`, `date`, `tags`, `slug`, `permalink`, `draft`
+- chore: `draft: false` made explicit on all 24 existing posts (previously implicit-by-omission on most)
 
 ---
 

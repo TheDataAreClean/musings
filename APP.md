@@ -11,8 +11,8 @@ Static site generator (Eleventy 3.x) → HTML + CSS + JS → GitHub Pages.
 No build tools, no bundler. Eleventy templates produce static HTML; all CSS and JS are served as-is.
 
 **Author/deploy flow:**
-1. Author writes `.md` in `src/` via the Obsidian vault at the repo root (post templates in `obsidian-templates/`)
-2. Commit to `main` (via Obsidian Git, or manually) triggers `deploy.yml`
+1. Author writes `.md` in `src/` (directly, or via Sveltia CMS at `/admin/`)
+2. Commit to `main` triggers `deploy.yml`
 3. GitHub Actions: `npm ci && npm run build` → `_site/`
 4. Pages deploys `_site/` to `musings.thedataareclean.com`
 
@@ -28,7 +28,7 @@ No build tools, no bundler. Eleventy templates produce static HTML; all CSS and 
 | JavaScript | Inline script in `base.njk` — no bundler |
 | Fonts | Arial (system); Georgia (user-switchable) |
 | Hosting | GitHub Pages + custom domain |
-| Authoring | Obsidian vault (repo root) + Obsidian Git plugin |
+| CMS | Sveltia CMS (Git-based, via Cloudflare Worker OAuth) |
 
 ---
 
