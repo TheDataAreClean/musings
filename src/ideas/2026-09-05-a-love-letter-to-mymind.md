@@ -1,7 +1,6 @@
 ---
 title: A love letter to mymind
 slug: mymind
-permalink: /ideas/2026-09-05-mymind/
 date: 2026-09-05T23:46:00+05:30
 draft: false
 description: .. and a case for entropy
@@ -28,7 +27,7 @@ In my love of links also lies a problem. It usually begins when a critical quant
 
 I have tried dozens of “second brain” tools and paid obnoxious amounts in subscription fees over the years to satiate this obsession with links. Most of these tools make the same promises: put everything here, organise it well, and you will always be able to return to your ideas for perpetuity.
 
-The tricky part being “**_organise it well_**”.
+The tricky part being “\*\*_organise it well_\*\*”.
 
 All of these tools demand that you maintain a structure, one they have decided is the best way to build your system. It usually involves some combination of folders, tags, databases, links, naming conventions, and rules about where things belong. Commit to the vocabulary of the application, and you will succeed!
 
@@ -68,7 +67,7 @@ In my love of links also lies a problem. It usually begins when a critical quant
 
 I have tried dozens of “second brain” tools and paid obnoxious amounts in subscription fees over the years to satiate this obsession with links. Most of these tools make the same promises: put everything here, organise it well, and you will always be able to return to your ideas for perpetuity.
 
-The tricky part being “**_organise it well_**”.
+The tricky part being “\*\*_organise it well_\*\*”.
 
 All of these tools demand that you maintain a structure, one they have decided is the best way to build your system. It usually involves some combination of folders, tags, databases, links, naming conventions, and rules about where things belong. Commit to the vocabulary of the application, and you will succeed!
 
@@ -96,7 +95,7 @@ That was more than three years ago. Now, more than 1,800 items later, I cannot i
 
 At this point, I should probably disclose that this is not an advertisement for the app, even though I absolutely love it and could not be convinced otherwise.
 
-![A peek into my mind / mymind. :)](/images/uploads/2026-09-05-mymind-2573dd83.webp)
+![](/images/uploads/mymind.png "A peek into my mind / mymind. :)")
 
 ***
 
@@ -127,8 +126,6 @@ Entropy is inevitable in any system that grows with a person. The challenge for 
 The best software makes you forget that this infrastructure exists at all. It becomes invisible because it adapts to how you want to work. It can lead when you need direction, follow when you know where you are going, and move alongside you as your habits and interests evolve.
 
 As _mymind_ becomes a more integral part of my life, I also realise that I have barely scratched the surface of what it can be for me. There are still so many ways to return to the things I have saved, find old ideas in new contexts, and discover connections I did not know were there. More than three years in, I am still learning how to use it, and look forward to the next turn in this journey.
-
-A peek into my mind / mymind. :)
 
 ***
 
