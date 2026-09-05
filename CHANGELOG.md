@@ -8,6 +8,13 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-09-05 (v3.7.2)
+
+- fix: the browser-tab `<title>` still used the old em-dash + shortTitle format after `og:title` was unified to `{Page Name} | Musings | TheDataAreClean` — the two had drifted apart. `<title>` now uses the identical format, byte-for-byte, on every page.
+- feature: 404 now has a real `og:image` (title "404", description "This page doesn't exist.", pulled from its own on-page text). `ogImageSlug` now strips a trailing `.html` too — 404's `page.url` is `/404.html` (its permalink has no trailing slash, unlike every other page), which would otherwise slug to a colliding `404.html.png`.
+
+---
+
 ## 2026-09-05 (v3.7.1)
 
 - feature: `og:image` generation extended to every page type — home, the three section indices (with their real sigils), every tag page (title highlighted like the real `<mark>{{ tag }}</mark>`, description a live-computed post count), and About. Gating in `base.njk` switched from `ogType == "article"` to a new `ogImageExists` check, so image coverage is decoupled from `og:type` and any page the generator covers gets the tags automatically.
