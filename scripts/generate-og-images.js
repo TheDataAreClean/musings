@@ -65,7 +65,10 @@ const colors = {
  * points at can never drift apart.
  */
 function ogImageSlug(url) {
-  const trimmed = url.replace(/^\/|\/$/g, "");
+  // 404's permalink is "404.html" (no trailing slash, unlike every other
+  // page), so page.url is "/404.html" — strip that extension too, or it'd
+  // slug to "404.html" and collide with the .png this script appends.
+  const trimmed = url.replace(/^\/|\/$/g, "").replace(/\.html$/, "");
   return trimmed === "" ? "home" : trimmed;
 }
 
@@ -316,6 +319,11 @@ async function main() {
   const aboutSrcPath = path.join(ROOT, "src", "about.md");
   const aboutData = matter(fs.readFileSync(aboutSrcPath, "utf8")).data;
   await renderIfStale("/about/", aboutSrcPath, { title: aboutData.title, description: aboutData.description, tags: [] });
+
+  // ---- 404 --------------------------------------------------------------
+  const notFoundSrcPath = path.join(ROOT, "src", "404.md");
+  const notFoundData = matter(fs.readFileSync(notFoundSrcPath, "utf8")).data;
+  await renderIfStale("/404.html", notFoundSrcPath, { title: notFoundData.title, description: notFoundData.description, tags: [] });
 
   // ---- tag pages --------------------------------------------------------
   // No single source file — a tag's card depends on every post carrying it —
