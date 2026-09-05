@@ -6,11 +6,17 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+---
+
+## 2026-09-05 (v3.7.0)
+
 - design: Georgia is now the document body's default font (`--font-doc`), switchable to Arial via the font dropdown — was the reverse. `--font-ui` (chrome) is unaffected, still always Arial.
 - feature: per-post `og:image` — generated at build time (`scripts/generate-og-images.js`, new `prebuild` step) as a real screenshot of the site's own doc-chrome (titlebar, title, description, tags), not a generic social card; wired into `base.njk` for pages using `doc.njk` (`ogType: article`), `twitter:card` upgraded to `summary_large_image` for those pages
+- design: post tags moved to their own line below the date/read-time/section-label line; the section label lost its yellow highlight to visually distinguish "type of post" from topic tags
+- docs: removed a stale `CLAUDE.md` trap entry describing the Obsidian Git plugin as part of the deploy workflow, and an Obsidian mention in `APP.md`'s images-symlink explanation — Obsidian-based authoring was dropped
 - chore: standardized front-matter field order across all 25 posts to `title`, `description`, `date`, `tags`, `slug`, `permalink`, `draft`
 - chore: `draft: false` made explicit on all 24 existing posts (previously implicit-by-omission on most)
-- infra: `src/images` is now a symlink to a top-level `images/` directory (vault-root, matching Obsidian's attachment location) instead of a real nested folder
+- infra: `src/images` is now a symlink to a top-level `images/` directory instead of a real nested folder
 - fix: Sveltia CMS `media_folder` pointed at `src/images/uploads`, which resolves locally through the symlink above but 404s via GitHub's Contents API (symlinks aren't traversed) — media wasn't showing in the CMS; pointed at the real path `images/uploads` instead
 - fix: reverted an incomplete migration off Sveltia CMS to Obsidian-based authoring — `src/admin/` was restored, unused `obsidian-templates/` removed, docs (`APP.md`, `README.md`, `CLAUDE.md`) corrected back to describe Sveltia as the authoring path
 
