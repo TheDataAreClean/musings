@@ -2,7 +2,7 @@ const markdownIt = require("markdown-it");
 const markdownItFootnote = require("markdown-it-footnote");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItAttrs = require("markdown-it-attrs");
-const { ogImageSlug } = require("./scripts/generate-og-images.js");
+const { ogImageSlug, ogImageExists } = require("./scripts/generate-og-images.js");
 
 // Returns a WebP path for convertible uploads (jpg/jpeg/png/heic), otherwise null
 function webpSrc(src) {
@@ -123,6 +123,7 @@ module.exports = function (eleventyConfig) {
   // the og:image filename this filter builds and the one that script writes
   // can never drift apart.
   eleventyConfig.addFilter("ogImageSlug", ogImageSlug);
+  eleventyConfig.addFilter("ogImageExists", ogImageExists);
 
   eleventyConfig.addFilter("postSigil", function (tags) {
     if (!tags) return "·";

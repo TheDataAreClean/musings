@@ -7,21 +7,23 @@
   <meta name="description" content="{{ description or site.description }}">
   <meta name="author" content="{{ site.author }}">
   <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
-  <meta property="og:title" content="{% if title and title != "Home" %}{{ title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}">
+  <meta property="og:title" content="{% if title and title != "Home" %}{{ title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}">
   <meta property="og:description" content="{{ description or site.description }}">
   <meta property="og:type" content="{{ ogType or 'website' }}">
   <meta property="og:url" content="{{ site.url }}{{ page.url }}">
   <meta property="og:site_name" content="{{ site.title }}">
-  {% if ogType == "article" %}
+  {% set ogImageSlugValue = page.url | ogImageSlug %}
+  {% if ogImageSlugValue | ogImageExists %}
   {# Generated at build time by scripts/generate-og-images.js — a real
      screenshot of the site's own doc-chrome, not a generic social card.
-     ogImageSlug is the same function that script uses to name the file, so
-     this can't drift from what's actually on disk. #}
-  <meta property="og:image" content="{{ site.url }}/images/og/{{ page.url | ogImageSlug }}.png">
+     ogImageSlug/ogImageExists are the same functions that script uses to
+     name and check for the file, so this can't drift from what's on disk —
+     if no PNG was generated for a page, these tags are simply omitted. #}
+  <meta property="og:image" content="{{ site.url }}/images/og/{{ ogImageSlugValue }}.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="{{ site.url }}/images/og/{{ page.url | ogImageSlug }}.png">
+  <meta name="twitter:image" content="{{ site.url }}/images/og/{{ ogImageSlugValue }}.png">
   {% else %}
   <meta name="twitter:card" content="summary">
   {% endif %}

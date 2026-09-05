@@ -1,6 +1,7 @@
 ---
 layout: layouts/doc.njk
 title: About
+description: I am a curious individual who likes to dip their toes in every pond.
 date: 2025-01-01
 hideMeta: true
 ---

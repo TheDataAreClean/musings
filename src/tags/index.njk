@@ -11,6 +11,9 @@ pagination:
     - snaps
     - feed
 permalink: /tags/{{ tag }}/
+eleventyComputed:
+  title: "{{ tag }}"
+  description: "{{ collections[tag].length }} post{% if collections[tag].length != 1 %}s{% endif %} tagged as {{ tag }}."
 eleventyExcludeFromCollections: true
 ---
 

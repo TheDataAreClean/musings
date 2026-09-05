@@ -56,12 +56,28 @@ const colors = {
 // ---- URL / filename ---------------------------------------------------------
 
 /**
- * Sanitizes a page URL into an og:image filename stem. Shared with
- * .eleventy.js (required directly, not reimplemented) so the file this
- * script writes and the URL base.njk points at can never drift apart.
+ * Turns a page URL into an og:image path, preserving the URL's own
+ * hierarchy rather than flattening it — /ideas/2026-08-15-grandmother/
+ * becomes ideas/2026-08-15-grandmother, so posts/tags naturally land in
+ * their own subfolder (images/og/ideas/, images/og/tags/, …) instead of
+ * one flat directory. Shared with .eleventy.js (required directly, not
+ * reimplemented) so the path this script writes and the URL base.njk
+ * points at can never drift apart.
  */
 function ogImageSlug(url) {
-  return url.replace(/^\/|\/$/g, "").replace(/\//g, "-") || "home";
+  const trimmed = url.replace(/^\/|\/$/g, "");
+  return trimmed === "" ? "home" : trimmed;
+}
+
+/**
+ * True if generate-og-images.js actually wrote a PNG for this slug. Shared
+ * with .eleventy.js the same way ogImageSlug is — base.njk gates its
+ * og:image tags on this instead of on page type, so any page this script
+ * covers (now or later) gets the tags automatically, and a page it doesn't
+ * cover never emits a broken reference.
+ */
+function ogImageExists(slug) {
+  return fs.existsSync(path.join(OUT_DIR, `${slug}.png`));
 }
 
 function computePostUrl(section, filename, data) {
@@ -120,6 +136,29 @@ function stoplight() {
   return h("div", { style: { display: "flex", gap: 10 } }, dot("#ff5f57"), dot("#febc2e"), dot("#28c840"));
 }
 
+// Real postSigil filter: → ideas, ○ snaps, · notes (default). Drawn as vector
+// icons, not text glyphs — Arial/Arimo don't cover U+2192 (→), and unlike a
+// browser (which silently substitutes another installed font) satori has no
+// OS font fallback to lean on.
+function sigilIcon(sigil, color, size) {
+  if (sigil === "→") {
+    return h(
+      "svg",
+      { width: size, height: size, viewBox: "0 0 24 24", style: { display: "flex" } },
+      h("line", { x1: 4, y1: 12, x2: 18, y2: 12, stroke: color, "stroke-width": 2 }),
+      h("polyline", { points: "12 6 18 12 12 18", stroke: color, "stroke-width": 2, fill: "none" })
+    );
+  }
+  if (sigil === "○") {
+    return h(
+      "svg",
+      { width: size, height: size, viewBox: "0 0 24 24", style: { display: "flex" } },
+      h("circle", { cx: 12, cy: 12, r: 8, stroke: color, "stroke-width": 2, fill: "none" })
+    );
+  }
+  return h("span", { style: { display: "flex", color } }, sigil);
+}
+
 function tagPill(text, fontSize) {
   return h(
     "span",
@@ -160,8 +199,22 @@ function titlebar() {
 // (always Arimo/Arial, never overridden). .doc-title/.doc-description are
 // both --text-base — one uniform content size, not a headline/body split.
 // Gap above tags mirrors .doc-description's real margin-bottom (space-2).
-function pageContent({ title, description, tags }, docFontName) {
+function pageContent({ title, description, tags, highlightTitle, sigil }, docFontName) {
   const contentSize = TXT_BASE * Z;
+  // Tag pages render their real doc-title as <mark>{{ tag }}</mark> (see
+  // components.css's `mark` rule) — highlightTitle mirrors that exact
+  // treatment here instead of inventing a new title style for this one case.
+  const titleStyle = highlightTitle
+    ? { fontWeight: 400, color: colors.text, background: colors.mark, padding: `0 ${4 * Z}px`, alignSelf: "flex-start", display: "flex" }
+    : { fontWeight: 400, color: colors.text, display: "flex" };
+  const titleRow = sigil
+    ? h(
+        "div",
+        { style: { display: "flex", alignItems: "center", gap: SP[2] * Z } },
+        sigilIcon(sigil, colors.text, contentSize * 0.75),
+        h("div", { style: titleStyle }, title)
+      )
+    : h("div", { style: titleStyle }, title);
   return h(
     "div",
     {
@@ -175,7 +228,7 @@ function pageContent({ title, description, tags }, docFontName) {
         fontSize: contentSize,
       },
     },
-    h("div", { style: { fontWeight: 400, color: colors.text, display: "flex" } }, title),
+    titleRow,
     description && h("div", { style: { color: colors.muted, marginTop: SP[2] * Z, display: "flex" } }, description),
     tags.length > 0 && h("div", { style: { display: "flex", marginTop: SP[8] * Z } }, ...tags.map((t) => tagPill(t, contentSize)))
   );
@@ -202,6 +255,9 @@ async function renderPng(card, fonts) {
   return new Resvg(svg, { fitTo: { mode: "width", value: W } }).render().asPng();
 }
 
+const SIGILS = { ideas: "→", notes: "·", snaps: "○" }; // mirrors .eleventy.js's postSigil filter
+const SITE_DATA_PATH = path.join(ROOT, "src", "_data", "site.json");
+
 async function main() {
   const docFont = resolveDocFont();
   const chromeFont = resolveChromeFont();
@@ -213,26 +269,70 @@ async function main() {
   let generated = 0;
   let skipped = 0;
 
+  // Renders and writes one card unless its PNG is already newer than srcPath
+  // (same caching pattern as convert-webp.js). Returns without writing when
+  // srcPath is null — used for the tag pages below, whose content depends on
+  // every tagged post rather than one source file.
+  async function renderIfStale(url, srcPath, content) {
+    const slug = ogImageSlug(url);
+    const outPath = path.join(OUT_DIR, `${slug}.png`);
+    if (srcPath && fs.existsSync(outPath) && fs.statSync(outPath).mtimeMs >= fs.statSync(srcPath).mtimeMs) {
+      skipped++;
+      return;
+    }
+    fs.mkdirSync(path.dirname(outPath), { recursive: true });
+    const png = await renderPng(buildCard(content, docFont.name, chromeFont.name), fonts);
+    fs.writeFileSync(outPath, png);
+    generated++;
+    console.log(`og:image  ${url}  ->  images/og/${slug}.png`);
+  }
+
+  // ---- posts --------------------------------------------------------------
   for (const { dir, name } of SECTIONS) {
     const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md"));
     for (const file of files) {
       const srcPath = path.join(dir, file);
       const { data } = matter(fs.readFileSync(srcPath, "utf8"));
-
       const url = computePostUrl(name, file, data);
-      const outPath = path.join(OUT_DIR, `${ogImageSlug(url)}.png`);
-
-      if (fs.existsSync(outPath) && fs.statSync(outPath).mtimeMs >= fs.statSync(srcPath).mtimeMs) {
-        skipped++;
-        continue;
-      }
-
       const tags = (data.tags || []).filter((t) => !COLLECTION_TAGS.has(t));
-      const png = await renderPng(buildCard({ title: data.title, description: data.description, tags }, docFont.name, chromeFont.name), fonts);
-      fs.writeFileSync(outPath, png);
-      generated++;
-      console.log(`og:image  ${url}  ->  images/og/${path.basename(outPath)}`);
+      await renderIfStale(url, srcPath, { title: data.title, description: data.description, tags });
     }
+  }
+
+  // ---- home -----------------------------------------------------------------
+  const homeSrcPath = path.join(ROOT, "src", "index.md");
+  const homeData = matter(fs.readFileSync(homeSrcPath, "utf8")).data;
+  const siteData = JSON.parse(fs.readFileSync(SITE_DATA_PATH, "utf8"));
+  await renderIfStale("/", homeSrcPath, { title: siteData.shortTitle, description: homeData.description, tags: [] });
+
+  // ---- section indices --------------------------------------------------
+  for (const { name } of SECTIONS) {
+    const srcPath = path.join(ROOT, "src", name, "index.njk");
+    const { data } = matter(fs.readFileSync(srcPath, "utf8"));
+    await renderIfStale(`/${name}/`, srcPath, { title: data.title, description: data.description, tags: [], sigil: SIGILS[name] });
+  }
+
+  // ---- about ----------------------------------------------------------------
+  const aboutSrcPath = path.join(ROOT, "src", "about.md");
+  const aboutData = matter(fs.readFileSync(aboutSrcPath, "utf8")).data;
+  await renderIfStale("/about/", aboutSrcPath, { title: aboutData.title, description: aboutData.description, tags: [] });
+
+  // ---- tag pages --------------------------------------------------------
+  // No single source file — a tag's card depends on every post carrying it —
+  // so these always regenerate rather than trying to cache against one mtime.
+  const tagCounts = {};
+  for (const { dir } of SECTIONS) {
+    for (const file of fs.readdirSync(dir).filter((f) => f.endsWith(".md"))) {
+      const { data } = matter(fs.readFileSync(path.join(dir, file), "utf8"));
+      for (const t of data.tags || []) {
+        if (COLLECTION_TAGS.has(t)) continue;
+        tagCounts[t] = (tagCounts[t] || 0) + 1;
+      }
+    }
+  }
+  for (const [tag, count] of Object.entries(tagCounts)) {
+    const description = `${count} post${count !== 1 ? "s" : ""} tagged as ${tag}.`;
+    await renderIfStale(`/tags/${tag}/`, null, { title: tag, description, tags: [], highlightTitle: true });
   }
 
   console.log(`Done — ${generated} generated, ${skipped} up to date.`);
@@ -245,4 +345,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { ogImageSlug };
+module.exports = { ogImageSlug, ogImageExists, buildCard, renderPng, resolveDocFont, resolveChromeFont };
