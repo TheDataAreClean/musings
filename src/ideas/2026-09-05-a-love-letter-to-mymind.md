@@ -96,7 +96,7 @@ That was more than three years ago. Now, more than 1,800 items later, I cannot i
 
 At this point, I should probably disclose that this is not an advertisement for the app, even though I absolutely love it and could not be convinced otherwise.
 
-![](/images/uploads/mymind.png "A peek into my mind / mymind. :)")
+![A peek into my mind / mymind. :)](/images/uploads/2026-09-05-mymind-1c4ac9e6.webp)
 
 ***
 
