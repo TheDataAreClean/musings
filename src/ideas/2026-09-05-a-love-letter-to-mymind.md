@@ -28,7 +28,7 @@ In my love of links also lies a problem. It usually begins when a critical quant
 
 I have tried dozens of “second brain” tools and paid obnoxious amounts in subscription fees over the years to satiate this obsession with links. Most of these tools make the same promises: put everything here, organise it well, and you will always be able to return to your ideas for perpetuity.
 
-The tricky part being “**_organise it well_**”.
+The tricky part being “_organise it well_”.
 
 All of these tools demand that you maintain a structure, one they have decided is the best way to build your system. It usually involves some combination of folders, tags, databases, links, naming conventions, and rules about where things belong. Commit to the vocabulary of the application, and you will succeed!
 
@@ -64,13 +64,13 @@ At this point, I should probably disclose that this is not an advertisement for 
 
 In _mymind_, my thoughts do not live in neat folders. They move more like objects flowing in a river. I notice one, pick it up, examine it, connect it to something else, and then drop it back into the current. I may return to it later in a different context.
 
-mymind feels closer to my actual mind than most second-brain tools ever have.
+_mymind_ feels closer to my actual mind than most second-brain tools ever have.
 
 There is no rigid system asking me to decide what something is or where it belongs at the moment I save it. It is a forgiving system that lets me collect ideas freely and return to them when I please.
 
 Probably my favourite feature of the app is **Serendipity**, a tab where the app resurfaces old links at random, presenting you with the opportunity to keep or forget each one.
 
-There are so many features I have not even talked about here. I highly recommend checking out [mymind](https://mymind.com/) for yourself.
+There are so many features I have not even talked about here. I highly recommend checking out [_mymind_](https://mymind.com/) for yourself.
 
 ***
 
