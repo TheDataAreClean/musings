@@ -1,6 +1,7 @@
 ---
 title: A love letter to mymind
 slug: mymind
+permalink: /ideas/2026-09-05-mymind/
 date: 2026-09-05T23:46:00+05:30
 draft: false
 description: .. and a case for entropy
