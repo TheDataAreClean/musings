@@ -28,7 +28,7 @@ In my love of links also lies a problem. It usually begins when a critical quant
 
 I have tried dozens of “second brain” tools and paid obnoxious amounts in subscription fees over the years to satiate this obsession with links. Most of these tools make the same promises: put everything here, organise it well, and you will always be able to return to your ideas for perpetuity.
 
-The tricky part being “\*\*_organise it well_\*\*”.
+The tricky part being “**_organise it well_**”.
 
 All of these tools demand that you maintain a structure, one they have decided is the best way to build your system. It usually involves some combination of folders, tags, databases, links, naming conventions, and rules about where things belong. Commit to the vocabulary of the application, and you will succeed!
 
