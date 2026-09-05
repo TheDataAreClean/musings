@@ -1,6 +1,7 @@
 ---
 title: A love letter to mymind
 slug: mymind
+permalink: /ideas/2026-09-05-mymind/
 date: 2026-09-05T23:46:00+05:30
 draft: false
 description: .. and a case for entropy
@@ -95,7 +96,7 @@ That was more than three years ago. Now, more than 1,800 items later, I cannot i
 
 At this point, I should probably disclose that this is not an advertisement for the app, even though I absolutely love it and could not be convinced otherwise.
 
-![A peek into my mind / mymind. :)](/images/uploads/mymind.png)
+![A peek into my mind / mymind. :)](/images/uploads/2026-09-05-mymind-2573dd83.webp)
 
 ***
 
