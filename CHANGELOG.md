@@ -8,6 +8,12 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-09-05 (v3.7.3)
+
+- fix: the deploy workflow's "Commit generated content changes" step scoped `git status`/`git add` to `-- src/` only, but `src/images` is a symlink — writes prebuild scripts (e.g. `convert-webp.js`) make through it land at the real path `images/...`, outside `src/`. A converted upload was left unstaged, so the auto-commit's `git pull --rebase` failed on "unstaged changes" and the deploy silently didn't ship. Step now stages the whole working tree (`git add -A`) instead.
+
+---
+
 ## 2026-09-05 (v3.7.2)
 
 - fix: the browser-tab `<title>` still used the old em-dash + shortTitle format after `og:title` was unified to `{Page Name} | Musings | TheDataAreClean` — the two had drifted apart. `<title>` now uses the identical format, byte-for-byte, on every page.

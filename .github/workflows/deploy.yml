@@ -25,15 +25,18 @@ jobs:
       - run: npm ci
       - run: npm run build
       # prebuild (part of `npm run build`) converts uploads to WebP and
-      # backfills dates/permalinks, mutating src/ in this checkout. Commit
-      # those changes back so the repo doesn't reconvert the same images
-      # on every future run and stays in sync with what's deployed.
+      # backfills dates/permalinks. `src/images` is a symlink to `../images`
+      # (see CLAUDE.md), so writes made through that path land at the real
+      # repo path `images/...`, outside `src/`. Stage the whole working tree
+      # (not just `-- src/`) so no generated path — present or future — is
+      # silently left unstaged, which would make `git pull --rebase` below
+      # fail on "unstaged changes" and lose the push.
       - name: Commit generated content changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain -- src/)" ]; then
-            git add src/
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
             git commit -m "Chore: auto-convert images and backfill content [skip ci]"
             git pull --rebase origin main
             git push

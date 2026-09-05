@@ -38,11 +38,14 @@ Font and zoom reset on a new tab by design. Do not upgrade to `localStorage` unl
 **Passthrough copies must be registered**
 Any new asset directory or file needs a corresponding `addPassthroughCopy` in `.eleventy.js`. Missing entries silently 404 in production.
 
+**The CI "Commit generated content changes" step must stage the whole working tree**
+`npm run build` runs `prebuild` scripts (`convert-webp.js`, `backfill-dates.js`, etc.) that write through the `src/images` symlink; those writes land at the real repo path `images/...`, outside `src/`. The deploy workflow (`.github/workflows/deploy.yml`) used to run `git status`/`git add` scoped to `-- src/` only, so a converted upload landing under `images/` was left unstaged — the auto-commit then hit "cannot pull with rebase: you have unstaged changes" and the push (and deploy) silently failed. Always use unscoped `git status --porcelain` / `git add -A` in that step so it catches generated files no matter where a script writes them.
+
 **New posts default to `draft: false` in Sveltia CMS**
 There is no separate draft pipeline — `draft` only hides a post from listings/feed, the URL still resolves once the file is on `main` (see `APP.md`). The `draft` field in `src/admin/config.yml` defaults to `false`, so a new post publishes immediately on save unless you tick Draft first.
 
 **`src/images` is a symlink — Sveltia CMS config must use the real path**
-`src/images` points at a top-level `images/` directory, not a real folder. Local builds and scripts resolve it fine (Node follows symlinks), but GitHub's Contents API — which Sveltia CMS uses — does not traverse it. `media_folder` in `src/admin/config.yml` must reference `images/uploads` directly, never `src/images/uploads`, or uploaded media silently stops showing up in the CMS.
+See `APP.md`'s Passthrough copies section for why `media_folder` in `src/admin/config.yml` must point at `images/uploads`, never `src/images/uploads`.
 
 **og:image generation never *ships* Arial or Georgia directly**
 `scripts/generate-og-images.js` renders each post's `og:image` at build time using Satori, which needs an actual embeddable font file — it has no OS font-fallback to lean on the way a browser does. Arial and Georgia are proprietary; there's no redistributable file for either, so `scripts/og-fonts/` carries **Arimo** (Arial's metric-compatible OFL substitute) and **Gelasio** (Georgia's — *not* Tinos, which is actually a Times New Roman clone and visibly wrong here) as the committed fallback. `resolveFont()` in that script *will* use a real Arial/Georgia `.ttf` if one exists at a known local system path (macOS: `/System/Library/Fonts/Supplemental/`) — that's fine, nothing from those paths is ever committed or shipped, only read at render time to embed glyph outlines. CI (GitHub Actions) has neither installed, so it always falls back to Arimo/Gelasio there. Don't add a real Arial/Georgia `.ttf` to the repo itself — that would actually violate the license. Same reasoning applies to any glyph a chosen font doesn't cover (e.g. the `→` sigil, or `▾` dropdown carets) — draw it as a small inline SVG instead of trusting font fallback.
