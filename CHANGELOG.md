@@ -8,6 +8,17 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-09-05 (v3.7.1)
+
+- feature: `og:image` generation extended to every page type — home, the three section indices (with their real sigils), every tag page (title highlighted like the real `<mark>{{ tag }}</mark>`, description a live-computed post count), and About. Gating in `base.njk` switched from `ogType == "article"` to a new `ogImageExists` check, so image coverage is decoupled from `og:type` and any page the generator covers gets the tags automatically.
+- fix: About page previously had a broken `og:image` (referenced a PNG that was never generated, 404ing in link previews) — now generates a real one.
+- fix: every tag page (`/tags/{tag}/`) previously shared one identical, generic `<title>`/`og:title`/description across all of them — now each has its own via `eleventyComputed`.
+- design: `og:title` format unified to `{Page Name} | Musings | TheDataAreClean` across every page (was an inconsistent mix of em-dash and pipe separators, and the 404 page said "Page not found" instead of "404").
+- design: section index pages (`/ideas/`, `/notes/`, `/snaps/`) and About now have real `og:description`s pulled from their own on-page content, instead of falling back to the generic site-wide description.
+- infra: `images/og/` now mirrors each page's own URL hierarchy (`images/og/ideas/2026-08-15-grandmother.png`, `images/og/tags/family.png`) instead of one flat directory of hyphenated filenames.
+
+---
+
 ## 2026-09-05 (v3.7.0)
 
 - design: Georgia is now the document body's default font (`--font-doc`), switchable to Arial via the font dropdown — was the reverse. `--font-ui` (chrome) is unaffected, still always Arial.
