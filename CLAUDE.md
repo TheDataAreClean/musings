@@ -38,14 +38,14 @@ Font and zoom reset on a new tab by design. Do not upgrade to `localStorage` unl
 **Passthrough copies must be registered**
 Any new asset directory or file needs a corresponding `addPassthroughCopy` in `.eleventy.js`. Missing entries silently 404 in production.
 
-**Obsidian Git must pull before it pushes**
-`deploy.yml` has the CI bot push image-conversion/permalink-backfill commits back to `main` after every build. If the Obsidian Git plugin pushes without pulling first, the push is rejected. Use "Commit and Sync" (or an equivalent pull-then-push setting), not a raw push.
-
 **New posts default to `draft: false` in Sveltia CMS**
 There is no separate draft pipeline — `draft` only hides a post from listings/feed, the URL still resolves once the file is on `main` (see `APP.md`). The `draft` field in `src/admin/config.yml` defaults to `false`, so a new post publishes immediately on save unless you tick Draft first.
 
 **`src/images` is a symlink — Sveltia CMS config must use the real path**
 `src/images` points at a top-level `images/` directory, not a real folder. Local builds and scripts resolve it fine (Node follows symlinks), but GitHub's Contents API — which Sveltia CMS uses — does not traverse it. `media_folder` in `src/admin/config.yml` must reference `images/uploads` directly, never `src/images/uploads`, or uploaded media silently stops showing up in the CMS.
+
+**og:image generation never *ships* Arial or Georgia directly**
+`scripts/generate-og-images.js` renders each post's `og:image` at build time using Satori, which needs an actual embeddable font file — it has no OS font-fallback to lean on the way a browser does. Arial and Georgia are proprietary; there's no redistributable file for either, so `scripts/og-fonts/` carries **Arimo** (Arial's metric-compatible OFL substitute) and **Gelasio** (Georgia's — *not* Tinos, which is actually a Times New Roman clone and visibly wrong here) as the committed fallback. `resolveFont()` in that script *will* use a real Arial/Georgia `.ttf` if one exists at a known local system path (macOS: `/System/Library/Fonts/Supplemental/`) — that's fine, nothing from those paths is ever committed or shipped, only read at render time to embed glyph outlines. CI (GitHub Actions) has neither installed, so it always falls back to Arimo/Gelasio there. Don't add a real Arial/Georgia `.ttf` to the repo itself — that would actually violate the license. Same reasoning applies to any glyph a chosen font doesn't cover (e.g. the `→` sigil, or `▾` dropdown carets) — draw it as a small inline SVG instead of trusting font fallback.
 
 ---
 

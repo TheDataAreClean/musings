@@ -6,6 +6,8 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+- design: Georgia is now the document body's default font (`--font-doc`), switchable to Arial via the font dropdown — was the reverse. `--font-ui` (chrome) is unaffected, still always Arial.
+- feature: per-post `og:image` — generated at build time (`scripts/generate-og-images.js`, new `prebuild` step) as a real screenshot of the site's own doc-chrome (titlebar, title, description, tags), not a generic social card; wired into `base.njk` for pages using `doc.njk` (`ogType: article`), `twitter:card` upgraded to `summary_large_image` for those pages
 - chore: standardized front-matter field order across all 25 posts to `title`, `description`, `date`, `tags`, `slug`, `permalink`, `draft`
 - chore: `draft: false` made explicit on all 24 existing posts (previously implicit-by-omission on most)
 - infra: `src/images` is now a symlink to a top-level `images/` directory (vault-root, matching Obsidian's attachment location) instead of a real nested folder

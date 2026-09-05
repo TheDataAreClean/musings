@@ -21,9 +21,10 @@
   --color-mark:           #ffff00;
   --color-mark-dim:       #fffacd;
 
-  /* Fonts — Arial throughout */
+  /* Fonts — Arial for chrome (--font-ui never changes); Georgia is the
+     document body default, user-switchable to Arial via the font dropdown */
   --font-ui:    Arial, Helvetica, sans-serif;
-  --font-doc:   Arial, Helvetica, sans-serif;
+  --font-doc:   Georgia, 'Times New Roman', serif;
   --font-mono:  'Courier New', Courier, monospace;
 
   /* Type scale */

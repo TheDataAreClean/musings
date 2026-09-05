@@ -522,12 +522,28 @@ body {
   margin-bottom: var(--space-8);
 }
 
+/* Tightens to the title/description rhythm (space-2) only when a tags line
+   actually follows — tag-less posts keep the full space-8 gap before the
+   body, since .doc-meta is the last meta element in that case. */
+.doc-meta:has(+ .doc-tags) {
+  margin-bottom: var(--space-2);
+}
+
 .doc-meta a {
   color: var(--color-link);
 }
 
 .doc-meta a:visited {
   color: var(--color-visited);
+}
+
+/* ==========================================================================
+   DOCUMENT TAGS — own line below the meta line, kept separate from the
+   section label (which stays plain text in .doc-meta, no highlight)
+   ========================================================================== */
+
+.doc-tags {
+  margin-bottom: var(--space-8);
 }
 
 /* ==========================================================================

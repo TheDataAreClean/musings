@@ -29,8 +29,13 @@ ogType: article
       · {{ content | wordcount }} words
       · {{ content | readtime }} min read
     {% endif %}
-    · <a class="post-tag" href="{{ sectionUrl }}">{{ sectionLabel }}</a>{% for tag in tags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endfor %}
+    · <a href="{{ sectionUrl }}">{{ sectionLabel }}</a>
   </p>
+  {% if tags | collectionTags | length %}
+  <p class="doc-tags">
+    {% for tag in tags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endfor %}
+  </p>
+  {% endif %}
   {% endif %}
 
   <div class="doc-layout">

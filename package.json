@@ -5,20 +5,24 @@
   "main": "index.js",
   "scripts": {
     "dev": "eleventy --serve --watch --port=8081",
-    "prebuild": "node scripts/backfill-dates.js && node scripts/convert-webp.js && node scripts/backfill-permalink.js",
+    "prebuild": "node scripts/backfill-dates.js && node scripts/convert-webp.js && node scripts/backfill-permalink.js && node scripts/generate-og-images.js",
     "build": "eleventy",
     "clean": "rm -rf _site",
     "webp": "node scripts/convert-webp.js",
-    "backfill": "node scripts/backfill-dates.js"
+    "backfill": "node scripts/backfill-dates.js",
+    "ogimages": "node scripts/generate-og-images.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@11ty/eleventy": "^3.1.5",
+    "@resvg/resvg-js": "^2.6.2",
+    "gray-matter": "^4.0.3",
     "markdown-it-anchor": "^9.2.0",
     "markdown-it-attrs": "^4.3.1",
     "markdown-it-footnote": "^4.0.0",
+    "satori": "^0.33.4",
     "sharp": "^0.34.5"
   }
 }

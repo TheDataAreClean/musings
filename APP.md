@@ -26,7 +26,7 @@ No build tools, no bundler. Eleventy templates produce static HTML; all CSS and 
 | Templates | Nunjucks + Markdown |
 | Styling | Vanilla CSS (~1,200 lines across 6 files) |
 | JavaScript | Inline script in `base.njk` — no bundler |
-| Fonts | Arial (system); Georgia (user-switchable) |
+| Fonts | Georgia (document default); Arial (chrome, always; user-switchable for the document) |
 | Hosting | GitHub Pages + custom domain |
 | CMS | Sveltia CMS (Git-based, via Cloudflare Worker OAuth) |
 
@@ -135,7 +135,7 @@ print.css       Print stylesheet — strips chrome, shows link URLs
 | Token | Value | Purpose |
 |---|---|---|
 | `--font-ui` | Arial/Helvetica | All chrome elements — never changes |
-| `--font-doc` | Arial (default) | Document body — user can switch to Georgia |
+| `--font-doc` | Georgia (default) | Document body — user can switch to Arial |
 | `--page-width` | 794px | A4 at 96dpi |
 | `--page-pad-v` | 80px | A4 vertical padding |
 | `--page-pad-h` | 96px | A4 horizontal padding |
@@ -218,10 +218,11 @@ Session persistence: `sessionStorage` only — resets on new tab by design.
 
 `deploy.yml` triggers on push to `main` — `npm ci → npm run webp → npm run build` → deploys `_site/` to GitHub Pages.
 
-`npm run build` runs `prebuild` automatically, which chains three scripts:
+`npm run build` runs `prebuild` automatically, which chains four scripts:
 1. `backfill-dates.js` — fills git creation time into date-only front matter
 2. `convert-webp.js` — converts JPEG/PNG/HEIC in `src/images/uploads/` to WebP (quality 82, auto-rotates via EXIF), deletes the original, then updates all markdown references in content files from the old extension to `.webp`. Existing `.webp` files are skipped.
 3. `backfill-permalink.js` — writes `permalink` to front matter for any post with a `slug` field
+4. `generate-og-images.js` — renders each post's `og:image` (see below). Must run after step 3, since it needs the final `permalink`.
 
 `src/CNAME` is passthrough-copied to `_site/CNAME` — required for the custom domain to survive deploys.
 
@@ -232,7 +233,7 @@ Files: `src/favicon.svg`, `src/favicon.ico`, `src/apple-touch-icon.png`, `src/ma
 
 Any new asset type needs a corresponding `addPassthroughCopy` in `.eleventy.js`.
 
-`src/images` is a symlink to a top-level `images/` directory (vault-root, alongside the Obsidian vault's other files), not a real nested folder. Node resolves it transparently for local builds and scripts, so `src/images/uploads/` is a valid filesystem path — but tools that read the repo through GitHub's API (Sveltia CMS) see only `images/uploads/` as a real git path; `src/images/uploads/` 404s there.
+`src/images` is a symlink to a top-level `images/` directory, not a real nested folder. Node resolves it transparently for local builds and scripts, so `src/images/uploads/` is a valid filesystem path — but tools that read the repo through GitHub's API (Sveltia CMS) see only `images/uploads/` as a real git path; `src/images/uploads/` 404s there.
 
 ### Sveltia CMS
 
@@ -247,6 +248,17 @@ Access: `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
 
 `/feed.xml` — combined Atom feed (ideas + notes + snaps), 15 most recent posts. Uses `atomDate` (UTC ISO 8601). `feed.njk` must have `layout: false`.
 
+### OG images
+
+`scripts/generate-og-images.js` renders a per-post `og:image` at build time — a 1200×630 screenshot of the site's own doc-chrome (titlebar showing the site domain, title, description, tags), not a generic redesigned social card. It's a real render (Satori → SVG → `@resvg/resvg-js` → PNG), not a screenshot tool — no headless browser dependency.
+
+- Output: `images/og/<slug>.png`, where `<slug>` comes from `ogImageSlug(page.url)` — sanitizes the final URL (`/ideas/2026-08-15-grandmother/` → `ideas-2026-08-15-grandmother`). `images/og/` is gitignored — regenerated every build, same as `_site/`.
+- `ogImageSlug` is exported from `generate-og-images.js` and required directly by `.eleventy.js` (registered as a filter) — `base.njk` uses the same filter to build the `<meta property="og:image">` URL, so the filename the script writes and the URL the template points at can never drift apart.
+- Only pages using `doc.njk` get one — gated in `base.njk` on `ogType == "article"` (set in `doc.njk`'s front matter). Home page, tag pages, and the feed don't get an `og:image`.
+- Skips regenerating a post's image if its PNG is already newer than the source `.md` file — same caching pattern as `convert-webp.js`.
+- Font: reads `--font-doc` from `tokens.css` at generation time, so the card can't silently drift from whichever font the site actually defaults to. Uses the real Arial/Georgia `.ttf` when one is installed locally (pixel-perfect); falls back to the committed OFL substitutes, Arimo/Gelasio, when it isn't (always the case in CI). See `CLAUDE.md`'s trap entry.
+- Chrome (the titlebar) is drawn at its real fixed pixel size, never scaled — content (title/description/tags) is scaled uniformly by a zoom factor matching one of the site's own zoom-dropdown rungs (200%). This mirrors the real site: chrome lives outside `.app-canvas` and never zooms with content.
+
 ---
 
 ## Dependencies
@@ -256,7 +268,10 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 | Package | Purpose |
 |---|---|
 | `@11ty/eleventy` | SSG |
+| `@resvg/resvg-js` | Rasterizes the SVG `satori` produces into the final og:image PNG |
+| `gray-matter` | Front-matter parsing in `generate-og-images.js` |
 | `markdown-it-anchor` | Heading anchors |
 | `markdown-it-attrs` | Custom attributes |
 | `markdown-it-footnote` | Footnotes |
+| `satori` | Lays out each post's og:image (title/description/tags) as SVG |
 | `sharp` | Image conversion — JPEG/PNG/HEIC → WebP in `convert-webp.js` |
