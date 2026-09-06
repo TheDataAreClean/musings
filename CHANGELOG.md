@@ -6,6 +6,8 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+- design: headings in doc body now carry the same bottom margin as a paragraph (`--space-4`) — previously `margin-bottom: 0`, so the gap after a heading collapsed to nothing (the following paragraph's own top margin is zeroed by the `h + p` rule, same convention as lists/blockquotes/pre/hr/figure). Spacing after a heading now matches spacing between paragraphs.
+
 ---
 
 ## 2026-09-05 (v3.7.3)
