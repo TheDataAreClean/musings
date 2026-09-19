@@ -1,6 +1,7 @@
 ---
 title: Thirty seconds at a time
 slug: thrity-seconds
+permalink: /ideas/2026-09-19-thrity-seconds/
 date: 2026-09-19T19:11:00+05:30
 draft: false
 description: I am losing my attention span (and taste)
