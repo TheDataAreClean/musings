@@ -54,6 +54,10 @@
   --page-pad-v:     80px;     /* top/bottom page margin */
   --page-pad-h:     96px;     /* left/right page margin — 1 inch */
 
+  /* Comments — margin notes shown as cards on the desk beside the page */
+  --comment-w:      208px;    /* width of a comment card in the desk rail */
+  --comment-gap:    14px;     /* gap between the page edge and the rail */
+
   /* Application chrome heights */
   --titlebar-h:   34px;
   --menubar-h:    26px;

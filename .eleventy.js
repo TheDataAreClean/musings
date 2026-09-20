@@ -90,6 +90,11 @@ module.exports = function (eleventyConfig) {
   // Passthrough copies
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/images");
+  eleventyConfig.addPassthroughCopy("src/js");
+
+  // /style/ is built from tokens.css (src/_data/tokens.js), so a token edit
+  // must rebuild it under `eleventy --serve`
+  eleventyConfig.addWatchTarget("src/css/tokens.css");
   eleventyConfig.addPassthroughCopy("src/admin");
   eleventyConfig.addPassthroughCopy("src/CNAME");
   eleventyConfig.addPassthroughCopy("src/favicon.svg");
@@ -239,8 +244,23 @@ module.exports = function (eleventyConfig) {
     return `<div class="page-break" role="separator"></div>`;
   });
 
-  eleventyConfig.addPairedShortcode("marginnote", function (content) {
-    return `<aside class="margin-note">${md.render(content)}</aside>`;
+  // Margin note → document comment. Renders a plain <aside> (readable with no
+  // JS, in print, and in feed readers); src/js/comments.js upgrades it into a
+  // comment card on the desk (wide screens) or a bottom sheet (narrow ones).
+  // Optional first argument is the phrase to highlight in the block right after
+  // the note — without it, the whole next block is the anchor. The card shows
+  // the post's date; an optional second argument (any date string) overrides it.
+  // To date a note that has no phrase, pass an empty first argument: "", "2026-03-01".
+  const escAttr = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+
+  eleventyConfig.addPairedShortcode("marginnote", function (content, anchor, written) {
+    const commentAuthor = this.ctx.site.author;
+    const date = written ? new Date(written) : this.page && this.page.date ? new Date(this.page.date) : null;
+    const when = date && !isNaN(date)
+      ? `<time datetime="${date.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" })}">${date.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" })}</time>`
+      : "";
+    const attr = anchor ? ` data-anchor="${escAttr(anchor)}"` : "";
+    return `<aside class="margin-note"${attr}><header class="margin-note__meta"><span class="margin-note__av" aria-hidden="true">${escAttr(commentAuthor.charAt(0))}</span><b>${escAttr(commentAuthor)}</b>${when}</header>${md.render(content)}</aside>`;
   });
 
   eleventyConfig.addPairedShortcode("callout", function (content, type = "note") {

@@ -4,6 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Musings CMS</title>
+  <script>
+    // Sveltia CMS rewrites the title as it loads (CMS name → site URL).
+    // Put it straight back so the tab always reads "Musings CMS". This watches
+    // the <title> element rather than redefining document.title, so nothing
+    // else that reads or sets document.title is affected.
+    (function () {
+      var pinned = 'Musings CMS';
+      new MutationObserver(function () {
+        var t = document.querySelector('title');
+        if (t && t.textContent !== pinned) t.textContent = pinned;
+      }).observe(document.head, { childList: true, subtree: true, characterData: true });
+    })();
+  </script>
   <meta name="description" content="Musings CMS." />
   <meta name="robots" content="noindex, nofollow, noarchive, noimageindex" />
   <meta name="theme-color" content="#f0f0f0" />

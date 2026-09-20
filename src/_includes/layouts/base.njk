@@ -38,6 +38,12 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="/css/main.css">
+  {% if "margin-note" in content %}
+  {# Hide inline margin notes until comments.js has built its cards, so they
+     don't paint and then vanish (layout shift). The timer un-hides them if
+     the script never runs. #}
+  <script>document.documentElement.classList.add('comments-pending');setTimeout(function(){document.documentElement.classList.remove('comments-pending')},3000)</script>
+  {% endif %}
 </head>
 <body>
 
@@ -252,5 +258,6 @@
 
   })();
   </script>
+  {% if "margin-note" in content %}<script src="/js/comments.js" defer></script>{% endif %}
 </body>
 </html>

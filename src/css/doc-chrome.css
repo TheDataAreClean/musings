@@ -395,6 +395,7 @@ body {
 }
 
 .app-canvas > main {
+  position: relative;   /* positioning context for the comment rail on the desk */
   width: 100%;
   max-width: var(--page-width);
 }

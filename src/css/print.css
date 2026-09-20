@@ -62,6 +62,15 @@
 
   .footnotes { page-break-before: always; }
 
+  /* Comments: print the plain inline notes, not the rail or sheet */
+  .margin-note[hidden] { display: block; }
+  .comment-rail,
+  .comment-sheet,
+  .comment-badge,
+  .comment-badge-row { display: none !important; }
+  .comment-anchor { background: none; text-decoration: none; }
+  .margin-note { page-break-inside: avoid; }
+
   /* Reset colors */
   body { color: #000; background: #fff; }
   a { color: #000; text-decoration: underline; }

@@ -1,12 +1,11 @@
 ---
-title: A complete formatting reference
-slug: ''
+layout: layouts/doc.njk
+title: Reference
+permalink: /reference/
 date: 2026-03-01T20:41:00+05:30
-draft: false
 description: Every element this document format supports, in one place.
-tags:
-  - meta
-  - design
+hideMeta: true
+hidePostNav: true
 ---
 
 This document exists to show every formatting element this site can render. It is a reference and a test. The content is real where it can be; instrumental where it must be.
@@ -145,8 +144,14 @@ A warning callout. Use this for things the reader should be careful about — ex
 
 ## Margin note
 
+{% marginnote "level with the words it is about" %}
+This one names its phrase, so only those words are highlighted.
+{% endmarginnote %}
+
+A margin note is shown as a comment on the desk beside the page, level with the words it is about. On a narrow screen the same note opens from the bottom when you tap the highlighted text. Without JavaScript, and in print, it is an ordinary boxed paragraph in the flow of the text.
+
 {% marginnote %}
-A margin note sits here, to the left of the content on wide screens, and inline on narrow ones. Use it for short asides that would interrupt the prose if embedded in it.
+This one names no phrase, so it is attached to the whole paragraph that follows.
 {% endmarginnote %}
 
 The paragraph that hosts a margin note should be self-contained — readable without the note. The note adds, it does not complete. This is the difference between a margin note and a footnote: margin notes are optional; footnotes are referenced.[^1]

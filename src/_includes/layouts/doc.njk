@@ -45,6 +45,7 @@ ogType: article
         {{ content | safe }}
       </div>
 
+      {% if not hidePostNav %}
       <nav class="post-nav" aria-label="Post navigation">
         <div class="post-nav__prev">
           <a href="{{ sectionUrl }}">← More {{ sectionLabel }}</a>
@@ -53,6 +54,7 @@ ogType: article
           <a href="/">All posts →</a>
         </div>
       </nav>
+      {% endif %}
     </div>
 
 

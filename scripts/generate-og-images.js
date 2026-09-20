@@ -320,6 +320,13 @@ async function main() {
   const aboutData = matter(fs.readFileSync(aboutSrcPath, "utf8")).data;
   await renderIfStale("/about/", aboutSrcPath, { title: aboutData.title, description: aboutData.description, tags: [] });
 
+  // ---- standalone pages (reference, style) -----------------------------------
+  for (const [url, file] of [["/reference/", "reference.md"], ["/style/", "style.njk"]]) {
+    const srcPath = path.join(ROOT, "src", file);
+    const data = matter(fs.readFileSync(srcPath, "utf8")).data;
+    await renderIfStale(url, srcPath, { title: data.title, description: data.description, tags: [] });
+  }
+
   // ---- 404 --------------------------------------------------------------
   const notFoundSrcPath = path.join(ROOT, "src", "404.md");
   const notFoundData = matter(fs.readFileSync(notFoundSrcPath, "utf8")).data;

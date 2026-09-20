@@ -106,7 +106,11 @@ home.njk      Home/feed listing (wraps base.njk)
 feed.njk      Atom XML — must have layout: false
 ```
 
-`doc.njk` element order: title → nav → description (if present) → meta (omitted if `hideMeta: true`) → body → post-nav
+`doc.njk` element order: title → nav → description (if present) → meta (omitted if `hideMeta: true`) → body → post-nav (omitted if `hidePostNav: true`)
+
+**Standalone pages** (not posts — no collection tag, so not in listings or the feed): `src/about.md` → `/about/`, `src/reference.md` → `/reference/` (every formatting element, and a live test of the shortcodes), `src/style.njk` → `/style/` (design tokens and components). The last two set `hideMeta` and `hidePostNav`.
+
+`src/_data/tokens.js` parses the first `:root` block of `tokens.css` at build time and feeds `/style/` (fonts, type scale, colour groups, spacing, page and chrome dimensions), so the page cannot drift from the real values. The parser expects the existing conventions: a `/* Group title — note */` comment line starts a group, and each token is `--name: value; /* note */` on one line. Add a new token there and it appears on `/style/` automatically if its name starts with `--font-`, `--text-`, `--leading-`, `--space-`, `--color-`, or one of the dimension prefixes (`--page`, `--comment`, `--titlebar`, `--menubar`, `--toolbar`, `--ruler`, `--statusbar`, `--chrome`); any other prefix needs adding to `tokens.js`. A value that is a `calc()` sum of `px` tokens (`--chrome-h`) is shown resolved (114px) with the formula as a note.
 
 `home.njk` sigils by tag: `→` ideas, `○` snaps, `·` notes (fallback).
 
@@ -140,6 +144,8 @@ print.css       Print stylesheet — strips chrome, shows link URLs
 | `--page-pad-v` | 80px | A4 vertical padding |
 | `--page-pad-h` | 96px | A4 horizontal padding |
 | `--chrome-h` | 114px | Sum of all chrome bar heights (34+26+32+22) |
+| `--comment-w` | 208px | Width of a comment card in the desk rail |
+| `--comment-gap` | 14px | Gap between the page edge and the comment rail |
 | `--titlebar-h` | 34px | |
 | `--menubar-h` | 26px | |
 | `--toolbar-h` | 32px | |
@@ -156,10 +162,22 @@ Defined in `.eleventy.js`:
 | Shortcode | Type | Output |
 |---|---|---|
 | `{% callout "note" %}…{% endcallout %}` | Paired | Callout block (type: `note` or `warning`) |
-| `{% marginnote %}…{% endmarginnote %}` | Paired | Inline aside |
+| `{% marginnote %}…{% endmarginnote %}` | Paired | `<aside class="margin-note">` — a document comment, anchored to the next paragraph |
+| `{% marginnote "phrase" %}…{% endmarginnote %}` | Paired | Same, anchored to that phrase (highlighted) in the next paragraph |
+| `{% marginnote "phrase", "2026-03-01" %}…{% endmarginnote %}` | Paired | Same, with the card dated that day instead of the post's date (use `""` for the phrase to anchor the whole paragraph) |
 | `{% pagebreak %}` | Non-paired | `<div>` grey desk gap between pages |
 
 `callout` and `marginnote` call `md.render()` — Markdown is supported inside them.
+
+**Margin notes are document comments.** The shortcode renders a plain `<aside class="margin-note">` (author from `site.json`, date from the post unless a date is passed) and `src/js/comments.js` upgrades it:
+
+- Place the shortcode directly *before* the paragraph it belongs to. The phrase is searched for only in the block right after the note (the block before it, if the note ends the post; curly and straight quotes match). If it isn't found there, the script warns in the console and anchors to the whole block. A whole-block anchor takes the nearest block no other note already holds, so two notes never share one. Notes with no anchor at all stay visible inline.
+- **Wide screens** (room on the desk for `--comment-w` + `--comment-gap` right of the page): cards are built into a rail inside `<main>`, each level with its anchor, pushed down when they collide. Hover or focus links anchor and card with a connector line. `<main>` is `position: relative` for this. The rail is measured in the canvas's own coordinates, so it stays aligned under the zoom control.
+- **Narrow screens**: one card at a time in a bottom sheet above the status bar (`.comment-sheet`, fixed, outside `.app-canvas`), with prev/next/close and Escape to close. Each note has a numbered badge — a real, focusable `<button>` — after its phrase, or inside its paragraph (on a row of its own before a list, table or rule). A phrase opens the sheet on click; a whole-paragraph note opens from its badge only, and links keep their own click. The mode is chosen on load, resize, zoom change and font change.
+- **No flash of the inline note:** on pages that contain a note, `base.njk` puts `html.comments-pending` in the head, which hides `.margin-note` in CSS until the script has run (the script clears it first thing; a 3s timer does too if the script never loads).
+- **Accessibility**: in the rail an anchor is focusable text with `aria-describedby` pointing at its card; in the sheet a phrase is a `role="button"` and every note has a real badge `<button>`. The badge is placed outside any link the phrase sits in, and its tap area is enlarged to ~32px.
+- **No JS, print, feed readers**: the original `<aside>` shows inline as a boxed card. The script sets `hidden` on each aside it built a card for; `print.css` shows those again and hides the rail, sheet and badges.
+- Comment cards are built from the aside's HTML, so the aside must contain everything (header + body). Cards live outside `.doc-body`, so lists, inline code and links inside a note are styled by extra `.comment` selectors in `typography.css`. `base.njk` loads the script (with `defer`) only on pages whose rendered content contains a margin note. `--chrome-h` is a `calc()` and can't be read as a number from JS, so the sheet's scroll-into-view measures the sticky toolbar and ruler instead.
 
 Section break: `---` in body renders as `* * *`.
 Page break: `<hr class="page-break">` renders as a grey desk gap.
@@ -210,6 +228,8 @@ All code in an IIFE — no globals leaked.
 
 Session persistence: `sessionStorage` only — resets on new tab by design.
 
+**Other scripts.** Margin-note comments live in `src/js/comments.js`, not in this block: `base.njk` loads it (`defer`) and adds a small head script that sets `html.comments-pending`, only on pages whose content contains a margin note. See Shortcodes → Margin notes. The comment rail listens for the zoom above by watching `.app-canvas`'s `style` attribute, so the zoom code needs no hook for it.
+
 ---
 
 ## Infrastructure
@@ -228,7 +248,7 @@ Session persistence: `sessionStorage` only — resets on new tab by design.
 
 ### Passthrough copies
 
-Directories: `src/fonts/`, `src/css/`, `src/images/`
+Directories: `src/fonts/`, `src/css/`, `src/js/`, `src/images/`
 Files: `src/favicon.svg`, `src/favicon.ico`, `src/apple-touch-icon.png`, `src/manifest.json`, `src/CNAME`
 
 Any new asset type needs a corresponding `addPassthroughCopy` in `.eleventy.js`.
@@ -243,6 +263,7 @@ Access: `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
 - GitHub OAuth App callback URL must point to the Worker
 - Every CMS save commits a Markdown file to `main`, which triggers `deploy.yml`
 - `media_folder` in `config.yml` is `images/uploads` (the real path, not the `src/images` symlink — see above); served from `/images/uploads/`
+- `src/admin/index.html` pins the tab title to "Musings CMS": Sveltia rewrites the title as it loads (CMS name → site URL), so a `MutationObserver` on `<head>` puts the `<title>` text back. It deliberately does not override `document.title`.
 
 ### Feed
 
@@ -252,11 +273,11 @@ Access: `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
 
 `scripts/generate-og-images.js` renders an `og:image` at build time for every page type — a 1200×630 screenshot of the site's own doc-chrome (titlebar showing the site domain, title, description, tags), not a generic redesigned social card. It's a real render (Satori → SVG → `@resvg/resvg-js` → PNG), not a screenshot tool — no headless browser dependency.
 
-Covers: every post, the home page, the three section indices (`/ideas/`, `/notes/`, `/snaps/` — with their real `postSigil`), every tag page (`/tags/{tag}/` — title highlighted like the real page's `<mark>{{ tag }}</mark>`, description a live-computed `"N posts tagged as {tag}."`), About, and 404. Deliberately not covered: the feed (XML, no meta tags). 404's permalink is the one exception to the URL-mirrors-path rule below — its `page.url` is `/404.html`, so `ogImageSlug` strips a trailing `.html` too, or it'd collide with the `.png` this script appends.
+Covers: every post, the home page, the three section indices (`/ideas/`, `/notes/`, `/snaps/` — with their real `postSigil`), every tag page (`/tags/{tag}/` — title highlighted like the real page's `<mark>{{ tag }}</mark>`, description a live-computed `"N posts tagged as {tag}."`), About, the standalone `/reference/` and `/style/` pages, and 404. Deliberately not covered: the feed (XML, no meta tags). 404's permalink is the one exception to the URL-mirrors-path rule below — its `page.url` is `/404.html`, so `ogImageSlug` strips a trailing `.html` too, or it'd collide with the `.png` this script appends.
 
 - Output: `images/og/<slug>.png`, where `<slug>` comes from `ogImageSlug(page.url)` — mirrors the page's own URL hierarchy rather than flattening it (`/ideas/2026-08-15-grandmother/` → `ideas/2026-08-15-grandmother`, `/tags/family/` → `tags/family`, `/` → `home`), so posts/tags land in their own subfolder (`images/og/ideas/`, `images/og/tags/`, …) instead of one flat directory. A section index (`/ideas/`) sits as `images/og/ideas.png`, right beside its own `images/og/ideas/` subfolder of posts — a file and a directory of the same name coexist fine, no collision. `images/og/` is gitignored — regenerated every build, same as `_site/`.
 - `ogImageSlug` and `ogImageExists` are exported from `generate-og-images.js` and required directly by `.eleventy.js` (registered as filters) — `base.njk` gates its `<meta property="og:image">` block on `ogImageExists`, not on page type (`ogType`), so any page this script covers gets the tags automatically and a page it doesn't cover never emits a broken reference. `og:type` itself (`article` vs `website`) is still driven by `ogType` as before — the two are deliberately decoupled.
-- Skips regenerating a page's image if its PNG is already newer than that page's one source file (post `.md`, `index.njk`, `about.md`) — same caching pattern as `convert-webp.js`. Tag pages have no single source file (their content depends on every post carrying that tag) and always regenerate.
+- Skips regenerating a page's image if its PNG is already newer than that page's one source file (post `.md`, `index.njk`, `about.md`, `reference.md`, `style.njk`) — same caching pattern as `convert-webp.js`. Tag pages have no single source file (their content depends on every post carrying that tag) and always regenerate.
 - Descriptions are pulled from each page's own real content, not invented copy: per-post `description`, each section index's own on-page blurb (`Things felt deeply.` etc., front matter), About's own blurb, and tag pages' live post count.
 - Font: reads `--font-doc` from `tokens.css` at generation time, so the card can't silently drift from whichever font the site actually defaults to. Uses the real Arial/Georgia `.ttf` when one is installed locally (pixel-perfect); falls back to the committed OFL substitutes, Arimo/Gelasio, when it isn't (always the case in CI). See `CLAUDE.md`'s trap entry.
 - Chrome (the titlebar) is drawn at its real fixed pixel size, never scaled — content (title/description/tags) is scaled uniformly by a zoom factor matching one of the site's own zoom-dropdown rungs (200%). This mirrors the real site: chrome lives outside `.app-canvas` and never zooms with content.

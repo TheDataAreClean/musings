@@ -50,6 +50,15 @@ See `APP.md`'s Passthrough copies section for why `media_folder` in `src/admin/c
 **og:image generation never *ships* Arial or Georgia directly**
 `scripts/generate-og-images.js` renders each post's `og:image` at build time using Satori, which needs an actual embeddable font file — it has no OS font-fallback to lean on the way a browser does. Arial and Georgia are proprietary; there's no redistributable file for either, so `scripts/og-fonts/` carries **Arimo** (Arial's metric-compatible OFL substitute) and **Gelasio** (Georgia's — *not* Tinos, which is actually a Times New Roman clone and visibly wrong here) as the committed fallback. `resolveFont()` in that script *will* use a real Arial/Georgia `.ttf` if one exists at a known local system path (macOS: `/System/Library/Fonts/Supplemental/`) — that's fine, nothing from those paths is ever committed or shipped, only read at render time to embed glyph outlines. CI (GitHub Actions) has neither installed, so it always falls back to Arimo/Gelasio there. Don't add a real Arial/Georgia `.ttf` to the repo itself — that would actually violate the license. Same reasoning applies to any glyph a chosen font doesn't cover (e.g. the `→` sigil, or `▾` dropdown carets) — draw it as a small inline SVG instead of trusting font fallback.
 
+**The comment rail lives in `<main>`, never inside `.doc-page`**
+`.doc-page` has `overflow-x: clip`, so anything positioned past the page edge is cut off. `src/js/comments.js` appends the rail to `<main>` (`position: relative` on `.app-canvas > main` in `doc-chrome.css`) at `left: calc(100% + var(--comment-gap))`. It also works in the canvas's own unzoomed coordinates (it divides by `canvas.style.zoom`), which is why it stays aligned under the zoom dropdown. Moving the rail inside the page, or dropping `position: relative` on `main`, clips or misplaces every comment.
+
+**`--chrome-h` can't be read from JS**
+It's a `calc()` of other custom properties, so `getComputedStyle(...).getPropertyValue('--chrome-h')` returns the literal string `calc(34px + …)` and `parseFloat` gives `NaN` (which `|| 0` then hides as zero). `comments.js` measures the bottom of `.app-toolbar` and `.app-ruler` instead. Any new script that needs the sticky-chrome offset should do the same.
+
+**A margin note must stay readable without the script**
+The shortcode renders a plain inline `<aside>`; the script only *hides* the ones it built a card for, via the `hidden` attribute, so a note that couldn't be anchored stays visible. `base.njk` also sets `html.comments-pending` in the head to stop a flash before the script runs — a 3s timer clears it if the script never loads. `print.css` re-shows hidden notes with `.margin-note[hidden] { display: block }`. If you change any of these, keep the guarantee: no JS, print and feed readers all show every note inline.
+
 ---
 
 ## Review triggers

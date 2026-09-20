@@ -1,0 +1,144 @@
+---
+layout: layouts/doc.njk
+title: Style
+permalink: /style/
+date: 2026-09-20T10:00:00+05:30
+description: The design tokens and components this site is built from, read from tokens.css when the site is built.
+hideMeta: true
+hidePostNav: true
+---
+
+{#- Headings on this page match what markdown-it-anchor emits for markdown pages:
+    the heading is a link to its own id. -#}
+{% macro h(level, id, text) -%}
+<h{{ level }} id="{{ id }}" tabindex="-1"><a class="header-anchor" href="#{{ id }}">{{ text }}</a></h{{ level }}>
+{%- endmacro %}
+
+{% macro tokenRow(t, style, sample) -%}
+<div class="token-row">
+  <p class="token-row__head"><code>{{ t.name }}</code><span>{{ t.value }}{% if t.note %} · {{ t.note }}{% endif %}</span></p>
+  {% if sample %}<p class="token-row__specimen" style="{{ style }}">{{ sample }}</p>{% endif %}
+</div>
+{%- endmacro %}
+
+<p>This page is a reference for how the site looks. Every value below is read from <code>src/css/tokens.css</code> at build time, so it cannot drift from the real thing. The formatting of the writing itself is on the <a href="/reference/">reference</a> page.</p>
+
+<hr>
+
+{{ h(2, "fonts", "Fonts") }}
+
+<p>Arial is the interface and never changes. Georgia is the document, and the font dropdown in the toolbar switches it to Arial. The specimens below follow that dropdown.</p>
+
+{% for f in tokens.fonts %}
+{{ tokenRow(f, "font-family: var(" + f.name + ");", "The quick brown fox jumps over the lazy dog. 0123456789") }}
+{% endfor %}
+
+<hr>
+
+{{ h(2, "type-scale", "Type scale") }}
+
+<p>Three sizes. Headings in the document are the same size as body text; structure comes from spacing and wording, not scale.</p>
+
+{% for t in tokens.text %}
+{{ tokenRow(t, "font-size: var(" + t.name + ");", "Every word here is set at this size.") }}
+{% endfor %}
+
+{{ h(3, "line-heights", "Line heights") }}
+
+{% for l in tokens.leading %}
+{{ tokenRow(l) }}
+{% endfor %}
+
+<hr>
+
+{{ h(2, "colors", "Colors") }}
+
+<p>Hex values live in <code>tokens.css</code> and in <code>doc-chrome.css</code> only. Everywhere else uses the token.</p>
+
+{% for g in tokens.colorGroups %}
+{{ h(3, "color-" + (g.title | slugify), g.title) }}
+<div class="swatch-grid">
+  {% for t in g.tokens %}
+  <div class="swatch">
+    <span class="swatch__chip" style="background: var({{ t.name }});"></span>
+    <code>{{ t.name }}</code>
+    <span class="swatch__value">{{ t.value }}</span>
+    {% if t.note %}<span class="swatch__note">{{ t.note }}</span>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
+
+<hr>
+
+{{ h(2, "spacing", "Spacing") }}
+
+<p>A scale built on 4px units, in rem so it follows the zoom.</p>
+
+<div class="space-list">
+  {% for s in tokens.space %}
+  <div class="space-row">
+    <code>{{ s.name }}</code>
+    <span class="space-row__value">{{ s.value }}</span>
+    <i class="space-row__bar" style="width: var({{ s.name }});"></i>
+  </div>
+  {% endfor %}
+</div>
+
+<hr>
+
+{{ h(2, "dimensions", "Page and chrome") }}
+
+<p>The page is A4 at 96dpi. On screens 768px wide or less, the side margin drops to <code>--space-4</code>, the top and bottom margin to <code>--space-6</code>, and the ruler is hidden (<code>--ruler-h</code> becomes 0). <code>--chrome-h</code> is the sum of the four bars above the page and is what heading anchors scroll clear of; it is a <code>calc()</code>, so it updates itself.</p>
+
+<div class="space-list">
+  {% for d in tokens.dimensions %}
+  <div class="space-row">
+    <code>{{ d.name }}</code>
+    <span class="space-row__value">{{ d.value }}</span>
+    <span class="space-row__note">{{ d.formula or d.note }}</span>
+  </div>
+  {% endfor %}
+</div>
+
+<hr>
+
+{{ h(2, "components", "Components") }}
+
+{{ h(3, "comment-margin-note", "Comment (margin note)") }}
+
+{% marginnote "the words it is about" %}
+On a wide screen this sits on the desk beside the page, level with the words it is about. On a narrow screen it opens from the bottom when you tap the highlight.
+{% endmarginnote %}
+
+<p>A comment is attached to the words it is about, so only those words are highlighted. Hover the highlight, or the card on the desk, and each lights up the other. Leave the phrase out and the whole paragraph is the anchor.</p>
+
+<p>Written as:</p>
+
+<pre><code>{% raw %}{% marginnote "the words it is about" %}
+The note. Markdown works in here.
+{% endmarginnote %}{% endraw %}</code></pre>
+
+<p>Put it directly before the paragraph it belongs to. If the phrase is not found in that paragraph, the note falls back to the whole paragraph.</p>
+
+{{ h(3, "callouts", "Callouts") }}
+
+{% callout "note" %}
+A note callout: an aside or clarification, on a faint yellow.
+{% endcallout %}
+
+{% callout "warning" %}
+A warning callout: a caveat or a known failure mode, on a faint orange.
+{% endcallout %}
+
+{{ h(3, "highlight-links-and-tags", "Highlight, links and tags") }}
+
+<p>A <mark>highlighted phrase</mark>, an <a href="https://www.example.com/">external link</a>, and a tag: <a class="post-tag" href="#components">design</a></p>
+
+{{ h(3, "page-break", "Page break") }}
+
+<p>A page break is a sheet edge across the page, and starts a new page when printed.</p>
+
+{% pagebreak %}
+
+<p>Text after the break.</p>

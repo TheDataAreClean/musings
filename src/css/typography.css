@@ -63,25 +63,32 @@
   margin-top: 0;
 }
 
-.doc-body a { color: var(--color-link); }
-.doc-body a:visited { color: var(--color-visited); }
+.doc-body a,
+.comment a { color: var(--color-link); }
+.doc-body a:visited,
+.comment a:visited { color: var(--color-visited); }
 
 /* --------------------------------------------------------------------------
    Lists
    -------------------------------------------------------------------------- */
 
 .doc-body ul,
-.doc-body ol {
+.doc-body ol,
+.comment ul,
+.comment ol {
   padding-left: var(--space-8);
   margin-bottom: var(--space-4);
 }
 
-.doc-body li {
+.doc-body li,
+.comment li {
   margin-bottom: var(--space-1);
 }
 
 .doc-body li > ul,
-.doc-body li > ol {
+.doc-body li > ol,
+.comment li > ul,
+.comment li > ol {
   margin-top: var(--space-1);
   margin-bottom: 0;
 }
@@ -109,7 +116,8 @@
    Code
    -------------------------------------------------------------------------- */
 
-.doc-body code {
+.doc-body code,
+.comment code {
   font-family: var(--font-mono);
   font-size: 0.88em;
   background: var(--color-mark-dim);
