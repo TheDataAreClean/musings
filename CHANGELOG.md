@@ -8,6 +8,19 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-09-20 (v3.8.0)
+
+- feat: margin notes are now document comments. On wide screens each note is a card on the grey desk beside the page, level with the words it is about (hover or focus joins them with a line; overlapping cards push apart); on narrow screens it opens from a bottom sheet with prev/next when you tap the highlight. `{% marginnote "phrase" %}` highlights that phrase in the next paragraph; without an argument the whole paragraph is the anchor. Without JS, in print and in the feed it stays an inline boxed note. New `src/js/comments.js` (registered passthrough), tokens `--comment-w` / `--comment-gap`, and an author + date header on every note (author from `site.json`).
+- fix: margin notes no longer flash inline before turning into cards (`html.comments-pending`, cleared by the script or a 3s timer); the phrase highlight has no extra padding; the note badge is a real button with a larger tap area and is never placed inside a link; anchors are described by their cards in the rail and act as buttons in the sheet. `/style/` rebuilds under `npm run dev` when `tokens.css` changes, and `tokens.js` now files multi-line group comments correctly and fails the build on anything it can't read.
+- feat: `/reference/` — the formatting reference is now a standalone page (moved out of `/ideas/`, so it no longer appears in the ideas list, tag pages or the feed). Its margin-note section now demonstrates the comment behaviour.
+- feat: `/style/` — design tokens and components, read from `tokens.css` at build time (`src/_data/tokens.js`).
+- feat: `doc.njk` accepts `hidePostNav: true` to omit the "More ideas / All posts" footer on standalone pages.
+- feat: `/reference/` and `/style/` get generated og:image cards (`scripts/generate-og-images.js`), like the other standalone pages.
+- fix: the admin tab title no longer cycles through "Musings CMS" → "Sveltia CMS" → the URL. `src/admin/index.html` puts the `<title>` back whenever Sveltia changes it (a MutationObserver on the element, not an override of `document.title`).
+- removed: `/ideas/2026-03-01-formatting-reference/` (moved to `/reference/`, no redirect).
+
+---
+
 ## 2026-09-06 (v3.7.4)
 
 - design: headings in doc body now carry the same bottom margin as a paragraph (`--space-4`) — previously `margin-bottom: 0`, so the gap after a heading collapsed to nothing (the following paragraph's own top margin is zeroed by the `h + p` rule, same convention as lists/blockquotes/pre/hr/figure). Spacing after a heading now matches spacing between paragraphs.
