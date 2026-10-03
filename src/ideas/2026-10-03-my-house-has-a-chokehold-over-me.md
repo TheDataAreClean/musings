@@ -1,6 +1,7 @@
 ---
 title: My house has a chokehold over me!
 slug: house-chokehold
+permalink: /ideas/2026-10-03-house-chokehold/
 date: 2026-10-03T23:11:00+05:30
 draft: true
 description: and my perfect schedule does not stand a chance.
