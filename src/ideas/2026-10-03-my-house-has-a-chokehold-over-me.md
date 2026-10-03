@@ -1,13 +1,13 @@
 ---
 title: My house has a chokehold over me!
 slug: house-chokehold
-permalink: /ideas/2026-10-03-house-chokehold/
-date: 2026-10-03T23:11:00+05:30
-draft: true
+date: 2026-10-03T23:21:00+05:30
+draft: false
 description: and my perfect schedule does not stand a chance.
 tags:
   - home
   - adulthood
+permalink: /ideas/2026-10-03-house-chokehold/
 ---
 
 I had a plan for how I wanted to start October. My house had some inputs on said plan.
