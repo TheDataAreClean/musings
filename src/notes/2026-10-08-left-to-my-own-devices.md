@@ -1,6 +1,7 @@
 ---
 title: Left to my own devices..
 slug: devices
+permalink: /notes/2026-10-08-devices/
 date: 2026-10-08T21:11:00+05:30
 draft: false
 description: .. I pick up a new one!
@@ -13,6 +14,6 @@ I am downgrading (read: upgrading) to my iPad which has not touched in months, a
 
 Get ready for many more blogs. Famous last words.
 
-![](/images/uploads/IMG_8519.jpeg "This feels like buying a new pen, or picking up an old one?")
+![](/images/uploads/2026-10-08-devices-2f8a828e.webp "This feels like buying a new pen, or picking up an old one?")
 
 Today , I picked up an old felldevice
