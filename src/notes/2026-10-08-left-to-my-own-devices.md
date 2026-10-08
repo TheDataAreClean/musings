@@ -4,7 +4,10 @@ slug: devices
 date: 2026-10-08T21:11:00+05:30
 draft: false
 description: .. I pick up a new one!
-tags: []
+tags:
+  - personal
+  - writing
+  - blogging
 permalink: /notes/2026-10-08-devices/
 ---
 
