@@ -14,4 +14,4 @@ I am downgrading (read: upgrading) to my iPad which has not touched in months, a
 
 Get ready for many more blogs. Famous last words.
 
-![](/images/uploads/2026-10-08-devices-2f8a828e.webp "This feels like buying a new pen, or picking up an old one?")
+![](/images/uploads/2026-10-08-devices-c0c64d36.webp "This feels like buying a new pen, or picking up an old one?")
