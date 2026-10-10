@@ -6,6 +6,8 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+- feat: every feed entry now ends with a short sign-off linking back to the site and the RSS feed. `og:title` on post pages is now just the post title (the blog name is already in `og:site_name`), so readers and link previews that pull the page title no longer append " | Musings | TheDataAreClean".
+
 ---
 
 ## 2026-09-20 (v3.8.0)
