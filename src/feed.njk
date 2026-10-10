@@ -24,7 +24,7 @@ eleventyExcludeFromCollections: true
     {% endif %}{% for tag in post.data.tags %}<category term="{{ tag }}"/>
     {% endfor %}<content type="html"><![CDATA[{% if post.data.description %}<p style="color:#666666;font-size:1rem;margin:0 0 1em;">{{ post.data.description }}</p><hr style="border:none;border-top:1px solid #dddddd;margin:0 0 1.5em;">{% endif %}{{ post.templateContent | rssContent | safe }}{% if post.data.tags and post.data.tags.length %}
 <p style="margin-top:1.5em;color:#6b7280;font-size:0.875em;">{{ post.data.tags | join(' · ') }}</p>{% endif %}
-<hr style="border:none;border-top:1px solid #dddddd;margin:2em 0 1em;"><p style="color:#6b7280;font-size:0.875em;">Congratulations! You have reached the end. You should read more at <a href="{{ site.url }}/">{{ site.url | replace("https://", "") }}</a> and subscribe via <a href="{{ site.url }}/feed.xml">RSS</a>.</p>]]></content>
+<hr style="border:none;border-top:1px solid #dddddd;margin:2em 0 1em;"><p style="color:#6b7280;font-size:0.875em;">Congratulations! You have reached the end. You should read more at <a href="{{ site.url }}/">{{ site.url | replace("https://", "") }}</a> and subscribe to my <a href="{{ site.url }}/feed.xml">RSS</a>.</p>]]></content>
   </entry>
   {% endfor %}
 </feed>
