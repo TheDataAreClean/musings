@@ -2,7 +2,21 @@
    PRINT STYLESHEET
    ========================================================================== */
 
+/* Print looks like the white page on screen: same font, colours, highlights
+   and margins, just without the chrome and the grey desk. */
+
+@page {
+  size: A4;
+  margin: 21mm 25.4mm;   /* --page-pad-v / --page-pad-h (80px / 96px) at 96dpi */
+}
+
 @media print {
+  /* Keep tag highlights and other backgrounds — browsers drop them by default */
+  html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   /* Strip application chrome */
   .app-titlebar,
   .app-menubar,
@@ -32,19 +46,6 @@
   /* Flatten layout */
   .doc-layout {
     display: block;
-  }
-
-  /* Show full URLs after links */
-  a[href]::after {
-    content: " (" attr(href) ")";
-    font-size: 0.75em;
-    color: #555;
-    font-family: 'Courier New', monospace;
-  }
-
-  a[href^="#"]::after,
-  a[href^="javascript"]::after {
-    content: none;
   }
 
   /* Page break control */
@@ -81,7 +82,5 @@
   .comment-anchor { background: none; text-decoration: none; }
   .margin-note { page-break-inside: avoid; }
 
-  /* Reset colors */
-  body { color: #000; background: #fff; }
-  a { color: #000; text-decoration: underline; }
+  body { background: var(--color-page-bg); }
 }
