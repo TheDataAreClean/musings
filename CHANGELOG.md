@@ -8,6 +8,13 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-10-10 (v3.9.0)
+
+- feat: the desktop page is now one screen tall instead of a full A4 sheet, and on posts the "More …" / "All posts" links sit at the bottom of the page under a thin rule, so a short post no longer ends with the links floating above a blank half-page. Applies on mobile too. Long posts are unchanged.
+- feat: every feed entry now ends with a short sign-off linking back to the site and the RSS feed. `og:title` on post pages is now just the post title (the blog name is already in `og:site_name`), so readers and link previews that pull the page title no longer append " | Musings | TheDataAreClean".
+
+---
+
 ## 2026-09-20 (v3.8.0)
 
 - feat: margin notes are now document comments. On wide screens each note is a card on the grey desk beside the page, level with the words it is about (hover or focus joins them with a line; overlapping cards push apart); on narrow screens it opens from a bottom sheet with prev/next when you tap the highlight. `{% marginnote "phrase" %}` highlights that phrase in the next paragraph; without an argument the whole paragraph is the anchor. Without JS, in print and in the feed it stays an inline boxed note. New `src/js/comments.js` (registered passthrough), tokens `--comment-w` / `--comment-gap`, and an author + date header on every note (author from `site.json`).

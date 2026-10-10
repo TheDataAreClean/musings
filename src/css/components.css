@@ -471,6 +471,33 @@ a.post-tag:hover { text-decoration: none; }
   margin-top: var(--space-10);
 }
 
+/* Pin the post nav to the bottom of the page on short posts; on long posts
+   it simply follows the content. Flex chain: page → layout → content. */
+.doc-page--with-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-page--with-nav .doc-layout {
+  flex: 1;
+  align-items: stretch;
+}
+
+.doc-page--with-nav .doc-layout__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-page--with-nav .doc-body {
+  margin-bottom: var(--space-10);
+}
+
+.doc-page--with-nav .post-nav {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-soft);
+}
+
 .post-nav__prev { text-align: left; }
 .post-nav__next { text-align: right; }
 
