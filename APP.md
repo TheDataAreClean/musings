@@ -108,6 +108,8 @@ feed.njk      Atom XML — must have layout: false
 
 `doc.njk` element order: title → nav → description (if present) → meta (omitted if `hideMeta: true`) → body → post-nav (omitted if `hidePostNav: true`)
 
+**Page height and post-nav:** `.doc-page` is one screen tall at minimum (`calc(100vh - var(--chrome-h) - var(--statusbar-h) - var(--space-6) * 2)` in `doc-chrome.css`), not A4. When the post-nav is shown, `doc.njk` adds `.doc-page--with-nav`, a flex chain (page → `.doc-layout` → `.doc-layout__content`) in `components.css` that pins `.post-nav` to the bottom of the page with `margin-top: auto`, under a thin rule. On long posts it just follows the body. `print.css` resets both (`display: block; min-height: 0`).
+
 **Standalone pages** (not posts — no collection tag, so not in listings or the feed): `src/about.md` → `/about/`, `src/reference.md` → `/reference/` (every formatting element, and a live test of the shortcodes), `src/style.njk` → `/style/` (design tokens and components). The last two set `hideMeta` and `hidePostNav`.
 
 `src/_data/tokens.js` parses the first `:root` block of `tokens.css` at build time and feeds `/style/` (fonts, type scale, colour groups, spacing, page and chrome dimensions), so the page cannot drift from the real values. The parser expects the existing conventions: a `/* Group title — note */` comment line starts a group, and each token is `--name: value; /* note */` on one line. Add a new token there and it appears on `/style/` automatically if its name starts with `--font-`, `--text-`, `--leading-`, `--space-`, `--color-`, or one of the dimension prefixes (`--page`, `--comment`, `--titlebar`, `--menubar`, `--toolbar`, `--ruler`, `--statusbar`, `--chrome`); any other prefix needs adding to `tokens.js`. A value that is a `calc()` sum of `px` tokens (`--chrome-h`) is shown resolved (114px) with the formula as a note.
@@ -268,6 +270,10 @@ Access: `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
 ### Feed
 
 `/feed.xml` — combined Atom feed (ideas + notes + snaps), 15 most recent posts. Uses `atomDate` (UTC ISO 8601). `feed.njk` must have `layout: false`.
+
+Each entry's `<title>` is the bare post title; the blog name comes from the feed's own `<title>`. Entry content is: description (if present) → rule → body → tags → rule → a fixed sign-off ("Congratulations! You have reached the end. You should read more at {site} and subscribe to my RSS.", both linked from `site.url`). Styles are inline because feed readers ignore site CSS.
+
+Post pages' `og:title` is likewise the bare title — the blog name lives in `og:site_name`. Only the browser-tab `<title>` keeps the `| {site.title}` suffix.
 
 ### OG images
 
