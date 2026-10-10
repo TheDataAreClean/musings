@@ -462,7 +462,9 @@ body {
   max-width: var(--page-width);
   margin: 0 auto;
   padding: var(--page-pad-v) var(--page-pad-h);
-  min-height: 297mm;
+  /* One screen tall: the window minus sticky chrome, status bar and the desk's
+     top/bottom gap — so a short post fills exactly one screen. */
+  min-height: calc(100vh - var(--chrome-h) - var(--statusbar-h) - var(--space-6) * 2);
   overflow-x: clip;
   color: var(--color-text);
   font-family: var(--font-doc);

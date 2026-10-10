@@ -3,7 +3,7 @@ layout: layouts/base.njk
 ogType: article
 ---
 
-<article class="doc-page">
+<article class="doc-page{% if not hidePostNav %} doc-page--with-nav{% endif %}">
 
   <p class="doc-title">{{ title }}</p>
 
