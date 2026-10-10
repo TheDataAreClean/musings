@@ -6,6 +6,10 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+---
+
+## 2026-10-10 (v3.9.0)
+
 - feat: the desktop page is now one screen tall instead of a full A4 sheet, and on posts the "More …" / "All posts" links sit at the bottom of the page under a thin rule, so a short post no longer ends with the links floating above a blank half-page. Long posts and mobile are unchanged.
 - feat: every feed entry now ends with a short sign-off linking back to the site and the RSS feed. `og:title` on post pages is now just the post title (the blog name is already in `og:site_name`), so readers and link previews that pull the page title no longer append " | Musings | TheDataAreClean".
 
