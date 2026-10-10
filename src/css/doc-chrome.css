@@ -168,6 +168,79 @@ body {
   color: var(--color-text);   /* black, not muted — real menus have black text */
 }
 
+/* Working menus (File, Help): highlight like a real menu title, panel below */
+.app-menu {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.app-menu:hover,
+.app-menu--open {
+  background: rgba(0,0,0,0.07);
+}
+
+.app-menu__panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 500;
+  min-width: 220px;
+  padding: 4px 0;
+  background: #f8f8f8;
+  border: 1px solid #c8c8c8;
+  border-radius: 2px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.14), 0 1px 3px rgba(0,0,0,0.08);
+  cursor: default;
+}
+
+.app-menu--right .app-menu__panel {
+  left: auto;
+  right: 0;
+}
+
+.app-menu--open .app-menu__panel {
+  display: block;
+}
+
+.app-menu__option {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 5px var(--space-4) 5px 20px;
+  color: #222;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.app-menu__option:hover {
+  background: rgba(0,0,0,0.06);
+}
+
+.app-menu__hint {
+  color: #999;
+}
+
+.app-menu__key {
+  margin-left: auto;
+  padding-left: var(--space-6);
+  color: #999;
+}
+
+.app-menu__label {
+  padding: 5px var(--space-4) 3px 20px;
+  color: #999;
+  white-space: nowrap;
+}
+
+.app-menu__sep {
+  border-top: 1px solid #e0e0e0;
+  margin: 4px 0;
+}
+
 /* ==========================================================================
    TOOLBAR — static decoration only
    Dense, realistic content. Dark text so items read as formatted, not disabled.
@@ -208,6 +281,29 @@ body {
   padding: 0 3px;
   color: #222;
   white-space: nowrap;
+}
+
+/* Pressed state: the active alignment, ¶ while marks are shown */
+.app-toolbar__fmt--active {
+  background: rgba(0,0,0,0.09);
+  border-radius: 2px;
+}
+
+.app-toolbar__marks {
+  cursor: pointer;
+}
+
+/* Alignment and indent icons — inline SVG, sized to the text */
+.app-toolbar__icon {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+}
+
+.app-toolbar__icon svg {
+  width: 13px;
+  height: 11px;
+  fill: currentColor;
 }
 
 .app-toolbar__pipe {
@@ -289,6 +385,20 @@ body {
 
 .app-dropdown__option:hover {
   background: rgba(0,0,0,0.06);
+}
+
+/* Outline: sub-headings indented under their section */
+.app-dropdown__option--sub {
+  padding-left: 34px;
+}
+
+/* Outline on a page with no headings: plain dead label */
+.app-dropdown--empty {
+  cursor: default;
+}
+
+.app-dropdown--empty:hover {
+  background: none;
 }
 
 .app-dropdown__option--selected {
@@ -434,6 +544,11 @@ body {
     margin-left: auto;
   }
 
+  /* Status bar: language goes so page, words and zoom fit */
+  .app-statusbar .app-statusbar__lang {
+    display: none;
+  }
+
   /* Ruler — hide on mobile; tick positions are desktop-only */
   .app-ruler {
     display: none;
@@ -468,6 +583,9 @@ body {
   overflow-x: clip;
   color: var(--color-text);
   font-family: var(--font-doc);
+  /* Text size picker: rescale the document type scale, chrome untouched */
+  --text-base: calc(1rem * var(--doc-scale));
+  --text-sm:   calc(0.8rem * var(--doc-scale));
 }
 
 /* ==========================================================================
@@ -568,6 +686,33 @@ body {
 
 
 /* ==========================================================================
+   FORMATTING MARKS — ¶ toggle in the toolbar adds html.show-marks
+   ========================================================================== */
+
+.show-marks .doc-body p::after,
+.show-marks .doc-body li::after,
+.show-marks .doc-body h2::after,
+.show-marks .doc-body h3::after,
+.show-marks .doc-body h4::after {
+  content: '¶';
+  margin-left: 0.15em;
+  color: #8fa8c8;
+  font-family: var(--font-doc);
+}
+
+.show-marks .doc-body .page-break::after {
+  content: 'Page break';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: #8a8a8a;
+}
+
+/* ==========================================================================
    :TARGET HIGHLIGHTS
    ========================================================================== */
 
@@ -605,6 +750,11 @@ body {
   display: flex;
   align-items: center;
   white-space: nowrap;
+}
+
+/* Words (posts only) and messages start hidden; display:flex above would win */
+.app-statusbar__item[hidden] {
+  display: none;
 }
 
 .app-statusbar__item:last-child {

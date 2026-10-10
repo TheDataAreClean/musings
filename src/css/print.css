@@ -62,6 +62,14 @@
 
   .page-break::after { content: none; }
 
+  /* Formatting marks are a screen aid, never printed */
+  .show-marks .doc-body p::after,
+  .show-marks .doc-body li::after,
+  .show-marks .doc-body h2::after,
+  .show-marks .doc-body h3::after,
+  .show-marks .doc-body h4::after,
+  .show-marks .doc-body .page-break::after { content: none; }
+
   .footnotes { page-break-before: always; }
 
   /* Comments: print the plain inline notes, not the rail or sheet */
