@@ -2,7 +2,21 @@
    PRINT STYLESHEET
    ========================================================================== */
 
+/* Print looks like the white page on screen: same font, colours, highlights
+   and margins, just without the chrome and the grey desk. */
+
+@page {
+  size: A4;
+  margin: 21mm 25.4mm;   /* --page-pad-v / --page-pad-h (80px / 96px) at 96dpi */
+}
+
 @media print {
+  /* Keep tag highlights and other backgrounds — browsers drop them by default */
+  html {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   /* Strip application chrome */
   .app-titlebar,
   .app-menubar,
@@ -34,19 +48,6 @@
     display: block;
   }
 
-  /* Show full URLs after links */
-  a[href]::after {
-    content: " (" attr(href) ")";
-    font-size: 0.75em;
-    color: #555;
-    font-family: 'Courier New', monospace;
-  }
-
-  a[href^="#"]::after,
-  a[href^="javascript"]::after {
-    content: none;
-  }
-
   /* Page break control */
   h2 { page-break-after: avoid; }
   h3, h4 { page-break-after: avoid; }
@@ -62,6 +63,14 @@
 
   .page-break::after { content: none; }
 
+  /* Formatting marks are a screen aid, never printed */
+  .show-marks .doc-body p::after,
+  .show-marks .doc-body li::after,
+  .show-marks .doc-body h2::after,
+  .show-marks .doc-body h3::after,
+  .show-marks .doc-body h4::after,
+  .show-marks .doc-body .page-break::after { content: none; }
+
   .footnotes { page-break-before: always; }
 
   /* Comments: print the plain inline notes, not the rail or sheet */
@@ -73,7 +82,5 @@
   .comment-anchor { background: none; text-decoration: none; }
   .margin-note { page-break-inside: avoid; }
 
-  /* Reset colors */
-  body { color: #000; background: #fff; }
-  a { color: #000; text-decoration: underline; }
+  body { background: var(--color-page-bg); }
 }

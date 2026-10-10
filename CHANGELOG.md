@@ -6,6 +6,10 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+- feat: the doc chrome now works. File menu (random post, all posts, copy link, RSS, print / PDF, close tab) and Help menu (zoom shortcuts, About); the style picker becomes an Outline of the post's headings; ¶ shows formatting marks; the 12 ▾ picker sets document text size (new token `--doc-scale`); the status bar shows page x of y, word count and read time; the titlebar shows "Last edited …" on posts.
+- fix: print / PDF now looks like the page on screen: no more "(/path/)" after every link, link colours, tag highlights and the document font are kept, and the page has A4 margins matching the on-screen page.
+- fix: the four alignment icons were all the same ⇄ glyph and the indent arrows were the wrong shape; all six are now inline SVGs. On mobile the toolbar no longer cuts off the zoom control (B/I/U/S and A ▾ hide) and the status bar drops the language cell.
+
 ---
 
 ## 2026-10-10 (v3.9.0)

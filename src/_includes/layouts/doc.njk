@@ -3,7 +3,7 @@ layout: layouts/base.njk
 ogType: article
 ---
 
-<article class="doc-page{% if not hidePostNav %} doc-page--with-nav{% endif %}">
+<article class="doc-page{% if not hidePostNav %} doc-page--with-nav{% endif %}"{% if date %} data-words="{{ content | wordcount }}" data-readtime="{{ content | readtime }}"{% endif %}>
 
   <p class="doc-title">{{ title }}</p>
 

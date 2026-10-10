@@ -146,6 +146,7 @@ print.css       Print stylesheet — strips chrome, shows link URLs
 | `--page-pad-v` | 80px | A4 vertical padding |
 | `--page-pad-h` | 96px | A4 horizontal padding |
 | `--chrome-h` | 114px | Sum of all chrome bar heights (34+26+32+22) |
+| `--doc-scale` | 1 | Document text size multiplier, set by the toolbar size picker (12 = 1) |
 | `--comment-w` | 208px | Width of a comment card in the desk rail |
 | `--comment-gap` | 14px | Gap between the page edge and the comment rail |
 | `--titlebar-h` | 34px | |
@@ -223,6 +224,14 @@ All code in an IIFE — no globals leaked.
 |---|---|
 | Font dropdown | Switches `--font-doc`; persists `musings-font` in `sessionStorage` |
 | Zoom dropdown | Sets `app-canvas` CSS zoom 50–200%; Cmd/Ctrl +/-/0 shortcuts; persists `musings-zoom` in `sessionStorage` |
+| Text size dropdown | 10–18, sets `--doc-scale` (size ÷ 12), which rescales `--text-base`/`--text-sm` inside `.doc-page` only; persists `musings-size` |
+| Outline dropdown | Lists `.doc-body` `h2`/`h3` (ids from markdown-it-anchor) and jumps via `location.hash`; reads "Normal text" and stays dead on pages without headings |
+| ¶ toggle | Adds `html.show-marks` — pilcrow after each paragraph, list item and heading, "Page break" label on breaks; never printed; persists `musings-marks` |
+| File menu | New (random post from `collections.feed`, via `data-urls`), Open… (`/`), Copy link (status bar confirms), Subscribe (`/feed.xml`), Print / PDF, Close tab. Shortcut hints are labels only (⌘ becomes Ctrl+ off Mac) |
+| Help menu | Zoom in/out/actual size (same as the keys), About |
+| Menu bar | Only File and Help open; once one is open, hovering the other switches. Click outside or Escape closes |
+| Status bar | "Page x of y" counts `.page-break`s above mid-screen on scroll; words · read time from `data-words`/`data-readtime` on posts (same filters as the meta line); transient messages |
+| Titlebar | "Last edited {updated or date}" on dated pages, else `site.chrome.saveState` (template, not JS) |
 | Stoplight dot | `window.close()` — browser-blocked for normal tabs, silent no-op |
 | Titlebar dimming | `setActive` on `blur`, `focus`, `visibilitychange` — all three needed |
 
