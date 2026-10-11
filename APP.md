@@ -128,7 +128,7 @@ reset.css       Minimal reset
 doc-chrome.css  App chrome (titlebar, menubar, toolbar, ruler, statusbar, canvas)
 typography.css  Document prose — headings, paragraphs, lists, code, tables
 components.css  Post list, footnotes, callouts, margin notes, post-nav
-print.css       Print stylesheet — strips chrome, shows link URLs
+print.css       Print stylesheet — A4 page like the screen page, no chrome, footer, page address at the end
 ```
 
 **Token rules:**
@@ -146,6 +146,7 @@ print.css       Print stylesheet — strips chrome, shows link URLs
 | `--page-pad-v` | 80px | A4 vertical padding |
 | `--page-pad-h` | 96px | A4 horizontal padding |
 | `--chrome-h` | 114px | Sum of all chrome bar heights (34+26+32+22) |
+| `--doc-scale` | 1 | Document text size multiplier, set by the toolbar size picker (12 = 1) |
 | `--comment-w` | 208px | Width of a comment card in the desk rail |
 | `--comment-gap` | 14px | Gap between the page edge and the comment rail |
 | `--titlebar-h` | 34px | |
@@ -178,7 +179,7 @@ Defined in `.eleventy.js`:
 - **Narrow screens**: one card at a time in a bottom sheet above the status bar (`.comment-sheet`, fixed, outside `.app-canvas`), with prev/next/close and Escape to close. Each note has a numbered badge — a real, focusable `<button>` — after its phrase, or inside its paragraph (on a row of its own before a list, table or rule). A phrase opens the sheet on click; a whole-paragraph note opens from its badge only, and links keep their own click. The mode is chosen on load, resize, zoom change and font change.
 - **No flash of the inline note:** on pages that contain a note, `base.njk` puts `html.comments-pending` in the head, which hides `.margin-note` in CSS until the script has run (the script clears it first thing; a 3s timer does too if the script never loads).
 - **Accessibility**: in the rail an anchor is focusable text with `aria-describedby` pointing at its card; in the sheet a phrase is a `role="button"` and every note has a real badge `<button>`. The badge is placed outside any link the phrase sits in, and its tap area is enlarged to ~32px.
-- **No JS, print, feed readers**: the original `<aside>` shows inline as a boxed card. The script sets `hidden` on each aside it built a card for; `print.css` shows those again and hides the rail, sheet and badges.
+- **No JS, print, feed readers**: the original `<aside>` shows inline as a boxed card. The script sets `hidden` on each aside it built a card for, numbers it (`data-c`) and moves it after the block it anchors to; `print.css` shows those again after their text, numbered to match the badge on the highlighted phrase, and hides the rail and sheet. Without JS the note stays where the author put it, before its block.
 - Comment cards are built from the aside's HTML, so the aside must contain everything (header + body). Cards live outside `.doc-body`, so lists, inline code and links inside a note are styled by extra `.comment` selectors in `typography.css`. `base.njk` loads the script (with `defer`) only on pages whose rendered content contains a margin note. `--chrome-h` is a `calc()` and can't be read as a number from JS, so the sheet's scroll-into-view measures the sticky toolbar and ruler instead.
 
 Section break: `---` in body renders as `* * *`.
@@ -223,12 +224,19 @@ All code in an IIFE — no globals leaked.
 |---|---|
 | Font dropdown | Switches `--font-doc`; persists `musings-font` in `sessionStorage` |
 | Zoom dropdown | Sets `app-canvas` CSS zoom 50–200%; Cmd/Ctrl +/-/0 shortcuts; persists `musings-zoom` in `sessionStorage` |
+| Text size dropdown | 10–18, sets `--doc-scale` (size ÷ 12), which rescales `--text-base`/`--text-sm`/`--text-xs` and the font-size of `.doc-page` only, so body, meta line, tags, captions and post nav all follow; persists `musings-size` |
+| Outline dropdown | Lists `.doc-body` `h2`/`h3` (ids from markdown-it-anchor) and jumps via `location.hash`; reads "Normal text" and stays dead on pages without headings |
+| ¶ toggle | Adds `html.show-marks` — pilcrow after each paragraph, list item and heading, "Page break" label on breaks; never printed; persists `musings-marks` |
+| File menu | New (random post from `/posts.json`, built by `src/posts.njk` from `collections.feed` and fetched on click), Open… (`/`), Copy link (status bar confirms), Subscribe (`/feed.xml`), Print / PDF, Close tab. Shortcut hints are labels only (⌘ becomes Ctrl+ off Mac) |
+| Help menu | Zoom in/out/actual size (same as the keys), About |
+| Menu bar | Only File and Help open; once one is open, hovering the other switches. Click outside or Escape closes |
+| Status bar | "Page x of y" counts `.page-break`s above mid-screen on scroll; words · read time from `data-words`/`data-readtime` on posts (same filters as the meta line); transient messages |
 | Stoplight dot | `window.close()` — browser-blocked for normal tabs, silent no-op |
 | Titlebar dimming | `setActive` on `blur`, `focus`, `visibilitychange` — all three needed |
 
 `initDropdown` returns `{ setValue }` — used by zoom to sync label with keyboard shortcuts.
 
-Session persistence: `sessionStorage` only — resets on new tab by design.
+Session persistence: `sessionStorage` only, and only within one visit. On load, a fresh arrival (`navigation.type` is `navigate` and the referrer is not this site: typed URL, bookmark, external link) clears `musings-font`, `musings-size`, `musings-zoom` and `musings-marks`. Moving between pages, reload and back/forward keep them; a new tab starts fresh as before.
 
 **Other scripts.** Margin-note comments live in `src/js/comments.js`, not in this block: `base.njk` loads it (`defer`) and adds a small head script that sets `html.comments-pending`, only on pages whose content contains a margin note. See Shortcodes → Margin notes. The comment rail listens for the zoom above by watching `.app-canvas`'s `style` attribute, so the zoom code needs no hook for it.
 

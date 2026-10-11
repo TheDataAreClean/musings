@@ -92,6 +92,7 @@
 
   // ── Build one comment per aside ────────────────────────────────────────────
   var comments = []; // { anchor, card, y, cardY } — y/cardY are set by layoutRail
+  var moves = [];    // { aside, block } — applied once every note has found its anchor
   asides.forEach(function (aside) {
     var found = findAnchor(aside, aside.getAttribute('data-anchor'));
     if (!found) return;
@@ -116,9 +117,21 @@
     card.setAttribute('data-c', id);
     card.setAttribute('aria-label', 'Note ' + id);
     card.innerHTML = aside.innerHTML;
+    aside.setAttribute('data-c', id); // print numbers the inline note to match its badge
     aside.hidden = true; // only notes that got a card are hidden; the rest stay readable inline
 
     comments.push({ anchor: el, card: card, phrase: found.phrase, label: 'Note ' + id + ' on \u201c' + el.textContent + '\u201d' });
+
+    // The (hidden) note is only seen in print: move it after the block it is
+    // about, so the printed box follows the text rather than introducing it.
+    var block = el;
+    while (block.parentNode && block.parentNode !== aside.parentNode) block = block.parentNode;
+    if (block.parentNode) moves.push({ aside: aside, block: block });
+  });
+  moves.forEach(function (m) {
+    var at = m.block;
+    while (at.nextElementSibling && at.nextElementSibling.classList.contains('margin-note') && at.nextElementSibling.hidden) at = at.nextElementSibling;
+    at.parentNode.insertBefore(m.aside, at.nextSibling);
   });
   if (!comments.length) return;
 

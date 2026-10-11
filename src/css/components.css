@@ -139,14 +139,19 @@
 .comment-badge {
   position: relative;
   margin-left: 2px;
+  border-radius: 0;
+  vertical-align: super;
+  cursor: pointer;
+}
+
+/* The badge look, shared with the number on a printed note (print.css) */
+.comment-badge,
+.margin-note[data-c]::before {
   padding: 0 3px;
   background: var(--color-mark);
   border: 1px solid var(--color-border);
-  border-radius: 0;
   color: var(--color-text);
   font: 700 9px/12px var(--font-ui);
-  vertical-align: super;
-  cursor: pointer;
 }
 
 /* A phone thumb needs ~32px; the badge stays small, its tap area doesn't */
@@ -159,8 +164,10 @@
 /* Badge on its own row, before a list / table / rule that can't hold it */
 .comment-badge-row { margin-bottom: var(--space-1); }
 
-.comments-rail .comment-badge,
-.comments-rail .comment-badge-row { display: none; }
+@media screen {
+  .comments-rail .comment-badge,
+  .comments-rail .comment-badge-row { display: none; }
+}
 
 /* Rail — cards on the desk, level with their anchors */
 
@@ -379,6 +386,9 @@ a.post-tag:visited {
 }
 
 a.post-tag:hover { text-decoration: none; }
+
+/* Inside prose, tags sit in a sentence, so punctuation follows them directly */
+.doc-body a.post-tag { margin-right: 0; }
 
 /* --------------------------------------------------------------------------
    Archive
