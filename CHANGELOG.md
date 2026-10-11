@@ -8,6 +8,12 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-10-11 (v3.10.1)
+
+- chore: faster publishes. CI now builds on Node 24, which the runner already has, instead of downloading Node 20 on every run. Build and deploy run as one job instead of two, and the deploy actions moved to their Node 24 versions, so the Node 20 deprecation warning is gone. A publish now takes about 30s from push to live, down from 35–40s. Site output is unchanged.
+
+---
+
 ## 2026-10-11 (v3.10.0)
 
 - content: About now explains the three kinds of posts (ideas, notes, snaps) with their list marks, shows tags as highlights, points to the home page and RSS, links Reference and Style under "How it is put together", and hints that the chrome works.

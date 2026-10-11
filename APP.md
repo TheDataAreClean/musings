@@ -246,7 +246,7 @@ Session persistence: `sessionStorage` only, and only within one visit. On load, 
 
 ### Deployment
 
-`deploy.yml` triggers on push to `main` — `npm ci → npm run webp → npm run build` → deploys `_site/` to GitHub Pages.
+`deploy.yml` triggers on push to `main` and runs as a single `build-and-deploy` job on Node 24: `npm ci → npm run build` → commits any files the prebuild scripts generated (`[skip ci]`) → deploys `_site/` to GitHub Pages. Build and deploy share one job so a publish doesn't wait for a second runner to start. Node 24 is preinstalled on `ubuntu-latest`; a version the runner lacks, such as Node 20, gets downloaded on every run, costing 5–11s. Keep the `actions/*` steps on their Node 24 majors (checkout v5, setup-node v5, upload-pages-artifact v5, deploy-pages v5) or every run logs a Node 20 deprecation warning. A typical publish takes about 30–40s from push to live.
 
 `npm run build` runs `prebuild` automatically, which chains four scripts:
 1. `backfill-dates.js` — fills git creation time into date-only front matter
