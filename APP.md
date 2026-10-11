@@ -227,7 +227,7 @@ All code in an IIFE — no globals leaked.
 | Text size dropdown | 10–18, sets `--doc-scale` (size ÷ 12), which rescales `--text-base`/`--text-sm`/`--text-xs` and the font-size of `.doc-page` only, so body, meta line, tags, captions and post nav all follow; persists `musings-size` |
 | Outline dropdown | Lists `.doc-body` `h2`/`h3` (ids from markdown-it-anchor) and jumps via `location.hash`; reads "Normal text" and stays dead on pages without headings |
 | ¶ toggle | Adds `html.show-marks` — pilcrow after each paragraph, list item and heading, "Page break" label on breaks; never printed; persists `musings-marks` |
-| File menu | New (random post from `collections.feed`, via `data-urls`), Open… (`/`), Copy link (status bar confirms), Subscribe (`/feed.xml`), Print / PDF, Close tab. Shortcut hints are labels only (⌘ becomes Ctrl+ off Mac) |
+| File menu | New (random post from `/posts.json`, built by `src/posts.njk` from `collections.feed` and fetched on click), Open… (`/`), Copy link (status bar confirms), Subscribe (`/feed.xml`), Print / PDF, Close tab. Shortcut hints are labels only (⌘ becomes Ctrl+ off Mac) |
 | Help menu | Zoom in/out/actual size (same as the keys), About |
 | Menu bar | Only File and Help open; once one is open, hovering the other switches. Click outside or Escape closes |
 | Status bar | "Page x of y" counts `.page-break`s above mid-screen on scroll; words · read time from `data-words`/`data-readtime` on posts (same filters as the meta line); transient messages |

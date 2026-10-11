@@ -2,8 +2,8 @@
 layout: layouts/base.njk
 ogType: article
 ---
-
-<article class="doc-page{% if not hidePostNav %} doc-page--with-nav{% endif %}"{% if date %} data-words="{{ content | wordcount }}" data-readtime="{{ content | readtime }}"{% endif %}>
+{% if date %}{% set words = content | wordcount %}{% set readtime = content | readtime %}{% endif %}
+<article class="doc-page{% if not hidePostNav %} doc-page--with-nav{% endif %}"{% if date %} data-words="{{ words }}" data-readtime="{{ readtime }}"{% endif %}>
 
   <p class="doc-title">{{ title }}</p>
 
@@ -26,8 +26,8 @@ ogType: article
   <p class="doc-meta">
     {% if date %}
       <time datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
-      · {{ content | wordcount }} words
-      · {{ content | readtime }} min read
+      · {{ words }} words
+      · {{ readtime }} min read
     {% endif %}
     · <a href="{{ sectionUrl }}">{{ sectionLabel }}</a>
   </p>

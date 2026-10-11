@@ -1,0 +1,8 @@
+---
+permalink: /posts.json
+layout: false
+eleventyExcludeFromCollections: true
+---
+{# Every post URL, for File → New (random post). Fetched on click rather than
+   embedded in every page. #}
+[{% for post in collections.feed %}"{{ post.url }}"{% if not loop.last %},{% endif %}{% endfor %}]

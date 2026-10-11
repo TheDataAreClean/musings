@@ -8,6 +8,10 @@
 @page {
   size: A4;
   margin: 21mm 25.4mm;   /* --page-pad-v / --page-pad-h (80px / 96px) at 96dpi */
+  /* Margin boxes inherit from here but can't read custom properties:
+     --font-ui at 8pt, and dimgray standing in for --color-muted */
+  font: 8pt Arial, Helvetica, sans-serif;
+  color: dimgray;
 
   /* Empty top boxes claim the top margin, so Chromium doesn't fill it with
      its own date and title when "Headers and footers" is ticked */
@@ -17,16 +21,8 @@
 
   /* Running footer: site name left, page number right. Browsers without
      margin-box support simply print no footer. */
-  @bottom-left {
-    content: "Musings";
-    font: 8pt Arial, Helvetica, sans-serif;
-    color: #777;
-  }
-  @bottom-right {
-    content: counter(page) " / " counter(pages);
-    font: 8pt Arial, Helvetica, sans-serif;
-    color: #777;
-  }
+  @bottom-left { content: "Musings"; }
+  @bottom-right { content: counter(page) " / " counter(pages); }
 }
 
 @media print {
@@ -83,16 +79,6 @@
 
   .page-break::after { content: none; }
 
-  /* Formatting marks are a screen aid, never printed */
-  .show-marks .doc-body p::after,
-  .show-marks .doc-body li::after,
-  .show-marks .doc-body h2::after,
-  .show-marks .doc-body h3::after,
-  .show-marks .doc-body h4::after,
-  .show-marks .doc-body .page-break::after { content: none; }
-
-  /* Footnotes follow the text instead of starting a mostly empty page */
-
   /* Paragraphs: no single stranded lines at the top or bottom of a page */
   p, li { orphans: 3; widows: 3; }
 
@@ -109,7 +95,6 @@
 
   /* Code can't scroll on paper: wrap long lines instead of cutting them off */
   .doc-body pre { white-space: pre-wrap; overflow-wrap: anywhere; }
-  .print-source { page-break-before: avoid; break-before: avoid; }
 
   /* Tighter section breaks on paper, so a page that just fills its sheet
      doesn't spill its last line onto a near-empty one */
@@ -117,7 +102,8 @@
 
   /* Where the page came from — printed at the end, hidden on screen */
   .print-source {
-    display: block !important;
+    display: block; /* beats the [hidden] the page ships with */
+    break-before: avoid;
     margin-top: var(--space-6);
     padding-top: var(--space-2);
     border-top: 1px solid var(--color-border-soft);
@@ -131,18 +117,12 @@
   .margin-note[hidden] { display: block; }
   .comment-rail,
   .comment-sheet { display: none !important; }
-  .comments-rail .comment-badge { display: inline; }
-  .comments-rail .comment-badge-row { display: block; }
   .margin-note { position: relative; page-break-inside: avoid; }
   .margin-note[data-c]::before {
     content: attr(data-c);
     position: absolute;
     top: -7px;
     left: -1px;
-    padding: 0 3px;
-    background: var(--color-mark);
-    border: 1px solid var(--color-border);
-    font: 700 9px/12px var(--font-ui);
   }
 
   body { background: var(--color-page-bg); }

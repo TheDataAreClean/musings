@@ -183,27 +183,10 @@ body {
 }
 
 .app-menu__panel {
-  display: none;
-  position: absolute;
   top: 100%;
-  left: 0;
-  z-index: 500;
   min-width: 220px;
   padding: 4px 0;
-  background: #f8f8f8;
-  border: 1px solid #c8c8c8;
-  border-radius: 2px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.14), 0 1px 3px rgba(0,0,0,0.08);
   cursor: default;
-}
-
-.app-menu--right .app-menu__panel {
-  left: auto;
-  right: 0;
-}
-
-.app-menu--open .app-menu__panel {
-  display: block;
 }
 
 .app-menu__option {
@@ -211,13 +194,6 @@ body {
   align-items: baseline;
   gap: var(--space-2);
   padding: 5px var(--space-4) 5px 20px;
-  color: #222;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.app-menu__option:hover {
-  background: rgba(0,0,0,0.06);
 }
 
 .app-menu__hint {
@@ -266,16 +242,6 @@ body {
 }
 
 /* Fake select/dropdown fields — text only, no borders */
-.app-toolbar__select {
-  padding: 0 var(--space-2);
-  white-space: nowrap;
-  color: #222;
-}
-
-.app-toolbar__select--size {
-  min-width: 2ch;
-}
-
 /* Formatting characters: B I U S etc — slightly more spaced */
 .app-toolbar__fmt {
   padding: 0 3px;
@@ -349,27 +315,33 @@ body {
   /* inherits font/size/color from .app-dropdown */
 }
 
-/* The dropdown panel */
-.app-dropdown__menu {
+/* The dropdown panel — the menu bar's File / Help panels share its skin */
+.app-dropdown__menu,
+.app-menu__panel {
   display: none;
   position: absolute;
-  top: calc(100% + 3px);
   left: 0;
   z-index: 500;
   background: #f8f8f8;
   border: 1px solid #c8c8c8;
   border-radius: 2px;
-  min-width: 100%;
   box-shadow: 0 3px 10px rgba(0,0,0,0.14), 0 1px 3px rgba(0,0,0,0.08);
 }
 
+.app-dropdown__menu {
+  top: calc(100% + 3px);
+  min-width: 100%;
+}
+
 /* Zoom panel opens right-aligned (sits at end of toolbar) */
-.app-dropdown--right .app-dropdown__menu {
+.app-dropdown--right .app-dropdown__menu,
+.app-menu--right .app-menu__panel {
   left: auto;
   right: 0;
 }
 
-.app-dropdown--open .app-dropdown__menu {
+.app-dropdown--open .app-dropdown__menu,
+.app-menu--open .app-menu__panel {
   display: block;
 }
 
@@ -378,12 +350,17 @@ body {
   padding: 4px var(--space-4) 4px 20px;
   font-family: var(--font-ui);
   font-size: var(--text-xs);
+}
+
+.app-dropdown__option,
+.app-menu__option {
   color: #222;
   cursor: pointer;
   white-space: nowrap;
 }
 
-.app-dropdown__option:hover {
+.app-dropdown__option:hover,
+.app-menu__option:hover {
   background: rgba(0,0,0,0.06);
 }
 
@@ -692,27 +669,30 @@ body {
    FORMATTING MARKS — ¶ toggle in the toolbar adds html.show-marks
    ========================================================================== */
 
-.show-marks .doc-body p::after,
-.show-marks .doc-body li::after,
-.show-marks .doc-body h2::after,
-.show-marks .doc-body h3::after,
-.show-marks .doc-body h4::after {
-  content: '¶';
-  margin-left: 0.15em;
-  color: #8fa8c8;
-  font-family: var(--font-doc);
-}
+/* A screen aid only, so it never reaches print */
+@media screen {
+  .show-marks .doc-body p::after,
+  .show-marks .doc-body li::after,
+  .show-marks .doc-body h2::after,
+  .show-marks .doc-body h3::after,
+  .show-marks .doc-body h4::after {
+    content: '¶';
+    margin-left: 0.15em;
+    color: #8fa8c8;
+    font-family: var(--font-doc);
+  }
 
-.show-marks .doc-body .page-break::after {
-  content: 'Page break';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-ui);
-  font-size: var(--text-xs);
-  color: #8a8a8a;
+  .show-marks .doc-body .page-break::after {
+    content: 'Page break';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: #8a8a8a;
+  }
 }
 
 /* ==========================================================================
