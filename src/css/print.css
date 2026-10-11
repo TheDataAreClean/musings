@@ -9,6 +9,12 @@
   size: A4;
   margin: 21mm 25.4mm;   /* --page-pad-v / --page-pad-h (80px / 96px) at 96dpi */
 
+  /* Empty top boxes claim the top margin, so Chromium doesn't fill it with
+     its own date and title when "Headers and footers" is ticked */
+  @top-left { content: ""; }
+  @top-center { content: ""; }
+  @top-right { content: ""; }
+
   /* Running footer: site name left, page number right. Browsers without
      margin-box support simply print no footer. */
   @bottom-left {

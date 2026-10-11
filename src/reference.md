@@ -151,7 +151,7 @@ This one names its phrase, so only those words are highlighted.
 A margin note is shown as a comment on the desk beside the page, level with the words it is about. On a narrow screen the same note opens from the bottom when you tap the highlighted text. Without JavaScript it is an ordinary boxed paragraph in the flow of the text. In print it is the same box, numbered to match the highlighted words.
 
 {% marginnote %}
-This one names no phrase, so it is attached to the whole paragraph that follows.
+This one names no phrase, so it is attached to the whole paragraph.
 {% endmarginnote %}
 
 The paragraph that hosts a margin note should be self-contained — readable without the note. The note adds, it does not complete. This is the difference between a margin note and a footnote: margin notes are optional; footnotes are referenced.[^1]
