@@ -231,7 +231,6 @@ All code in an IIFE — no globals leaked.
 | Help menu | Zoom in/out/actual size (same as the keys), About |
 | Menu bar | Only File and Help open; once one is open, hovering the other switches. Click outside or Escape closes |
 | Status bar | "Page x of y" counts `.page-break`s above mid-screen on scroll; words · read time from `data-words`/`data-readtime` on posts (same filters as the meta line); transient messages |
-| Titlebar | "Last edited {updated or date}" on dated pages, else `site.chrome.saveState` (template, not JS) |
 | Stoplight dot | `window.close()` — browser-blocked for normal tabs, silent no-op |
 | Titlebar dimming | `setActive` on `blur`, `focus`, `visibilitychange` — all three needed |
 

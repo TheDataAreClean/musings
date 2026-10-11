@@ -62,8 +62,7 @@
       </div>
     </div>
     <span class="app-titlebar__doc">{{ title or site.shortTitle }}</span>
-    {% set editedOn = updated or date %}
-    <span class="app-titlebar__saved">{% if editedOn %}Last edited {{ editedOn | readableDate }}{% else %}{{ site.chrome.saveState }}{% endif %}</span>
+    <span class="app-titlebar__saved">{{ site.chrome.saveState }}</span>
   </div>
 
   {# Menu bar: File and Help open real menus; the rest are dead text #}
