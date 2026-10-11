@@ -8,6 +8,19 @@
 @page {
   size: A4;
   margin: 21mm 25.4mm;   /* --page-pad-v / --page-pad-h (80px / 96px) at 96dpi */
+
+  /* Running footer: site name left, page number right. Browsers without
+     margin-box support simply print no footer. */
+  @bottom-left {
+    content: "Musings";
+    font: 8pt Arial, Helvetica, sans-serif;
+    color: #777;
+  }
+  @bottom-right {
+    content: counter(page) " / " counter(pages);
+    font: 8pt Arial, Helvetica, sans-serif;
+    color: #777;
+  }
 }
 
 @media print {
@@ -23,7 +36,8 @@
   .app-toolbar,
   .app-ruler,
   .app-statusbar,
-  .post-nav {
+  .post-nav,
+  .doc-nav {
     display: none !important;
   }
 
@@ -71,7 +85,33 @@
   .show-marks .doc-body h4::after,
   .show-marks .doc-body .page-break::after { content: none; }
 
-  .footnotes { page-break-before: always; }
+  /* Footnotes follow the text instead of starting a mostly empty page */
+
+  /* Paragraphs: no single stranded lines at the top or bottom of a page */
+  p, li { orphans: 3; widows: 3; }
+
+  /* Images: keep them on the page with their heading and caption, never
+     taller than most of a page, so a snap doesn't leave page 1 blank */
+  .doc-body img {
+    max-height: 140mm;
+    width: auto;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  img, figure { page-break-inside: avoid; }
+  .print-source { page-break-before: avoid; break-before: avoid; }
+
+  /* Where the page came from — printed at the end, hidden on screen */
+  .print-source {
+    display: block !important;
+    margin-top: var(--space-8);
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border-soft);
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+  }
 
   /* Comments: print the plain inline notes, not the rail or sheet */
   .margin-note[hidden] { display: block; }

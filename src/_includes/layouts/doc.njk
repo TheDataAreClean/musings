@@ -45,6 +45,8 @@ ogType: article
         {{ content | safe }}
       </div>
 
+      <p class="print-source" hidden>{{ site.url | replace("https://", "") }}{{ page.url }}</p>
+
       {% if not hidePostNav %}
       <nav class="post-nav" aria-label="Post navigation">
         <div class="post-nav__prev">
