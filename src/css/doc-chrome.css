@@ -583,9 +583,12 @@ body {
   overflow-x: clip;
   color: var(--color-text);
   font-family: var(--font-doc);
-  /* Text size picker: rescale the document type scale, chrome untouched */
+  /* Text size picker: rescale the document type scale, chrome untouched.
+     font-size here covers text that just inherits (meta line, tags, post nav). */
   --text-base: calc(1rem * var(--doc-scale));
   --text-sm:   calc(0.8rem * var(--doc-scale));
+  --text-xs:   calc(0.7rem * var(--doc-scale));
+  font-size:   var(--text-base);
 }
 
 /* ==========================================================================
