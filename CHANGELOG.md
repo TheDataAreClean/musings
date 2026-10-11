@@ -6,8 +6,10 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+- content: About now explains the three kinds of posts (ideas, notes, snaps) with their list marks, tags and RSS, and which chrome controls actually work.
+
 - feat: the doc chrome now works. File menu (random post, all posts, copy link, RSS, print / PDF, close tab) and Help menu (zoom shortcuts, About); the style picker becomes an Outline of the post's headings; ¶ shows formatting marks; the 12 ▾ picker sets document text size, including the meta line, tags, captions and post nav (new token `--doc-scale`). Font, text size, zoom and ¶ now carry across pages during a visit but reset on a fresh visit (typed URL, bookmark or link from another site); the status bar shows page x of y, word count and read time.
-- fix: print / PDF now looks like the page on screen: no more "(/path/)" after every link, link colours, tag highlights and the document font are kept, and the page has A4 margins matching the on-screen page. Printed pages also get a footer (Musings · page x / y), end with the page's address, drop the site nav links, keep photos on the same page as their post (max 140mm tall), avoid single stranded lines, and footnotes no longer start a new page.
+- fix: print / PDF now looks like the page on screen: no more "(/path/)" after every link, link colours, tag highlights and the document font are kept, and the page has A4 margins matching the on-screen page. Printed pages also get a footer (Musings · page x / y), end with the page's address, drop the site nav links, keep photos on the same page as their post (max 140mm tall), avoid single stranded lines, footnotes no longer start a new page, and long code lines wrap.
 - fix: the four alignment icons were all the same ⇄ glyph and the indent arrows were the wrong shape; all six are now inline SVGs. On mobile the toolbar no longer cuts off the zoom control (B/I/U/S and A ▾ hide) and the status bar drops the language cell.
 
 ---

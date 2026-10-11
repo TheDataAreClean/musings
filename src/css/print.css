@@ -100,6 +100,9 @@
     margin-right: auto;
   }
   img, figure { page-break-inside: avoid; }
+
+  /* Code can't scroll on paper: wrap long lines instead of cutting them off */
+  .doc-body pre { white-space: pre-wrap; overflow-wrap: anywhere; }
   .print-source { page-break-before: avoid; break-before: avoid; }
 
   /* Where the page came from — printed at the end, hidden on screen */
