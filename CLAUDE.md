@@ -56,6 +56,9 @@ See `APP.md`'s Passthrough copies section for why `media_folder` in `src/admin/c
 **`--chrome-h` can't be read from JS**
 It's a `calc()` of other custom properties, so `getComputedStyle(...).getPropertyValue('--chrome-h')` returns the literal string `calc(34px + …)` and `parseFloat` gives `NaN` (which `|| 0` then hides as zero). `comments.js` measures the bottom of `.app-toolbar` and `.app-ruler` instead. Any new script that needs the sticky-chrome offset should do the same.
 
+**`@page` margin boxes can't read custom properties**
+The print footer in `print.css` sets its font and colour on `@page` with literal values (`8pt Arial…`, `dimgray` for `--color-muted`) because margin boxes don't inherit `:root` variables. The three empty `@top-*` boxes are load-bearing: they claim the top margin so Chromium doesn't print its own date and title there when "Headers and footers" is ticked. Safari and Firefox ignore margin boxes and print their own.
+
 **A margin note must stay readable without the script**
 The shortcode renders a plain inline `<aside>`; the script only *hides* the ones it built a card for, via the `hidden` attribute, so a note that couldn't be anchored stays visible. `base.njk` also sets `html.comments-pending` in the head to stop a flash before the script runs — a 3s timer clears it if the script never loads. `print.css` re-shows hidden notes with `.margin-note[hidden] { display: block }`. If you change any of these, keep the guarantee: no JS, print and feed readers all show every note inline.
 
