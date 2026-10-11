@@ -14,11 +14,11 @@ The site is built to look like a living document, and keep the focus on the cont
 
 Everything here is one of three kinds of writing. Each has its own mark in the lists, so you can tell them apart at a glance.
 
-→ **[Ideas](/ideas/)**: things felt deeply. Longer pieces that take their time with one thought, like a love letter to an app or a year spent offline.
+→ **[Ideas](/ideas/)**: things felt deeply. Longer pieces that take their time with one thought that has been with me for a while.
 
 · **[Notes](/notes/)**: observations worth noting. Short entries, often a single paragraph, written closer to the moment.
 
-○ **[Snaps](/snaps/)**: moments that stuck. A photograph with a line or two about why it mattered.
+○ **[Snaps](/snaps/)**: moments that stuck. A photograph, sometimes with a line or two about why it mattered.
 
 Tags like [personal](/tags/personal/){ .post-tag } [tech](/tags/tech/){ .post-tag } [writing](/tags/writing/){ .post-tag } follow the threads that run across all three. Everything new shows up on the [home page](/) and in the [RSS feed](/feed.xml).
 
