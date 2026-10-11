@@ -20,18 +20,13 @@ Everything here is one of three kinds of writing. Each has its own mark in the l
 
 ○ **[Snaps](/snaps/)**: moments that stuck. A photograph with a line or two about why it mattered.
 
-Posts also carry [tags](/tags/personal/) for the threads that run across all three, like *personal*, *tech* or *writing*. Everything new shows up on the [home page](/) and in the [RSS feed](/feed.xml).
+Tags like [personal](/tags/personal/){ .post-tag } [tech](/tags/tech/){ .post-tag } [writing](/tags/writing/){ .post-tag } follow the threads that run across all three. Everything new shows up on the [home page](/) and in the [RSS feed](/feed.xml).
+
+Two pages show how the site is put together: [Reference](/reference/) has every kind of formatting a post can use, and [Style](/style/) lists the fonts, colours and spacing behind it.
 
 ## Reading it like a document
 
-The bars around the page are not just decoration. A few of them work:
-
-- **File → New** opens a random post, and **File → Print / PDF** gives you a clean printed copy.
-- The font picker switches between Georgia and Arial, and **12 ▾** makes the text bigger or smaller.
-- **¶** shows the paragraph marks, the way a word processor does.
-- **Outline** jumps between the sections of a longer post, including this one.
-
-Your choices stay while you browse, and reset the next time you visit.
+The bars around the page are not just decoration.
 
 ---
 
