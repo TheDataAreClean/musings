@@ -116,6 +116,7 @@
     card.setAttribute('data-c', id);
     card.setAttribute('aria-label', 'Note ' + id);
     card.innerHTML = aside.innerHTML;
+    aside.setAttribute('data-c', id); // print numbers the inline note to match its badge
     aside.hidden = true; // only notes that got a card are hidden; the rest stay readable inline
 
     comments.push({ anchor: el, card: card, phrase: found.phrase, label: 'Note ' + id + ' on \u201c' + el.textContent + '\u201d' });

@@ -120,14 +120,24 @@
     color: var(--color-muted);
   }
 
-  /* Comments: print the plain inline notes, not the rail or sheet */
+  /* Comments: keep the highlighted phrase and its numbered badge, and print
+     each note in the flow as a numbered card (the rail and sheet are screen-only) */
   .margin-note[hidden] { display: block; }
   .comment-rail,
-  .comment-sheet,
-  .comment-badge,
-  .comment-badge-row { display: none !important; }
-  .comment-anchor { background: none; text-decoration: none; }
-  .margin-note { page-break-inside: avoid; }
+  .comment-sheet { display: none !important; }
+  .comments-rail .comment-badge { display: inline; }
+  .comments-rail .comment-badge-row { display: block; }
+  .margin-note { position: relative; page-break-inside: avoid; }
+  .margin-note[data-c]::before {
+    content: attr(data-c);
+    position: absolute;
+    top: -7px;
+    left: -1px;
+    padding: 0 3px;
+    background: var(--color-mark);
+    border: 1px solid var(--color-border);
+    font: 700 9px/12px var(--font-ui);
+  }
 
   body { background: var(--color-page-bg); }
 }
