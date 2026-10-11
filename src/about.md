@@ -6,8 +6,6 @@ date: 2025-01-01
 hideMeta: true
 ---
 
-I am a curious individual who likes to dip their toes in every pond.
-
 The site is built to look like a living document, and keep the focus on the content of its pages.
 
 ---
