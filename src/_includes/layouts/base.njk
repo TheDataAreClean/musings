@@ -237,7 +237,21 @@
       if (e.key === 'Escape') closeAll();
     });
 
-    // ── 1. FONT — session-persistent ─────────────────────────────────────────
+    // ── 0. VISIT — formatting carries across pages within one visit only ─────
+    // A fresh arrival (typed URL, bookmark, link from another site) clears the
+    // saved font, size, zoom and ¶. Moving between pages, reload and back/forward
+    // keep them. Storage stays sessionStorage, so a new tab is fresh too.
+    var STORE_KEYS = ['musings-font', 'musings-size', 'musings-zoom', 'musings-marks'];
+    try {
+      var navEntry = performance.getEntriesByType('navigation')[0];
+      var navType  = navEntry ? navEntry.type : 'navigate';
+      var internal = document.referrer && new URL(document.referrer).origin === location.origin;
+      if (navType === 'navigate' && !internal) {
+        STORE_KEYS.forEach(function (k) { sessionStorage.removeItem(k); });
+      }
+    } catch (err) {}
+
+    // ── 1. FONT — persists within a visit ────────────────────────────────────
     var fontMap = {
       arial:   'Arial, Helvetica, sans-serif',
       georgia: 'Georgia, "Times New Roman", serif'
@@ -285,12 +299,22 @@
       else if (e.key === '0')             { e.preventDefault(); applyZoom(levels.indexOf(100)); }
     });
 
-    // ── 3. TEXT SIZE — scales document text only, resets to 12 on every page ──
-    // 12 is the 1rem baseline; --doc-scale feeds the type scale inside .doc-page.
-    // Deliberately not persisted: each page opens at the default size.
-    initDropdown(document.querySelector('.app-toolbar__size'), function (value) {
-      document.documentElement.style.setProperty('--doc-scale', Number(value) / 12);
+    // ── 3. TEXT SIZE — scales document text only, persists within a visit ────
+    // 12 is the 1rem baseline; --doc-scale feeds the type scale inside .doc-page
+    function applySize(pt) {
+      document.documentElement.style.setProperty('--doc-scale', pt / 12);
+      sessionStorage.setItem('musings-size', pt);
+    }
+
+    var sizeDropdown = initDropdown(document.querySelector('.app-toolbar__size'), function (value) {
+      applySize(Number(value));
     });
+
+    var savedSize = sessionStorage.getItem('musings-size');
+    if (savedSize && document.querySelector('.app-toolbar__size [data-value="' + savedSize + '"]')) {
+      applySize(Number(savedSize));
+      sizeDropdown.setValue(savedSize);
+    }
 
     // ── 4. OUTLINE — the style picker lists the post's headings ──────────────
     var outline  = document.querySelector('.app-toolbar__outline');
