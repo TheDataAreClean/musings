@@ -93,7 +93,7 @@
   /* Images: keep them on the page with their heading and caption, never
      taller than most of a page, so a snap doesn't leave page 1 blank */
   .doc-body img {
-    max-height: 140mm;
+    max-height: 110mm;
     width: auto;
     max-width: 100%;
     margin-left: auto;
@@ -105,10 +105,14 @@
   .doc-body pre { white-space: pre-wrap; overflow-wrap: anywhere; }
   .print-source { page-break-before: avoid; break-before: avoid; }
 
+  /* Tighter section breaks on paper, so a page that just fills its sheet
+     doesn't spill its last line onto a near-empty one */
+  .doc-body hr:not(.page-break) { margin: var(--space-6) 0; }
+
   /* Where the page came from — printed at the end, hidden on screen */
   .print-source {
     display: block !important;
-    margin-top: var(--space-8);
+    margin-top: var(--space-6);
     padding-top: var(--space-2);
     border-top: 1px solid var(--color-border-soft);
     font-family: var(--font-ui);
