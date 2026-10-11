@@ -9,11 +9,18 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+# One job, not build + deploy: a second job waits for a fresh runner to
+# spin up, which was a noticeable share of each publish.
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,16 +51,5 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./_site
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - uses: actions/deploy-pages@v4
         id: deployment
