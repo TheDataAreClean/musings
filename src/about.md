@@ -20,13 +20,15 @@ Everything here is one of three kinds of writing. Each has its own mark in the l
 
 ○ **[Snaps](/snaps/)**: moments that stuck. A photograph, sometimes with a line or two about why it mattered.
 
-Tags like [personal](/tags/personal/){ .post-tag } [tech](/tags/tech/){ .post-tag } [writing](/tags/writing/){ .post-tag } follow the threads that run across all three. Everything new shows up on the [home page](/) and in the [RSS feed](/feed.xml).
-
-Two pages show how the site is put together: [Reference](/reference/) has every kind of formatting a post can use, and [Style](/style/) lists the fonts, colours and spacing behind it.
+Tags like [personal](/tags/personal/){ .post-tag }, [tech](/tags/tech/){ .post-tag }, [writing](/tags/writing/){ .post-tag } follow the threads that run across all three. Everything new shows up on the [home page](/) and in the [RSS feed](/feed.xml).
 
 ## Reading it like a document
 
 The bars around the page are not just decoration.
+
+## How it is put together
+
+[Reference](/reference/) has every kind of formatting a post can use, and [Style](/style/) lists the fonts, colours and spacing behind it.
 
 ---
 

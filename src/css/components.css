@@ -380,6 +380,9 @@ a.post-tag:visited {
 
 a.post-tag:hover { text-decoration: none; }
 
+/* Inside prose, tags sit in a sentence, so punctuation follows them directly */
+.doc-body a.post-tag { margin-right: 0; }
+
 /* --------------------------------------------------------------------------
    Archive
    -------------------------------------------------------------------------- */
