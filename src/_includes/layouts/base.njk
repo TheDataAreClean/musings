@@ -286,22 +286,12 @@
       else if (e.key === '0')             { e.preventDefault(); applyZoom(levels.indexOf(100)); }
     });
 
-    // ── 3. TEXT SIZE — scales document text only, session-persistent ─────────
-    // 12 is the 1rem baseline; --doc-scale feeds the type scale inside .doc-page
-    function applySize(pt) {
-      document.documentElement.style.setProperty('--doc-scale', pt / 12);
-      sessionStorage.setItem('musings-size', pt);
-    }
-
-    var sizeDropdown = initDropdown(document.querySelector('.app-toolbar__size'), function (value) {
-      applySize(Number(value));
+    // ── 3. TEXT SIZE — scales document text only, resets to 12 on every page ──
+    // 12 is the 1rem baseline; --doc-scale feeds the type scale inside .doc-page.
+    // Deliberately not persisted: each page opens at the default size.
+    initDropdown(document.querySelector('.app-toolbar__size'), function (value) {
+      document.documentElement.style.setProperty('--doc-scale', Number(value) / 12);
     });
-
-    var savedSize = sessionStorage.getItem('musings-size');
-    if (savedSize && document.querySelector('.app-toolbar__size [data-value="' + savedSize + '"]')) {
-      applySize(Number(savedSize));
-      sizeDropdown.setValue(savedSize);
-    }
 
     // ── 4. OUTLINE — the style picker lists the post's headings ──────────────
     var outline  = document.querySelector('.app-toolbar__outline');
