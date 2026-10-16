@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {# Earlier versions and changes pages of a post point search engines and
+     link previews at the latest version (see doc.njk for vinfo) #}
+  {% set vinfo = versions[page.inputPath] or (versions["./" + versionOf] if versionOf else null) %}
+  {% set canonicalUrl = vinfo.latest.url if versionOf and vinfo else page.url %}
   <title>{% if title and title != "Home" %}{{ title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
   <meta name="description" content="{{ description or site.description }}">
   <meta name="author" content="{{ site.author }}">
@@ -12,7 +16,7 @@
   <meta property="og:type" content="{{ ogType or 'website' }}">
   <meta property="og:url" content="{{ site.url }}{{ page.url }}">
   <meta property="og:site_name" content="{{ site.title }}">
-  {% set ogImageSlugValue = page.url | ogImageSlug %}
+  {% set ogImageSlugValue = canonicalUrl | ogImageSlug %}
   {% if ogImageSlugValue | ogImageExists %}
   {# Generated at build time by scripts/generate-og-images.js — a real
      screenshot of the site's own doc-chrome, not a generic social card.
@@ -28,7 +32,7 @@
   <meta name="twitter:card" content="summary">
   {% endif %}
   <meta name="theme-color" content="#f0f0f0">
-  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  <link rel="canonical" href="{{ site.url }}{{ canonicalUrl }}">
   <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="/feed.xml">
   {# Favicon stack: ICO for bookmark managers/RSS readers, SVG for modern browsers,
      apple-touch-icon for iOS Safari home screen, manifest for Android Chrome.
@@ -69,7 +73,7 @@
   <div class="app-menubar" aria-hidden="true">
     {% for item in site.chrome.menu %}
     {% if item == "File" %}
-    <span class="app-menubar__item app-menu">File
+    <span class="app-menubar__item app-menu app-menu--file">File
       <div class="app-menu__panel">
         <div class="app-menu__option" data-action="random">New<span class="app-menu__hint">random post</span><span class="app-menu__key">⌘N</span></div>
         <div class="app-menu__option" data-href="/">Open…<span class="app-menu__hint">all posts</span><span class="app-menu__key">⌘O</span></div>
@@ -77,6 +81,16 @@
         <div class="app-menu__option" data-action="copy-link">Copy link<span class="app-menu__key">⌘L</span></div>
         <div class="app-menu__option" data-href="/feed.xml">Subscribe<span class="app-menu__hint">RSS feed</span></div>
         <div class="app-menu__option" data-action="print">Print / PDF<span class="app-menu__key">⌘P</span></div>
+        {# A revised post lists its versions here, newest first, the one on
+           screen bold. The page's edit note carries the same information. #}
+        {% if vinfo %}
+        {% if changesFrom %}{% set curVersion = changesTo | int %}{% else %}{% set curVersion = version or vinfo.latest.version %}{% endif %}
+        <div class="app-menu__sep"></div>
+        <div class="app-menu__label">Version history</div>
+        {% for v in vinfo.newestFirst %}
+        <div class="app-menu__option" data-href="{{ v.url }}">{% if v.version == curVersion %}<b>{{ v.date | readableDate }}</b>{% else %}{{ v.date | readableDate }}{% endif %}{% if v.latest %}<span class="app-menu__hint">latest</span>{% elif v.original %}<span class="app-menu__hint">original</span>{% endif %}</div>
+        {% endfor %}
+        {% endif %}
         <div class="app-menu__sep"></div>
         <div class="app-menu__option" data-action="close">Close tab<span class="app-menu__key">⌘W</span></div>
       </div>
@@ -399,6 +413,11 @@
       });
     }
 
+    function openMenu(menu) {
+      closeAll();
+      menu.classList.add('app-menu--open');
+    }
+
     var menus = document.querySelectorAll('.app-menu');
     menus.forEach(function (menu) {
       menu.addEventListener('click', function (e) {
@@ -406,13 +425,12 @@
         if (e.target.closest('.app-menu__panel')) return;
         var isOpen = menu.classList.contains('app-menu--open');
         closeAll();
-        if (!isOpen) menu.classList.add('app-menu--open');
+        if (!isOpen) openMenu(menu);
       });
       // Like a real menu bar: once one menu is open, hovering opens its neighbour
       menu.addEventListener('mouseenter', function () {
         if (!document.querySelector('.app-menu--open') || menu.classList.contains('app-menu--open')) return;
-        closeAll();
-        menu.classList.add('app-menu--open');
+        openMenu(menu);
       });
     });
 
@@ -445,6 +463,16 @@
         closeAll();
         if (opt.dataset.href) location.href = opt.dataset.href;
         else if (actions[opt.dataset.action]) actions[opt.dataset.action](opt);
+      });
+    });
+
+    // "Earlier versions" in the version footnote opens the File menu, where
+    // the version history is; its href (the original) is the fallback
+    document.querySelectorAll('[data-open-versions]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openMenu(document.querySelector('.app-menu--file'));
       });
     });
 

@@ -1,0 +1,6 @@
+{# Date in post lists. A revised post shows its latest version's date, from
+   the same version data the post page uses, so "revised" means the same
+   thing in lists and on the post. #}
+{%- set listVersions = versions[post.inputPath] -%}
+{%- set listDate = listVersions.latest.date if listVersions else post.date -%}
+<time datetime="{{ listDate | isoDate }}">{{ listDate | readableDate }}</time>{% if listVersions %} (updated){% endif %}

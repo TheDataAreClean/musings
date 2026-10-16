@@ -3,6 +3,30 @@ const markdownItFootnote = require("markdown-it-footnote");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItAttrs = require("markdown-it-attrs");
 const { tagSlug, ogImageSlug, ogImageExists } = require("./scripts/generate-og-images.js");
+const { diffArrays } = require("diff");
+
+// "15 Oct, 2026" — every date a reader sees (lists, posts, version notes,
+// chrome, margin notes, feed); machine dates stay ISO via isoDate. Month names
+// are our own, not the ICU build's en-GB data, so September is always "Sept".
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+const IST_PARTS = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "numeric",
+  year: "numeric",
+  timeZone: "Asia/Kolkata",
+});
+const IST_ISO = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" });
+
+function readableDate(date) {
+  if (!date) return "";
+  const part = Object.fromEntries(IST_PARTS.formatToParts(new Date(date)).map((p) => [p.type, p.value]));
+  return `${Number(part.day)} ${MONTHS[part.month - 1]}, ${part.year}`;
+}
+
+function isoDate(date) {
+  if (!date) return "";
+  return IST_ISO.format(new Date(date));
+}
 
 // Returns a WebP path for convertible uploads (jpg/jpeg/png/heic), otherwise null
 function webpSrc(src) {
@@ -10,6 +34,73 @@ function webpSrc(src) {
   const ext = (src.match(/\.[^.]+$/)?.[0] || "").toLowerCase();
   if (![".jpg", ".jpeg", ".png", ".heic"].includes(ext)) return null;
   return src.slice(0, -ext.length) + ".webp";
+}
+
+// Word-level diff of two rendered post bodies, for /v{n}/changes/ pages.
+// Tags and words are diffed as tokens; the output keeps every tag of the newer
+// version (so it stays balanced) with added words in <ins> and removed words in
+// <del>. A removed run whose tags balance on their own (a whole paragraph)
+// keeps its tags, so it shows as a struck-out block in place. An image counts
+// as a word, so an added or removed image is marked too.
+const VOID_TAG = /^<(area|br|col|embed|hr|img|input|link|meta|source|wbr)\b/i;
+
+function diffTokens(html) {
+  return html.match(/<[^>]+>|[^<\s]+\s*|\s+/g) || [];
+}
+
+function isText(tok) {
+  return !tok.startsWith("<") || /^<img\b/i.test(tok);
+}
+
+function balanced(tokens) {
+  const stack = [];
+  for (const t of tokens) {
+    if (isText(t) || !t.startsWith("<") || VOID_TAG.test(t) || t.startsWith("<!")) continue;
+    const close = t.match(/^<\/(\w+)/);
+    if (close) {
+      if (stack.pop() !== close[1].toLowerCase()) return false;
+    } else stack.push(t.match(/^<(\w+)/)[1].toLowerCase());
+  }
+  return stack.length === 0;
+}
+
+function wrapRun(tokens, tag, keepTags) {
+  let out = "";
+  let open = false;
+  // Close the mark before any trailing space, so it doesn't underline the gap
+  // (in <pre>, a removed line's newline would push the added text onto the
+  // next line, so after a removal the gap is always a single space)
+  const close = () => {
+    let space = out.match(/\s*$/)[0];
+    out = out.slice(0, out.length - space.length) + `</${tag}>`;
+    if (space && tag === "del") space = " ";
+    out += space;
+    open = false;
+  };
+  for (const t of tokens) {
+    if (isText(t)) {
+      if (!open && t.trim()) { out += `<${tag}>`; open = true; }
+      out += t;
+    } else {
+      if (open) close();
+      if (keepTags) out += t;
+    }
+  }
+  if (open) close();
+  return out;
+}
+
+function htmlDiff(oldHtml, newHtml) {
+  const parts = diffArrays(diffTokens(oldHtml || ""), diffTokens(newHtml || ""), {
+    comparator: (a, b) => a.trim() === b.trim(),
+  });
+  return parts
+    .map((part) => {
+      if (part.added) return wrapRun(part.value, "ins", true);
+      if (part.removed) return wrapRun(part.value, "del", balanced(part.value));
+      return part.value.join("");
+    })
+    .join("");
 }
 
 // Wraps an img tag in a <picture> with a WebP source when available
@@ -139,22 +230,9 @@ module.exports = function (eleventyConfig) {
     return "·";
   });
 
-  eleventyConfig.addFilter("readableDate", function (date) {
-    if (!date) return "";
-    return new Date(date).toLocaleDateString("en-GB", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      timeZone: "Asia/Kolkata",
-    });
-  });
+  eleventyConfig.addFilter("readableDate", readableDate);
 
-  eleventyConfig.addFilter("isoDate", function (date) {
-    if (!date) return "";
-    return new Date(date).toLocaleDateString("en-CA", {
-      timeZone: "Asia/Kolkata",
-    });
-  });
+  eleventyConfig.addFilter("isoDate", isoDate);
 
   eleventyConfig.addFilter("atomDate", function (date) {
     if (!date) return "";
@@ -177,6 +255,51 @@ module.exports = function (eleventyConfig) {
         }
       );
   });
+
+  // Post versions — see scripts/snapshot-versions.js and src/_data/versions.js
+  eleventyConfig.addFilter("htmlDiff", htmlDiff);
+
+  // The version after a snapshot: the next snapshot that exists (a number can
+  // be skipped), or the live post
+  eleventyConfig.addFilter("newerVersion", function (snap, all) {
+    const later = all
+      .filter((p) => p.data.versionOf === snap.data.versionOf && p.data.version > snap.data.version)
+      .sort((a, b) => a.data.version - b.data.version);
+    return later[0] || all.find((p) => p.inputPath === "./" + snap.data.versionOf);
+  });
+
+  // The version footnote (doc.njk) joins the post's own footnotes as the last
+  // item, or starts a footnotes section, using markdown-it-footnote's own markup
+  const fnOpen = md.renderer.rules.footnote_block_open([], 0, md.options);
+  const fnClose = md.renderer.rules.footnote_block_close();
+  eleventyConfig.addFilter("withVersionFootnote", function (html, item) {
+    const end = html.lastIndexOf(fnClose);
+    return end === -1 ? html + fnOpen + item + fnClose : html.slice(0, end) + item + html.slice(end);
+  });
+
+  // A version note as a sentence: adds a full stop unless it already ends in one
+  const sentence = (text) => (/[.!?]$/.test(text) ? text : text + ".");
+  eleventyConfig.addFilter("sentence", sentence);
+
+  // Changes page: what the title, description or tags used to be, in one
+  // sentence. parts is [[label, verb, oldValue]] for each that changed; only
+  // the first takes the verb ("Before, the title was ~…~ and the tags ~…~.")
+  eleventyConfig.addFilter("beforeSentence", function (parts) {
+    const esc = (t) => String(t).replace(/[&"'<>]/g, (c) => ({ "&": "&amp;", '"': "&quot;", "'": "&#39;", "<": "&lt;", ">": "&gt;" })[c]);
+    const items = parts.map(([label, verb, old], i) => `${label} ${i === 0 ? verb + " " : ""}${old ? `<del>${esc(old)}</del>` : "(none)"}`);
+    const list = items.length > 1 ? items.slice(0, -1).join(", ") + " and " + items[items.length - 1] : items[0];
+    const last = parts[parts.length - 1][2];
+    return `Before, ${list}${last && /[.!?]$/.test(last) ? "" : "."}`;
+  });
+
+  // `npm run build` runs scripts/snapshot-versions.js as a prebuild step; the
+  // dev server doesn't, so run it before each dev rebuild too. A bump saved in
+  // the CMS (local repository mode) then gets its snapshot straight away.
+  if (isDev) {
+    eleventyConfig.on("eleventy.before", () => {
+      require("child_process").execFileSync("node", ["scripts/snapshot-versions.js"], { stdio: "inherit" });
+    });
+  }
 
   eleventyConfig.addGlobalData("buildTime", () => new Date());
 
@@ -252,6 +375,11 @@ module.exports = function (eleventyConfig) {
     ]));
   });
 
+  // Frozen earlier versions of posts — not in listings, tags or the feed
+  eleventyConfig.addCollection("versions", function (collectionApi) {
+    return collectionApi.getFilteredByGlob("src/versions/**/*.md");
+  });
+
   // Shortcodes
   eleventyConfig.addShortcode("pagebreak", function () {
     return `<div class="page-break" role="separator"></div>`;
@@ -270,7 +398,7 @@ module.exports = function (eleventyConfig) {
     const commentAuthor = this.ctx.site.author;
     const date = written ? new Date(written) : this.page && this.page.date ? new Date(this.page.date) : null;
     const when = date && !isNaN(date)
-      ? `<time datetime="${date.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" })}">${date.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" })}</time>`
+      ? `<time datetime="${isoDate(date)}">${readableDate(date)}</time>`
       : "";
     const attr = anchor ? ` data-anchor="${escAttr(anchor)}"` : "";
     return `<aside class="margin-note"${attr}><header class="margin-note__meta"><span class="margin-note__av" aria-hidden="true">${escAttr(commentAuthor.charAt(0))}</span><b>${escAttr(commentAuthor)}</b>${when}</header>${md.render(content)}</aside>`;

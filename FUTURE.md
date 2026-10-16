@@ -25,7 +25,7 @@ Ideas and backlog. Not history — see [CHANGELOG.md](CHANGELOG.md) for shipped 
 ## LATER
 
 ### Product
-- `v4.0.0` — complete visual overhaul (new site concept; resets MAJOR version)
+- Complete visual overhaul (new site concept; next MAJOR version)
 - Related posts by tag at bottom of doc layout
 
 ### DX

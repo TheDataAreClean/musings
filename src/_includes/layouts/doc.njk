@@ -2,6 +2,11 @@
 layout: layouts/base.njk
 ogType: article
 ---
+{# Post versions: vinfo is the post's version history (src/_data/versions.js).
+   A snapshot page (src/versions/) and a changes page (src/changes.njk) find it
+   through versionOf, the live post's source path. #}
+{% set vinfo = versions[page.inputPath] or (versions["./" + versionOf] if versionOf else null) %}
+{% set shownTags = postTags or tags %}
 {% if date %}{% set words = content | wordcount %}{% set readtime = content | readtime %}{% endif %}
 <article class="doc-page{% if not hidePostNav %} doc-page--with-nav{% endif %}"{% if date %} data-words="{{ words }}" data-readtime="{{ readtime }}"{% endif %}>
 
@@ -11,10 +16,11 @@ ogType: article
 
   {% if description %}<p class="doc-description">{{ description }}</p>{% endif %}
 
-  {% if tags and ("snaps" in tags) %}
+  {% if versionOf %}{% set postSection = versionOf.split("/")[1] %}{% elif shownTags and ("snaps" in shownTags) %}{% set postSection = "snaps" %}{% elif shownTags and ("notes" in shownTags) %}{% set postSection = "notes" %}{% else %}{% set postSection = "ideas" %}{% endif %}
+  {% if postSection == "snaps" %}
     {% set sectionLabel = "snaps" %}
     {% set sectionUrl = "/snaps/" %}
-  {% elif tags and ("notes" in tags) %}
+  {% elif postSection == "notes" %}
     {% set sectionLabel = "notes" %}
     {% set sectionUrl = "/notes/" %}
   {% else %}
@@ -31,10 +37,39 @@ ogType: article
     {% endif %}
     · <a href="{{ sectionUrl }}">{{ sectionLabel }}</a>
   </p>
-  {% if tags | collectionTags | length %}
+  {% if shownTags | collectionTags | length %}
   <p class="doc-tags">
-    {% for tag in tags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | tagSlug }}/">{{ tag }}</a>{% endfor %}
+    {% for tag in shownTags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | tagSlug }}/">{{ tag }}</a>{% endfor %}
   </p>
+  {% endif %}
+  {% endif %}
+
+  {% if vinfo %}
+  {# The version line and its footnote are the document's only version note;
+     the history itself is the titlebar menu (base.njk), aria-hidden like all
+     chrome. The latest version's note is shared with the feed
+     (version-notes.njk). #}
+  {% import "version-notes.njk" as notes %}
+  {% set backref %} <a href="#fnref-version" class="footnote-backref">↩︎</a></p>
+</li>
+{% endset %}
+  {% if changesFrom %}
+  {% set newerV = vinfo.byVersion[changesTo] %}{% set olderV = vinfo.byVersion[changesFrom] %}
+  {% set was = [] %}
+  {% if oldTitle != title %}{% set _ = was.push(["the title", "was", oldTitle]) %}{% endif %}
+  {% if oldDescription != description %}{% set _ = was.push(["the description", "was", oldDescription]) %}{% endif %}
+  {% if oldTags != newTags %}{% set _ = was.push(["the tags", "were", oldTags]) %}{% endif %}
+  <p class="version-line">These are the edits made on {{ newerV.date | readableDate }}{{ notes.mark() }}</p>
+  {% set versionFootnote %}<li id="fn-version" class="footnote-item footnote-item--version"><p>{{ notes.editNote(newerV) }} Red is removed, green is added.{% if was | length %} {{ was | beforeSentence | safe }}{% endif %} <a href="{{ vinfo.latest.url }}">Latest version</a> · <a href="{{ olderV.url }}">Previous version</a>{{ backref | safe }}{% endset %}
+  {% elif versionOf %}
+  {% set thisV = vinfo.byVersion[version] %}{% set nextV = thisV.nextVersion %}
+  {# Latest, middle and original footnotes run in one order: note (or
+     "Edited on …"), then "What changed", then the other version #}
+  <p class="version-line">This is {{ "the original" if thisV.original else "an older" }} version of this post, from {{ versionDate | readableDate }}{{ notes.mark() }}</p>
+  {% set versionFootnote %}<li id="fn-version" class="footnote-item footnote-item--version"><p>{% if thisV.changesUrl %}{{ notes.editNote(thisV) }} <a href="{{ thisV.changesUrl }}">What changed</a> · <a href="{{ vinfo.latest.url }}">Latest version</a>{% else %}{% if nextV %}Edited on {{ nextV.date | readableDate }}. <a href="{{ nextV.changesUrl }}">What changed</a> · {% endif %}<a href="{{ vinfo.latest.url }}">Latest version</a>{% endif %}{{ backref | safe }}{% endset %}
+  {% else %}
+  <p class="version-line">{{ notes.latestLine(vinfo) }}</p>
+  {% set versionFootnote = notes.latestFootnote(vinfo, "") %}
   {% endif %}
   {% endif %}
 
@@ -42,7 +77,7 @@ ogType: article
 
     <div class="doc-layout__content">
       <div class="doc-body">
-        {{ content | safe }}
+        {% if vinfo %}{{ content | withVersionFootnote(versionFootnote) | safe }}{% else %}{{ content | safe }}{% endif %}
       </div>
 
       <p class="print-source" hidden>{{ site.url | replace("https://", "") }}{{ page.url }}</p>

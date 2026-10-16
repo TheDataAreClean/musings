@@ -83,8 +83,48 @@ draft: true
 ```
 
 **Drafts.** `draft: true` keeps a post off the home page, section lists, tag pages, the feed and `/posts.json` (`filterDrafts` and the `published` filter in `.eleventy.js`; `generate-og-images.js` leaves drafts out of tag counts). The post page itself is still built, so its URL works once the file is on `main`. Under `npm run dev` drafts show everywhere, so you can preview them in lists.
+Optional on any post, once it has been revised (see Post versions below):
+```yaml
+version: 2                        # bump to publish a new version
+versionNote: One line on what changed.
+versionDate: 2026-10-20T…         # script-managed, do not set by hand
+```
 
 Layout is inherited from directory data files — do not repeat it in front matter. `tags` beyond the collection tag (`ideas`/`notes`/`snaps`, also inherited) are freeform, e.g. `personal`, `tech`, `design`.
+
+---
+
+## Post versions
+
+A post can be revised in public: readers land on the latest version at the post's usual URL, can open any earlier version, and can see what changed. Git history can't be the version store, because Sveltia commits on every save; a version is something the author declares with `version:`.
+
+**Authoring.** In the CMS, bump **Version** and fill **What changed** in the same save as the first edit of the new version. Saves publish immediately, so edits saved before the bump become part of the old version.
+
+**Snapshots.** `scripts/snapshot-versions.js` (prebuild, and before each dev-server rebuild) looks at every post with `version: N` (N ≥ 2). For each earlier version without a snapshot it finds, in the file's git history (`git log --follow`), the newest commit where the post was still at that version (no `version:` counts as 1), and writes it to `src/versions/{section}/{post-file-stem}/v{n}.md`. The deploy's auto-commit step saves it; from then on it's never regenerated and no longer depends on history. Snapshot front matter: `title`, `description`, `date`, `postTags` (not `tags`, so snapshots stay out of tag collections), `version`, `versionDate`, `versionNote`, `versionOf` (the live post's path) and `permalink`. The script also keeps each snapshot's `permalink` in step with its post's URL, and stamps `versionDate` on the live post when the bump is first committed (now, if it isn't committed yet).
+
+**URLs.** `{post-url}` is always the latest version. `{post-url}v{n}/` is an earlier version (`src/versions/`, layout from `src/versions/versions.json`). `{post-url}v{n}/changes/` is what changed from version n to the next version that exists (`src/changes.njk`, paginated over the `versions` collection). Numbers can be skipped (1 → 3): the script warns that v2 can't be saved and everything compares 1 with 3. The changes page shows the newer title and description, and notes the old title, description or tags in its version footnote when they changed. Earlier versions and changes pages set `rel=canonical` and `og:image` to the latest version.
+
+**Data.** `src/_data/versions.js` builds `versions[inputPath]` → `{ latest, all, newestFirst, byVersion }` for every post with snapshots (`all` oldest first, so `all[0]` is the original); each version is `{ version, date, note, url, changesUrl, original, nextVersion }`, where `nextVersion` is the next version that exists. Post lists render their date through `src/_includes/post-date.njk`, which reads the same data. Templates look versions up by number through `byVersion`, never by position, since numbers can skip. `doc.njk`, `base.njk` and `feed.njk` look it up by `page.inputPath`, or by `"./" + versionOf` on snapshot and changes pages.
+
+**Reader UI.** Two places, one in the chrome and one in the document:
+
+- **File → Version history** (`base.njk`). On a revised post the File menu ends with a "Version history" section: every version's date, newest first, the one on screen bold, marked "latest" and "original". Dates only; notes and links live in the footnote. The titlebar, the browser tab title and the save state are unchanged on every page type. Like all chrome it's `aria-hidden` and doesn't print.
+- **Edit note** (the document's only version note, so it prints and reaches screen readers). A one-line quote, `.version-line` (a blockquote's left bar, no vertical padding), sits after the tags (after the description on changes pages, which have no meta) and ends in a superscript `[*]` linking to `#fn-version`. That footnote is the last item of the post's footnotes: `withVersionFootnote` adds it to markdown-it-footnote's list, built from the plugin's own markup, or starts a footnotes section. `.footnote-item--version` sets its marker to `*` so its text lines up with the numbered notes; it has the usual ↩ back-link. The macros live in `src/_includes/version-notes.njk`, shared with the feed.
+
+| Page | Line | Footnote |
+|---|---|---|
+| Latest | This post was edited on 15 Oct, 2026[*] | [note]. What changed · Original |
+| Middle version | This is an older version of this post, from 13 Oct, 2026[*] | [its note]. What changed · Latest version |
+| Original | This is the original version of this post, from 10 Oct, 2026[*] | Edited on [next version's date]. What changed · Latest version |
+| Changes page | These are the edits made on 15 Oct, 2026[*] | [note]. Red is removed, green is added. Before, the title was ~…~, the description ~…~ and the tags ~…~. Latest version · Previous version |
+
+A missing note reads "Edited on [date].". The "Before, …" sentence lists only what changed (`beforeSentence`). "Previous version" is the diff's "before" side. When more than one version came before the latest, "Original" becomes "Earlier versions", which opens the File menu at its version history (`data-open-versions`; its href, the original, is the no-JS fallback). These are the only link names. Version notes get a full stop unless they end in `.`, `!` or `?` (`sentence`).
+
+**Listings** show a revised post's latest version date, marked "(updated)", in place of its original date; the list stays in original-date order.
+
+**Diff.** The `htmlDiff` filter tokenizes both rendered bodies into tags and words, diffs them with `diff`'s `diffArrays`, and outputs the newer version's tags with added words in `<ins>` and removed words in `<del>`. A removed run that is balanced on its own (a whole paragraph) keeps its tags; images count as words. `--color-ins`/`--color-del` (+ `-bg`) style them.
+
+**Feed.** Same entry and id; `<published>` is the post date, `<updated>` the latest version's date, and the entry carries the same edit note as the page, from the same macros (`src/_includes/version-notes.njk`): the quoted "This post was edited on 15 Oct, 2026[*]" line after the description (inline styles), and the `[*]` footnote added to the post's footnotes with absolute links and an inline `*` marker. "Earlier versions" is a plain link to the original there. The feed's own `<updated>` is the newest of its entries' `<updated>`, so a revision counts as a feed change. Earlier versions never appear in the feed, listings or tag pages.
 
 ---
 
@@ -117,9 +157,12 @@ tags/index.njk                  One page per tag → /tags/{tag | tagSlug}/ (pag
 feed.njk                        Atom XML → /feed.xml — must have layout: false
 posts.njk                       JSON list of post URLs → /posts.json (File → New)
 404.md                          Not-found page → /404.html
+changes.njk                     A post version's "what changed" page → {post}/v{n}/changes/ (Post versions)
 ```
 
-`doc.njk` element order: title → nav → description (if present) → meta (omitted if `hideMeta: true`) → body → post-nav (omitted if `hidePostNav: true`)
+Includes: `nav.njk` (site nav), `post-date.njk` (a list item's date, "(updated)" on revised posts), `version-notes.njk` (the edit note line and `[*]` footnote, used by `doc.njk` and `feed.njk`).
+
+`doc.njk` element order: title → nav → description (if present) → meta and tags (omitted if `hideMeta: true`) → edit note line (revised posts, see Post versions) → body → post-nav (omitted if `hidePostNav: true`)
 
 **Page height and post-nav:** `.doc-page` is one screen tall at minimum (`calc(100vh - var(--chrome-h) - var(--statusbar-h) - var(--space-6) * 2)` in `doc-chrome.css`), not A4. When the post-nav is shown, `doc.njk` adds `.doc-page--with-nav`, a flex chain (page → `.doc-layout` → `.doc-layout__content`) in `components.css` that pins `.post-nav` to the bottom of the page with `margin-top: auto`, under a thin rule. On long posts it just follows the body. `print.css` resets both (`display: block; min-height: 0`).
 
@@ -160,6 +203,8 @@ print.css       Print stylesheet — A4 page like the screen page, no chrome, fo
 | `--page-pad-h` | 96px | A4 horizontal padding |
 | `--chrome-h` | 114px | Sum of the four sticky bars (34+26+32+22); 92px on mobile, where `--ruler-h` is 0 |
 | `--doc-scale` | 1 | Document text size multiplier, set by the toolbar size picker (12 = 1) |
+| `--color-ins` / `--color-ins-bg` | #0a6b2d / #e6f4ea | Added text on a changes page |
+| `--color-del` / `--color-del-bg` | #b3261e / #fce8e6 | Removed text on a changes page |
 | `--comment-w` | 208px | Width of a comment card in the desk rail |
 | `--comment-gap` | 14px | Gap between the page edge and the comment rail |
 | `--titlebar-h` | 34px | |
@@ -210,13 +255,18 @@ Page break: `<hr class="page-break">` renders as a grey desk gap.
 | `postSigil` | `tags` array | `→` ideas · `○` snaps · `·` notes (default) |
 | `wordcount` | HTML string | Word count (strips tags first) |
 | `readtime` | HTML string | Minutes to read at 200 wpm |
-| `readableDate` | date | "30 April 2026" in IST |
+| `readableDate` | date | "30 Apr, 2026" in IST (September is "Sept") — every date a reader sees: lists, posts, version notes, chrome, margin notes, feed. `<time datetime>` stays ISO (`isoDate`) |
 | `isoDate` | date | `YYYY-MM-DD` in IST |
 | `atomDate` | date | UTC ISO 8601 for Atom feed |
 | `rssContent` | HTML string | Feed-only rewrite: inline figure spacing, margin notes as labelled blockquotes |
 | `ogImageSlug` / `ogImageExists` | URL / slug | og:image path and existence check (from `generate-og-images.js`) |
 | `tagSlug` | tag | URL segment for a tag (lowercase, spaces → hyphens). Use it for every `/tags/` link and the tag page permalink; `generate-og-images.js` uses the same function |
 | `limit` | array, n | First n items (feed) |
+| `htmlDiff` | old HTML, new HTML | New HTML with `<ins>`/`<del>` marks (Post versions) |
+| `sentence` | text | The text with a full stop added unless it ends in `.`, `!` or `?` (version notes) |
+| `beforeSentence` | `[[label, verb, old]]` | "Before, the title was ~…~ and the tags ~…~." for a changes page (Post versions) |
+| `withVersionFootnote` | body HTML, footnote `<li>` | Body with the version footnote added to its footnotes (Post versions) |
+| `newerVersion` | snapshot, `collections.all` | The version after a snapshot: next snapshot or the live post |
 
 **Nav include:** `src/_includes/nav.njk` — shared navigation used by all pages. Set `{% set navRss = true %}` before including to show the RSS link (home, section index, and post pages).
 
@@ -250,6 +300,7 @@ All code in an IIFE — no globals leaked.
 | Status bar | "Page x of y" counts `.page-break`s above mid-screen on scroll; words · read time from `data-words`/`data-readtime` on posts (same filters as the meta line); transient messages |
 | Stoplight dot | `window.close()` — browser-blocked for normal tabs, silent no-op |
 | Titlebar dimming | `setActive` on `blur`, `focus`, `visibilitychange` — all three needed |
+| Version history | On revised posts, a section at the end of the File menu (`.app-menu--file`); the edit note footnote's "Earlier versions" link (`[data-open-versions]`) opens that menu instead of following its href |
 
 `initDropdown` returns `{ setValue }` — used by zoom to sync label with keyboard shortcuts.
 
@@ -265,11 +316,12 @@ Session persistence: `sessionStorage` only, and only within one visit. On load, 
 
 `deploy.yml` triggers on push to `main` and runs as a single `build-and-deploy` job on Node 24: `npm ci → npm run build` → commits any files the prebuild scripts generated (`[skip ci]`) → deploys `_site/` to GitHub Pages. Build and deploy share one job so a publish doesn't wait for a second runner to start. Node 24 is preinstalled on `ubuntu-latest`; a version the runner lacks, such as Node 20, gets downloaded on every run, costing 5–11s. Keep the `actions/*` steps on their Node 24 majors (checkout v5, setup-node v5, upload-pages-artifact v5, deploy-pages v5) or every run logs a Node 20 deprecation warning. A typical publish takes about 30–40s from push to live.
 
-`npm run build` runs `prebuild` automatically, which chains four scripts:
+`npm run build` runs `prebuild` automatically, which chains five scripts:
 1. `backfill-dates.js` — fills git creation time into date-only front matter
 2. `convert-webp.js` — converts JPEG/PNG/HEIC in `src/images/uploads/` to WebP (quality 82, auto-rotates via EXIF), deletes the original, then updates all markdown references in content files from the old extension to `.webp`. Existing `.webp` files are skipped.
 3. `backfill-permalink.js` — writes `permalink` to front matter for any post with a `slug` field
-4. `generate-og-images.js` — renders each post's `og:image` (see below). Must run after step 3, since it needs the final `permalink`.
+4. `snapshot-versions.js` — saves earlier versions of revised posts to `src/versions/` (see Post versions). Must run after step 3, since snapshot URLs follow the post's `permalink`.
+5. `generate-og-images.js` — renders each post's `og:image` (see below). Must run after step 3, since it needs the final `permalink`.
 
 `src/CNAME` is passthrough-copied to `_site/CNAME` — required for the custom domain to survive deploys.
 
@@ -300,7 +352,7 @@ Access: `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
 
 `/feed.xml` — combined Atom feed (ideas + notes + snaps), 15 most recent posts. Uses `atomDate` (UTC ISO 8601). `feed.njk` must have `layout: false`.
 
-Each entry's `<title>` is the bare post title; the blog name comes from the feed's own `<title>`. Entry content is: description (if present) → rule → body → tags → rule → a fixed sign-off ("Congratulations! You have reached the end. You should read more at {site} and subscribe to my RSS.", both linked from `site.url`). Styles are inline because feed readers ignore site CSS.
+Each entry's `<title>` is the bare post title; the blog name comes from the feed's own `<title>`. Entry content is: description (if present) → rule → edit line (revised posts) → body (a revised post's `[*]` footnote joins its footnotes; see Post versions) → tags → rule → a fixed sign-off ("Congratulations! You have reached the end. You should read more at {site} and subscribe to my RSS.", both linked from `site.url`). Styles are inline because feed readers ignore site CSS.
 
 Post pages' `og:title` is likewise the bare title — the blog name lives in `og:site_name`. Only the browser-tab `<title>` keeps the `| {site.title}` suffix.
 
@@ -327,7 +379,8 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 |---|---|
 | `@11ty/eleventy` | SSG |
 | `@resvg/resvg-js` | Rasterizes the SVG `satori` produces into the final og:image PNG |
-| `gray-matter` | Front-matter parsing in `generate-og-images.js` |
+| `diff` | Word-level diff for post-version changes pages (`htmlDiff` filter) |
+| `gray-matter` | Front-matter parsing in `generate-og-images.js`, `snapshot-versions.js` and `_data/versions.js` |
 | `markdown-it` | Markdown parser (configured in `.eleventy.js`) |
 | `markdown-it-anchor` | Heading anchors |
 | `markdown-it-attrs` | Custom attributes |

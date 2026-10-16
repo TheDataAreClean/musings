@@ -20,6 +20,10 @@
   --color-visited:        #551a8b;
   --color-mark:           #ffff00;
   --color-mark-dim:       #fffacd;
+  --color-ins:            #0a6b2d;   /* changes page — added text */
+  --color-ins-bg:         #e6f4ea;
+  --color-del:            #b3261e;   /* changes page — removed text */
+  --color-del-bg:         #fce8e6;
   --color-code-bg:        #f8f8f8;   /* code block background */
   --color-warning-bg:     #fff8f0;   /* warning callout background */
 

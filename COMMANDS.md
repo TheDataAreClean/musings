@@ -16,6 +16,7 @@ All runnable commands. Source: `package.json`.
 | Backfill post datetimes from git | `npm run backfill` |
 | Backfill slug → permalink in front matter | `node scripts/backfill-permalink.js` |
 | Generate per-post og:image files | `npm run ogimages` |
+| Save earlier versions of revised posts | `npm run versions` |
 | Check vulnerabilities | `npm audit` |
 | List available updates | `npm outdated` |
 
@@ -46,4 +47,4 @@ Full checklist and bump policy: [release skill](.claude/skills/release/SKILL.md)
 - Build output → `_site/` (not committed)
 - `npm run clean` deletes `_site/` only — safe to run before a fresh build
 - `npm ci` is used in CI (`deploy.yml`) — prefer `npm install` locally
-- `npm run build` automatically runs `prebuild` first (backfill-dates + convert-webp + backfill-permalink + generate-og-images) — no need to call them separately in CI
+- `npm run build` automatically runs `prebuild` first (backfill-dates + convert-webp + backfill-permalink + snapshot-versions + generate-og-images) — no need to call them separately in CI

@@ -518,3 +518,45 @@ a.post-tag:hover { text-decoration: none; }
 
 .post-nav a:visited { color: var(--color-visited); }
 .post-nav a:hover { text-decoration: none; }
+
+/* --------------------------------------------------------------------------
+   Post versions — the version line under the meta, its asterisk footnote,
+   and track-changes marks. The version history menu is chrome (doc-chrome.css).
+   -------------------------------------------------------------------------- */
+
+/* A blockquote's left bar (typography.css), trimmed: no vertical padding,
+   so the bar is one line tall */
+.version-line {
+  margin-bottom: var(--space-6);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--color-border-soft);
+}
+
+.doc-meta:has(+ .version-line),
+.doc-tags:has(+ .version-line) {
+  margin-bottom: var(--space-4);
+}
+
+/* On changes pages it follows the description, which sits tight (space-2) */
+.doc-description + .version-line {
+  margin-top: var(--space-4);
+}
+
+/* The asterisk sits in the numbers' column: an outside marker ends where the
+   text starts, and "*" plus an en space is about as wide as "1. " */
+.footnote-item--version { list-style-type: "*\2002"; }
+
+.doc-body ins {
+  color: var(--color-ins);
+  background: var(--color-ins-bg);
+  text-decoration: underline;
+}
+
+.doc-body del {
+  color: var(--color-del);
+  background: var(--color-del-bg);
+  text-decoration: line-through;
+}
+
+.doc-body ins img { outline: 3px solid var(--color-ins); }
+.doc-body del img { outline: 3px solid var(--color-del); opacity: 0.6; }

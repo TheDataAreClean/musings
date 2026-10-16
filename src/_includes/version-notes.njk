@@ -1,0 +1,14 @@
+{# Version edit notes. doc.njk uses all of these; the feed (feed.njk) uses
+   the latest version's line and footnote. base is "" on the page and site.url in the feed, where
+   links must be absolute. "Earlier versions" opens the titlebar menu on the
+   page; in the feed it is a plain link to the original, and the "*" marker is
+   inline because feed readers drop the site CSS. #}
+{% macro mark() %}<sup class="footnote-ref"><a href="#fn-version" id="fnref-version">[*]</a></sup>{% endmacro %}
+
+{% macro editNote(v) %}{% if v.note %}{{ v.note | sentence }}{% else %}Edited on {{ v.date | readableDate }}.{% endif %}{% endmacro %}
+
+{% macro latestLine(vinfo) %}This post was edited on {{ vinfo.latest.date | readableDate }}{{ mark() }}{% endmacro %}
+
+{% macro latestFootnote(vinfo, base) %}<li id="fn-version" class="footnote-item footnote-item--version"{% if base %} style="list-style-type:'*\2002'"{% endif %}><p>{{ editNote(vinfo.latest) }} <a href="{{ base }}{{ vinfo.latest.changesUrl }}">What changed</a> · {% if vinfo.all | length > 2 %}<a href="{{ base }}{{ vinfo.all[0].url }}" data-open-versions>Earlier versions</a>{% else %}<a href="{{ base }}{{ vinfo.all[0].url }}">Original</a>{% endif %} <a href="#fnref-version" class="footnote-backref">↩︎</a></p>
+</li>
+{% endmacro %}

@@ -22,6 +22,7 @@ description: Pre-push checklist (build/content/behaviour/infrastructure) and rel
 - [ ] Margin notes: cards on desktop, bottom sheet on mobile, inline asides with JS off and in print preview
 - [ ] Stoplight dims on tab switch, restores on return
 - [ ] Anchor links land below sticky chrome
+- [ ] Revised posts: the edit note line and `[*]` footnote show on the latest, an earlier version and a changes page; File → Version history lists the versions
 
 ### Infrastructure
 - [ ] `site.url` in `site.json` — no trailing slash
@@ -42,7 +43,7 @@ git push origin v3.1.0
 
 | Part | When to increment |
 |---|---|
-| MAJOR | Complete visual redesign or change in site concept |
+| MAJOR | Complete visual redesign, change in site concept, or a change in how posts work |
 | MINOR | New feature, new section, new page type |
 | PATCH | Bug fix, design tweak, content or docs update |
 
