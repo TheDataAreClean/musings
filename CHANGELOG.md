@@ -6,6 +6,7 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+- change: a margin note now goes *after* the paragraph it is about in the Markdown, not before it, so the source, feed readers and no-JS pages read text first, note second. Existing notes are moved; the phrase is now looked for in the paragraph before the note.
 - fix: a paragraph that follows a margin note now gets the same first-line indent and tight spacing as any other follow-on paragraph. The hidden note left behind in the text broke the "paragraph after paragraph" rule, so those paragraphs started flush with a bigger gap above.
 
 ---
