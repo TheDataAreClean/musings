@@ -172,6 +172,8 @@ Defined in `.eleventy.js`:
 
 `callout` and `marginnote` call `md.render()` — Markdown is supported inside them.
 
+**Paragraph indent.** In `typography.css`, a paragraph's first line is indented 1.5em only when the element right before it is another paragraph (`.doc-body p + p`), with the gap above tightened to match. After a heading, list, quote, code block, rule, figure or table it starts flush. A margin note the script has hidden counts as invisible (`p + .margin-note[hidden] + p`), so a note never breaks the indent on screen; in print the note shows inline and the next paragraph starts flush.
+
 **Margin notes are document comments.** The shortcode renders a plain `<aside class="margin-note">` (author from `site.json`, date from the post unless a date is passed) and `src/js/comments.js` upgrades it:
 
 - Place the shortcode directly *after* the paragraph it belongs to. The phrase is searched for only in the block right before the note (the block after it, if the note starts the post; curly and straight quotes match). If it isn't found there, the script warns in the console and anchors to the whole block. A whole-block anchor takes the nearest block no other note already holds, so two notes never share one. Notes with no anchor at all stay visible inline.
