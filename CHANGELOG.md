@@ -6,6 +6,10 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+---
+
+## 2026-10-16 (v3.10.4)
+
 - fix: after a deploy, a browser could pair the new page with its cached copy of the old stylesheet or comments script for up to 10 minutes (that is how margin notes briefly highlighted the wrong paragraph after v3.10.2). CSS and JS links now carry a per-build `?v=` stamp, so every deploy loads fresh files.
 
 ---
