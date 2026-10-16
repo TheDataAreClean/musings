@@ -1,6 +1,7 @@
 ---
 title: The day I stopped singing
 slug: singing
+permalink: /ideas/2026-10-16-singing/
 date: 2026-10-16T11:18:00+05:30
 draft: true
 description: Exploring a creative wound.
