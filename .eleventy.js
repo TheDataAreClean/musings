@@ -178,6 +178,19 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.addGlobalData("buildTime", () => new Date());
 
+  // Cache-busting: each build stamps CSS/JS URLs with a new ?v=, so a deploy
+  // never pairs fresh HTML with a stale script or stylesheet from the
+  // browser cache (GitHub Pages caches assets for 10 minutes).
+  const assetVersion = Date.now().toString(36);
+  eleventyConfig.addGlobalData("assetVersion", assetVersion);
+  eleventyConfig.on("eleventy.after", ({ dir }) => {
+    const fs = require("fs");
+    const main = `${dir.output}/css/main.css`;
+    if (!fs.existsSync(main)) return; // dev server serves passthrough from memory
+    const css = fs.readFileSync(main, "utf8");
+    fs.writeFileSync(main, css.replace(/@import "([^"?]+\.css)";/g, `@import "$1?v=${assetVersion}";`));
+  });
+
   eleventyConfig.addFilter("groupByYear", function (posts) {
     const groups = {};
     posts.forEach((post) => {

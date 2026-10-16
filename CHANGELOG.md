@@ -8,6 +8,12 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-10-16 (v3.10.4)
+
+- fix: after a deploy, a browser could pair the new page with its cached copy of the old stylesheet or comments script for up to 10 minutes (that is how margin notes briefly highlighted the wrong paragraph after v3.10.2). CSS and JS links now carry a per-build `?v=` stamp, so every deploy loads fresh files.
+
+---
+
 ## 2026-10-16 (v3.10.3)
 
 - fix: margin notes in the RSS feed no longer show as a jumbled "AArpit16 Oct" line. Each note is now a quoted aside labelled "Note on “phrase” · date" right after its paragraph.

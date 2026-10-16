@@ -37,7 +37,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/main.css?v={{ assetVersion }}">
   {% if "margin-note" in content %}
   {# Hide inline margin notes until comments.js has built its cards, so they
      don't paint and then vanish (layout shift). The timer un-hides them if
@@ -467,6 +467,6 @@
 
   })();
   </script>
-  {% if "margin-note" in content %}<script src="/js/comments.js" defer></script>{% endif %}
+  {% if "margin-note" in content %}<script src="/js/comments.js?v={{ assetVersion }}" defer></script>{% endif %}
 </body>
 </html>
