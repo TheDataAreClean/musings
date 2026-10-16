@@ -1,12 +1,17 @@
 # CHANGELOG
 
-Version bump policy: MAJOR = complete visual redesign or change in site concept; MINOR = new feature, section, or page type; PATCH = bug fix, design tweak, content push.
+Version bump policy: MAJOR = complete visual redesign, change in site concept, or a change in how posts work; MINOR = new feature, section, or page type; PATCH = bug fix, design tweak, content push.
 
 ---
 
-## UNRELEASED
+## UNRELEASED (v4.0.0)
 
-- add: post versions. Bump **Version** on a post in the CMS (with a one-line **What changed**) and the previous version is kept at `{post}/v1/`, with a banner pointing to the latest. The post's own URL always shows the latest version, with a Version history panel under the meta line (also in File → Version history). Each version has a "What changed" page at `{post}/v1/changes/` showing additions underlined in green and removals struck out in red. In the feed, a revised post keeps its entry, gets a new updated date, and ends with a note on what changed. Lists show a small `v2` after the date.
+- add: post versions. A post can now be revised in public. In the CMS, bump **Version** and write a one-line **What changed** in the same save as the first edit. The post's URL always shows the latest version; each earlier version stays readable at `{post}/v1/`, `{post}/v2/`, … and each edit has a "What changed" page (`{post}/v1/changes/`) with additions underlined in green and removals struck out in red.
+  - On the page, a quoted line under the tags says "This post was edited on 15 Oct, 2026[*]". The [*] goes to a footnote at the bottom with the note and links to what changed and the original. Earlier versions and changes pages say what they are the same way ("This is the original version of this post, from …", "These are the edits made on …").
+  - In the app chrome, File → Version history lists every version by date. The titlebar and the browser tab title stay as they were.
+  - In post lists, a revised post shows its latest date, marked "(updated)".
+  - In the feed, a revised post keeps its entry, gets a new updated date, and carries the same edit line and footnote.
+- change: every date a reader sees now reads like "15 Oct, 2026" (September is "Sept"): post lists (which used `2026-10-15`), post pages, the version menu, margin notes and the feed.
 
 ---
 

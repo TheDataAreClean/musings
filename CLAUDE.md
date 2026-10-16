@@ -50,6 +50,9 @@ There is no separate draft pipeline — `draft` only hides a post from listings/
 **Post versions: snapshots live in `src/versions/` and must never be hand-edited or regenerated**
 Once `snapshot-versions.js` writes `src/versions/{section}/{stem}/v{n}.md`, that file *is* version n; it is only ever created, never rewritten (apart from its `permalink`). Snapshots carry `postTags`, not `tags`, so they stay out of tag collections, listings and the feed; keep it that way. Renaming a post file orphans its snapshots (the folder is keyed by file stem), so move `src/versions/{section}/{stem}/` with it. See `APP.md` → Post versions.
 
+**The edit note is built once, for the page and the feed**
+`src/_includes/version-notes.njk` holds the edit note's macros (the `[*]` mark, the latest version's line and footnote, the note-or-"Edited on" fallback); `doc.njk` and `feed.njk` both import it, so change wording there, not in either template. The feed passes `site.url` as `base` for absolute links and gets an inline `*` marker, since feed readers drop the site CSS. `withVersionFootnote` builds its markup from markdown-it-footnote's own renderer rules; don't hard-code `<section class="footnotes">` strings. The `#fn-version`/`#fnref-version` ids must stay unique: a post's own footnotes are numbered, so they can't clash.
+
 **`src/images` is a symlink — Sveltia CMS config must use the real path**
 See `APP.md`'s Passthrough copies section for why `media_folder` in `src/admin/config.yml` must point at `images/uploads`, never `src/images/uploads`.
 

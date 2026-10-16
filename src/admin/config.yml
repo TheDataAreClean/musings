@@ -34,7 +34,7 @@ collections:
         required: false
         hint: "Extra tags beyond 'ideas'. e.g. design, tech, personal"
       - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Bump this in the same save as your first edit for a new version (saves publish immediately, so edits saved before the bump become part of the old version). The old version is kept and readers can switch back to it and see what changed." }
-      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version. Shown in the version history and at the end of the feed entry." }
+      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version. Shown in the post's [*] edit note footnote, on the page and in the feed." }
       - { name: body, label: Body, widget: markdown }
 
   - name: notes
@@ -55,7 +55,7 @@ collections:
         required: false
         hint: "Extra tags beyond 'notes'. e.g. personal, tech, create"
       - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Bump this in the same save as your first edit for a new version (saves publish immediately, so edits saved before the bump become part of the old version). The old version is kept and readers can switch back to it and see what changed." }
-      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version. Shown in the version history and at the end of the feed entry." }
+      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version. Shown in the post's [*] edit note footnote, on the page and in the feed." }
       - { name: body, label: Body, widget: markdown }
 
   - name: snaps
@@ -76,5 +76,5 @@ collections:
         required: false
         hint: "Extra tags beyond 'snaps'. e.g. luru, family, street"
       - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Bump this in the same save as your first edit for a new version (saves publish immediately, so edits saved before the bump become part of the old version). The old version is kept and readers can switch back to it and see what changed." }
-      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version. Shown in the version history and at the end of the feed entry." }
+      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version. Shown in the post's [*] edit note footnote, on the page and in the feed." }
       - { name: body, label: Body, widget: markdown, hint: "Upload your image via the media button, then add caption text below if needed." }

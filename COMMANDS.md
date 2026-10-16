@@ -50,4 +50,4 @@ git push && git push origin vx.y.z
 - Build output → `_site/` (not committed)
 - `npm run clean` deletes `_site/` only — safe to run before a fresh build
 - `npm ci` is used in CI (`deploy.yml`) — prefer `npm install` locally
-- `npm run build` automatically runs `prebuild` first (backfill-dates + convert-webp + backfill-permalink + generate-og-images) — no need to call them separately in CI
+- `npm run build` automatically runs `prebuild` first (backfill-dates + convert-webp + backfill-permalink + snapshot-versions + generate-og-images) — no need to call them separately in CI
