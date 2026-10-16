@@ -1,10 +1,17 @@
 # CHANGELOG
 
-Version bump policy: MAJOR = complete visual redesign or change in site concept; MINOR = new feature, section, or page type; PATCH = bug fix, design tweak, content push.
+Version bump policy: MAJOR = complete visual redesign or change in site concept; MINOR = new feature, section, or page type; PATCH = bug fix, design tweak, content or docs update.
 
 ---
 
 ## UNRELEASED
+
+---
+
+## 2026-10-16 (v3.10.5)
+
+- fix: draft posts no longer show on tag pages or count towards a tag's "N posts tagged" line (on the page and in its og:image). Tag pages now page over a new `tagList` collection built from published posts only.
+- docs: APP.md, CLAUDE.md, README, COMMANDS, FUTURE and the release skill brought in line with the code (drafts, generated pages, passthrough list, filters, tokens, crawler policy, release flow).
 
 ---
 

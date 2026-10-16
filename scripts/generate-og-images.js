@@ -339,6 +339,7 @@ async function main() {
   for (const { dir } of SECTIONS) {
     for (const file of fs.readdirSync(dir).filter((f) => f.endsWith(".md"))) {
       const { data } = matter(fs.readFileSync(path.join(dir, file), "utf8"));
+      if (data.draft) continue; // drafts stay off tag pages, so off their counts too
       for (const t of data.tags || []) {
         if (COLLECTION_TAGS.has(t)) continue;
         tagCounts[t] = (tagCounts[t] || 0) + 1;

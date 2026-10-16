@@ -18,7 +18,8 @@ description: Pre-push checklist (build/content/behaviour/infrastructure) and rel
 - [ ] All links resolve; images exist in `src/images/`
 
 ### Behaviour
-- [ ] Font and zoom dropdowns work; persist across page navigation; reset on fresh tab
+- [ ] Font, size and zoom dropdowns work; persist across page navigation; reset on fresh tab
+- [ ] Margin notes: cards on desktop, bottom sheet on mobile, inline asides with JS off and in print preview
 - [ ] Stoplight dims on tab switch, restores on return
 - [ ] Anchor links land below sticky chrome
 
@@ -26,9 +27,13 @@ description: Pre-push checklist (build/content/behaviour/infrastructure) and rel
 - [ ] `site.url` in `site.json` — no trailing slash
 - [ ] `feed.njk` has `layout: false`
 - [ ] `_site/feed.xml` is valid XML — open in browser
+- [ ] No draft appears on the home page, section lists, any `/tags/` page or the feed
+- [ ] `/reference/` and `/style/` build; `images/og/` has a PNG for new posts
 - [ ] `_site/favicon.ico`, `_site/favicon.svg`, `_site/apple-touch-icon.png`, `_site/manifest.json` present
 
 ## Release workflow
+
+Bump `package.json` and move the CHANGELOG entries inside the change's own PR. After it merges, cube tags `main` from their Mac:
 
 ```sh
 git tag -a v3.1.0 -m "Brief description"
@@ -39,7 +44,7 @@ git push origin v3.1.0
 |---|---|
 | MAJOR | Complete visual redesign or change in site concept |
 | MINOR | New feature, new section, new page type |
-| PATCH | Bug fix, design tweak, docs update |
+| PATCH | Bug fix, design tweak, content or docs update |
 
 Move UNRELEASED entries in [CHANGELOG.md](../../../CHANGELOG.md) to a dated version block on each release.
 Update `version` in `package.json` with `npm version <tag> --no-git-tag-version`.

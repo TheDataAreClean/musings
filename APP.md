@@ -8,7 +8,7 @@ Architecture and technical reference. Claude's operating manual lives in [CLAUDE
 
 Static site generator (Eleventy 3.x) → HTML + CSS + JS → GitHub Pages.
 
-No build tools, no bundler. Eleventy templates produce static HTML; all CSS and JS are served as-is.
+No bundler. Eleventy templates produce static HTML; all CSS and JS are served as-is. Four Node `prebuild` scripts run before each build (dates, WebP, permalinks, og:images — see Deployment).
 
 **Author/deploy flow:**
 1. Author writes `.md` in `src/` (directly, or via Sveltia CMS at `/admin/`)
@@ -24,8 +24,8 @@ No build tools, no bundler. Eleventy templates produce static HTML; all CSS and 
 |---|---|
 | Generator | Eleventy 3.x |
 | Templates | Nunjucks + Markdown |
-| Styling | Vanilla CSS (~1,200 lines across 6 files) |
-| JavaScript | Inline script in `base.njk` — no bundler |
+| Styling | Vanilla CSS (~1,800 lines across 7 files, `main.css` imports the rest) |
+| JavaScript | Inline script in `base.njk` + `src/js/comments.js` (margin notes) — no bundler |
 | Fonts | Georgia (document default); Arial (chrome, always; user-switchable for the document) |
 | Hosting | GitHub Pages + custom domain |
 | CMS | Sveltia CMS (Git-based, via Cloudflare Worker OAuth) |
@@ -47,7 +47,7 @@ No build tools, no bundler. Eleventy templates produce static HTML; all CSS and 
 
 **Front matter per type:**
 
-Field order convention: `title`, `description`, `date`, `tags`, `slug`, `permalink` (script-managed, see below), `draft` last.
+Fields: `title`, `description`, `date`, `tags`, `slug`, `permalink` (script-managed), `draft`, and optional `updated` (tie-break in the sort above). Order doesn't matter; Sveltia CMS writes `title, slug, date, draft, description, tags`.
 
 Ideas (long-form):
 ```yaml
@@ -82,6 +82,8 @@ slug: optional-custom-url-slug
 draft: true
 ```
 
+**Drafts.** `draft: true` keeps a post off the home page, section lists, tag pages, the feed and `/posts.json` (`filterDrafts` and the `published` filter in `.eleventy.js`; `generate-og-images.js` leaves drafts out of tag counts). The post page itself is still built, so its URL works once the file is on `main`. Under `npm run dev` drafts show everywhere, so you can preview them in lists.
+
 Layout is inherited from directory data files — do not repeat it in front matter. `tags` beyond the collection tag (`ideas`/`notes`/`snaps`, also inherited) are freeform, e.g. `personal`, `tech`, `design`.
 
 ---
@@ -99,11 +101,22 @@ Layout is inherited from directory data files — do not repeat it in front matt
 
 ## Template hierarchy
 
+Layouts (`src/_includes/layouts/`):
+
 ```
 base.njk      Shell — chrome HTML, inline <script>, affects every page
 doc.njk       Single post layout (wraps base.njk)
 home.njk      Home/feed listing (wraps base.njk)
-feed.njk      Atom XML — must have layout: false
+```
+
+Generated pages in `src/`:
+
+```
+{ideas,notes,snaps}/index.njk   Section lists → /ideas/, /notes/, /snaps/
+tags/index.njk                  One page per tag → /tags/{tag}/ (paginates collections.tagList)
+feed.njk                        Atom XML → /feed.xml — must have layout: false
+posts.njk                       JSON list of post URLs → /posts.json (File → New)
+404.md                          Not-found page → /404.html
 ```
 
 `doc.njk` element order: title → nav → description (if present) → meta (omitted if `hideMeta: true`) → body → post-nav (omitted if `hidePostNav: true`)
@@ -145,14 +158,15 @@ print.css       Print stylesheet — A4 page like the screen page, no chrome, fo
 | `--page-width` | 794px | A4 at 96dpi |
 | `--page-pad-v` | 80px | A4 vertical padding |
 | `--page-pad-h` | 96px | A4 horizontal padding |
-| `--chrome-h` | 114px | Sum of all chrome bar heights (34+26+32+22) |
+| `--chrome-h` | 114px | Sum of the four sticky bars (34+26+32+22); 92px on mobile, where `--ruler-h` is 0 |
 | `--doc-scale` | 1 | Document text size multiplier, set by the toolbar size picker (12 = 1) |
 | `--comment-w` | 208px | Width of a comment card in the desk rail |
 | `--comment-gap` | 14px | Gap between the page edge and the comment rail |
 | `--titlebar-h` | 34px | |
 | `--menubar-h` | 26px | |
 | `--toolbar-h` | 32px | |
-| `--ruler-h` | 22px | |
+| `--ruler-h` | 22px | 0 on mobile (ruler hidden) |
+| `--statusbar-h` | 22px | Bottom status bar; not part of `--chrome-h` |
 
 `--chrome-h` is used by `scroll-margin-top` on headings. Must be kept in sync with individual bar heights manually.
 
@@ -192,16 +206,18 @@ Page break: `<hr class="page-break">` renders as a grey desk gap.
 | Filter | Input | Output |
 |---|---|---|
 | `collectionTags` | `tags` array | Tags with `ideas`, `notes`, `snaps` removed |
+| `published` | posts array | Drops drafts (keeps them under `npm run dev`) — used by tag pages |
 | `postSigil` | `tags` array | `→` ideas · `○` snaps · `·` notes (default) |
 | `wordcount` | HTML string | Word count (strips tags first) |
 | `readtime` | HTML string | Minutes to read at 200 wpm |
 | `readableDate` | date | "30 April 2026" in IST |
 | `isoDate` | date | `YYYY-MM-DD` in IST |
 | `atomDate` | date | UTC ISO 8601 for Atom feed |
-| `groupByYear` | posts array | Posts grouped by year, descending |
-| `excerpt` | HTML string | First 200 chars, tags stripped |
-| `limit` / `offset` | array, n | Slice helpers |
-| `findIndex` | array, page | Index of current page in collection |
+| `rssContent` | HTML string | Feed-only rewrite: inline figure spacing, margin notes as labelled blockquotes |
+| `ogImageSlug` / `ogImageExists` | URL / slug | og:image path and existence check (from `generate-og-images.js`) |
+| `limit` | array, n | First n items (feed) |
+
+Also defined but currently unused: `groupByYear`, `excerpt`, `offset`, `findIndex`.
 
 **Nav include:** `src/_includes/nav.njk` — shared navigation used by all pages. Set `{% set navRss = true %}` before including to show the RSS link (home, section index, and post pages).
 
@@ -260,12 +276,16 @@ Session persistence: `sessionStorage` only, and only within one visit. On load, 
 
 ### Passthrough copies
 
-Directories: `src/fonts/`, `src/css/`, `src/js/`, `src/images/`
-Files: `src/favicon.svg`, `src/favicon.ico`, `src/apple-touch-icon.png`, `src/manifest.json`, `src/CNAME`
+Directories: `src/css/`, `src/js/`, `src/images/`, `src/admin/`
+Files: `src/favicon.svg`, `src/favicon.ico`, `src/apple-touch-icon.png`, `src/favicon-512.png`, `src/manifest.json`, `src/robots.txt`, `src/CNAME`
 
 Any new asset type needs a corresponding `addPassthroughCopy` in `.eleventy.js`.
 
 `src/images` is a symlink to a top-level `images/` directory, not a real nested folder. Node resolves it transparently for local builds and scripts, so `src/images/uploads/` is a valid filesystem path — but tools that read the repo through GitHub's API (Sveltia CMS) see only `images/uploads/` as a real git path; `src/images/uploads/` 404s there.
+
+### Search engines and crawlers
+
+The site asks not to be indexed, on purpose: `src/robots.txt` disallows every crawler (with explicit entries for AI crawlers), and `base.njk` sets `<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">` on every page. Don't remove either without asking.
 
 ### Sveltia CMS
 
@@ -309,6 +329,7 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 | `@11ty/eleventy` | SSG |
 | `@resvg/resvg-js` | Rasterizes the SVG `satori` produces into the final og:image PNG |
 | `gray-matter` | Front-matter parsing in `generate-og-images.js` |
+| `markdown-it` | Markdown parser — required directly by `.eleventy.js`, but installed only as Eleventy's own dependency |
 | `markdown-it-anchor` | Heading anchors |
 | `markdown-it-attrs` | Custom attributes |
 | `markdown-it-footnote` | Footnotes |

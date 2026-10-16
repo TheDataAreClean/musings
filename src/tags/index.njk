@@ -1,19 +1,13 @@
 ---
 layout: layouts/base.njk
 pagination:
-  data: collections
+  data: collections.tagList
   size: 1
   alias: tag
-  filter:
-    - all
-    - ideas
-    - notes
-    - snaps
-    - feed
 permalink: /tags/{{ tag }}/
 eleventyComputed:
   title: "{{ tag }}"
-  description: "{{ collections[tag].length }} post{% if collections[tag].length != 1 %}s{% endif %} tagged as {{ tag }}."
+  description: "{% set n = (collections[tag] | published).length %}{{ n }} post{% if n != 1 %}s{% endif %} tagged as {{ tag }}."
 eleventyExcludeFromCollections: true
 ---
 
@@ -23,7 +17,7 @@ eleventyExcludeFromCollections: true
 
   {% include "nav.njk" %}
 
-  {% set taggedPosts = collections[tag] | sort(true, false, "date") %}{# sort: reverse=true, caseSensitive=false, attr="date" #}
+  {% set taggedPosts = collections[tag] | published | sort(true, false, "date") %}{# sort: reverse=true, caseSensitive=false, attr="date" #}
   {% if taggedPosts.length %}
   <div class="post-list">
     {% for post in taggedPosts %}

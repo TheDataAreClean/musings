@@ -255,6 +255,19 @@ module.exports = function (eleventyConfig) {
     return sortPosts(filterDrafts(collectionApi.getFilteredByGlob("src/snaps/**/*.md")));
   });
 
+  // Tag pages (src/tags/index.njk) page over this list and render
+  // `collections[tag] | published`, so a draft never shows on a tag page and
+  // a tag used only by drafts gets no page at all (outside `npm run dev`).
+  eleventyConfig.addFilter("published", (posts) => filterDrafts(posts || []));
+
+  eleventyConfig.addCollection("tagList", function (collectionApi) {
+    const tags = new Set();
+    for (const post of filterDrafts(collectionApi.getAll())) {
+      for (const t of post.data.tags || []) if (!COLLECTION_TAGS.includes(t)) tags.add(t);
+    }
+    return [...tags].sort();
+  });
+
   eleventyConfig.addCollection("feed", function (collectionApi) {
     return sortPosts(filterDrafts([
       ...collectionApi.getFilteredByGlob("src/ideas/**/*.md"),
@@ -271,8 +284,8 @@ module.exports = function (eleventyConfig) {
   // Margin note → document comment. Renders a plain <aside> (readable with no
   // JS, in print, and in feed readers); src/js/comments.js upgrades it into a
   // comment card on the desk (wide screens) or a bottom sheet (narrow ones).
-  // Optional first argument is the phrase to highlight in the block right after
-  // the note — without it, the whole next block is the anchor. The card shows
+  // Optional first argument is the phrase to highlight in the block right before
+  // the note — without it, the whole previous block is the anchor. The card shows
   // the post's date; an optional second argument (any date string) overrides it.
   // To date a note that has no phrase, pass an empty first argument: "", "2026-03-01".
   const escAttr = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
