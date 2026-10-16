@@ -39,7 +39,7 @@ ogType: article
   </p>
   {% if shownTags | collectionTags | length %}
   <p class="doc-tags">
-    {% for tag in shownTags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endfor %}
+    {% for tag in shownTags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | tagSlug }}/">{{ tag }}</a>{% endfor %}
   </p>
   {% endif %}
   {% endif %}

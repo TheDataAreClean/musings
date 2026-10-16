@@ -13,7 +13,6 @@ Ideas and backlog. Not history — see [CHANGELOG.md](CHANGELOG.md) for shipped 
 ## NEXT
 
 ### Product
-- **Tag pages** — `/ideas/tag/{slug}/`, `/notes/tag/{slug}/` listing pages — low build complexity, already have tag data
 - **Dark mode** — optional toggle; chrome and doc both need token variants; persist in `sessionStorage`
 - **Search** — client-side (Pagefind or similar); no server required
 

@@ -24,6 +24,8 @@
   --color-ins-bg:         #e6f4ea;
   --color-del:            #b3261e;   /* changes page — removed text */
   --color-del-bg:         #fce8e6;
+  --color-code-bg:        #f8f8f8;   /* code block background */
+  --color-warning-bg:     #fff8f0;   /* warning callout background */
 
   /* Fonts — Arial for chrome (--font-ui never changes); Georgia is the
      document body default, user-switchable to Arial via the font dropdown */

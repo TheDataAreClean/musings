@@ -1,6 +1,6 @@
 # CHANGELOG
 
-Version bump policy: MAJOR = complete visual redesign, change in site concept, or a change in how posts work; MINOR = new feature, section, or page type; PATCH = bug fix, design tweak, content push.
+Version bump policy: MAJOR = complete visual redesign, change in site concept, or a change in how posts work; MINOR = new feature, section, or page type; PATCH = bug fix, design tweak, content or docs update.
 
 ---
 
@@ -12,6 +12,15 @@ Version bump policy: MAJOR = complete visual redesign, change in site concept, o
   - In post lists, a revised post shows its latest date, marked "(updated)".
   - In the feed, a revised post keeps its entry, gets a new updated date, and carries the same edit line and footnote.
 - change: every date a reader sees now reads like "15 Oct, 2026" (September is "Sept"): post lists (which used `2026-10-15`), post pages, the version menu, margin notes and the feed.
+
+---
+
+## 2026-10-16 (v3.10.5)
+
+- fix: draft posts no longer show on tag pages or count towards a tag's "N posts tagged" line (on the page and in its og:image). Tag pages now page over a new `tagList` collection built from published posts only.
+- fix: tag links are built one way everywhere (`tagSlug`), so a tag with a capital letter or a space no longer links to a missing page from the section lists.
+- chore: the code-block and warning-callout backgrounds are now tokens (`--color-code-bg`, `--color-warning-bg`); removed four unused filters; `markdown-it` is now a direct dev dependency.
+- docs: APP.md, CLAUDE.md, README, COMMANDS, FUTURE and the release skill brought in line with the code (drafts, generated pages, passthrough list, filters, tokens, crawler policy, release flow).
 
 ---
 

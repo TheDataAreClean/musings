@@ -8,7 +8,7 @@ Architecture and technical reference. Claude's operating manual lives in [CLAUDE
 
 Static site generator (Eleventy 3.x) → HTML + CSS + JS → GitHub Pages.
 
-No build tools, no bundler. Eleventy templates produce static HTML; all CSS and JS are served as-is.
+No bundler. Eleventy templates produce static HTML; all CSS and JS are served as-is. Four Node `prebuild` scripts run before each build (dates, WebP, permalinks, og:images — see Deployment).
 
 **Author/deploy flow:**
 1. Author writes `.md` in `src/` (directly, or via Sveltia CMS at `/admin/`)
@@ -24,8 +24,8 @@ No build tools, no bundler. Eleventy templates produce static HTML; all CSS and 
 |---|---|
 | Generator | Eleventy 3.x |
 | Templates | Nunjucks + Markdown |
-| Styling | Vanilla CSS (~1,800 lines across 6 files) |
-| JavaScript | Inline script in `base.njk` — no bundler |
+| Styling | Vanilla CSS (~1,800 lines across 7 files, `main.css` imports the rest) |
+| JavaScript | Inline script in `base.njk` + `src/js/comments.js` (margin notes) — no bundler |
 | Fonts | Georgia (document default); Arial (chrome, always; user-switchable for the document) |
 | Hosting | GitHub Pages + custom domain |
 | CMS | Sveltia CMS (Git-based, via Cloudflare Worker OAuth) |
@@ -47,7 +47,7 @@ No build tools, no bundler. Eleventy templates produce static HTML; all CSS and 
 
 **Front matter per type:**
 
-Field order convention: `title`, `description`, `date`, `tags`, `slug`, `permalink` (script-managed, see below), `draft` last.
+Fields: `title`, `description`, `date`, `tags`, `slug`, `permalink` (script-managed), `draft`, and optional `updated` (tie-break in the sort above). Order doesn't matter; Sveltia CMS writes `title, slug, date, draft, description, tags`.
 
 Ideas (long-form):
 ```yaml
@@ -82,6 +82,7 @@ slug: optional-custom-url-slug
 draft: true
 ```
 
+**Drafts.** `draft: true` keeps a post off the home page, section lists, tag pages, the feed and `/posts.json` (`filterDrafts` and the `published` filter in `.eleventy.js`; `generate-og-images.js` leaves drafts out of tag counts). The post page itself is still built, so its URL works once the file is on `main`. Under `npm run dev` drafts show everywhere, so you can preview them in lists.
 Optional on any post, once it has been revised (see Post versions below):
 ```yaml
 version: 2                        # bump to publish a new version
@@ -140,12 +141,23 @@ A missing note reads "Edited on [date].". The "Before, …" sentence lists only 
 
 ## Template hierarchy
 
+Layouts (`src/_includes/layouts/`):
+
 ```
 base.njk      Shell — chrome HTML, inline <script>, affects every page
 doc.njk       Single post layout (wraps base.njk)
 home.njk      Home/feed listing (wraps base.njk)
-feed.njk      Atom XML — must have layout: false
-changes.njk   A post version's "what changed" page (Post versions)
+```
+
+Generated pages in `src/`:
+
+```
+{ideas,notes,snaps}/index.njk   Section lists → /ideas/, /notes/, /snaps/
+tags/index.njk                  One page per tag → /tags/{tag | tagSlug}/ (paginates collections.tagList)
+feed.njk                        Atom XML → /feed.xml — must have layout: false
+posts.njk                       JSON list of post URLs → /posts.json (File → New)
+404.md                          Not-found page → /404.html
+changes.njk                     A post version's "what changed" page → {post}/v{n}/changes/ (Post versions)
 ```
 
 Includes: `nav.njk` (site nav), `post-date.njk` (a list item's date, "(updated)" on revised posts), `version-notes.njk` (the edit note line and `[*]` footnote, used by `doc.njk` and `feed.njk`).
@@ -189,7 +201,7 @@ print.css       Print stylesheet — A4 page like the screen page, no chrome, fo
 | `--page-width` | 794px | A4 at 96dpi |
 | `--page-pad-v` | 80px | A4 vertical padding |
 | `--page-pad-h` | 96px | A4 horizontal padding |
-| `--chrome-h` | 114px | Sum of all chrome bar heights (34+26+32+22) |
+| `--chrome-h` | 114px | Sum of the four sticky bars (34+26+32+22); 92px on mobile, where `--ruler-h` is 0 |
 | `--doc-scale` | 1 | Document text size multiplier, set by the toolbar size picker (12 = 1) |
 | `--color-ins` / `--color-ins-bg` | #0a6b2d / #e6f4ea | Added text on a changes page |
 | `--color-del` / `--color-del-bg` | #b3261e / #fce8e6 | Removed text on a changes page |
@@ -198,7 +210,8 @@ print.css       Print stylesheet — A4 page like the screen page, no chrome, fo
 | `--titlebar-h` | 34px | |
 | `--menubar-h` | 26px | |
 | `--toolbar-h` | 32px | |
-| `--ruler-h` | 22px | |
+| `--ruler-h` | 22px | 0 on mobile (ruler hidden) |
+| `--statusbar-h` | 22px | Bottom status bar; not part of `--chrome-h` |
 
 `--chrome-h` is used by `scroll-margin-top` on headings. Must be kept in sync with individual bar heights manually.
 
@@ -238,16 +251,17 @@ Page break: `<hr class="page-break">` renders as a grey desk gap.
 | Filter | Input | Output |
 |---|---|---|
 | `collectionTags` | `tags` array | Tags with `ideas`, `notes`, `snaps` removed |
+| `published` | posts array | Drops drafts (keeps them under `npm run dev`) — used by tag pages |
 | `postSigil` | `tags` array | `→` ideas · `○` snaps · `·` notes (default) |
 | `wordcount` | HTML string | Word count (strips tags first) |
 | `readtime` | HTML string | Minutes to read at 200 wpm |
 | `readableDate` | date | "30 Apr, 2026" in IST (September is "Sept") — every date a reader sees: lists, posts, version notes, chrome, margin notes, feed. `<time datetime>` stays ISO (`isoDate`) |
 | `isoDate` | date | `YYYY-MM-DD` in IST |
 | `atomDate` | date | UTC ISO 8601 for Atom feed |
-| `groupByYear` | posts array | Posts grouped by year, descending |
-| `excerpt` | HTML string | First 200 chars, tags stripped |
-| `limit` / `offset` | array, n | Slice helpers |
-| `findIndex` | array, page | Index of current page in collection |
+| `rssContent` | HTML string | Feed-only rewrite: inline figure spacing, margin notes as labelled blockquotes |
+| `ogImageSlug` / `ogImageExists` | URL / slug | og:image path and existence check (from `generate-og-images.js`) |
+| `tagSlug` | tag | URL segment for a tag (lowercase, spaces → hyphens). Use it for every `/tags/` link and the tag page permalink; `generate-og-images.js` uses the same function |
+| `limit` | array, n | First n items (feed) |
 | `htmlDiff` | old HTML, new HTML | New HTML with `<ins>`/`<del>` marks (Post versions) |
 | `sentence` | text | The text with a full stop added unless it ends in `.`, `!` or `?` (version notes) |
 | `beforeSentence` | `[[label, verb, old]]` | "Before, the title was ~…~ and the tags ~…~." for a changes page (Post versions) |
@@ -313,12 +327,16 @@ Session persistence: `sessionStorage` only, and only within one visit. On load, 
 
 ### Passthrough copies
 
-Directories: `src/fonts/`, `src/css/`, `src/js/`, `src/images/`
-Files: `src/favicon.svg`, `src/favicon.ico`, `src/apple-touch-icon.png`, `src/manifest.json`, `src/CNAME`
+Directories: `src/css/`, `src/js/`, `src/images/`, `src/admin/`
+Files: `src/favicon.svg`, `src/favicon.ico`, `src/apple-touch-icon.png`, `src/favicon-512.png`, `src/manifest.json`, `src/robots.txt`, `src/CNAME`
 
 Any new asset type needs a corresponding `addPassthroughCopy` in `.eleventy.js`.
 
 `src/images` is a symlink to a top-level `images/` directory, not a real nested folder. Node resolves it transparently for local builds and scripts, so `src/images/uploads/` is a valid filesystem path — but tools that read the repo through GitHub's API (Sveltia CMS) see only `images/uploads/` as a real git path; `src/images/uploads/` 404s there.
+
+### Search engines and crawlers
+
+The site asks not to be indexed, on purpose: `src/robots.txt` disallows every crawler (with explicit entries for AI crawlers), and `base.njk` sets `<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">` on every page. Don't remove either without asking.
 
 ### Sveltia CMS
 
@@ -363,6 +381,7 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 | `@resvg/resvg-js` | Rasterizes the SVG `satori` produces into the final og:image PNG |
 | `diff` | Word-level diff for post-version changes pages (`htmlDiff` filter) |
 | `gray-matter` | Front-matter parsing in `generate-og-images.js`, `snapshot-versions.js` and `_data/versions.js` |
+| `markdown-it` | Markdown parser (configured in `.eleventy.js`) |
 | `markdown-it-anchor` | Heading anchors |
 | `markdown-it-attrs` | Custom attributes |
 | `markdown-it-footnote` | Footnotes |
