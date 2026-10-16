@@ -44,7 +44,7 @@ The turning point came in ninth standard, during auditions for an inter-house mu
 
 That memory still stings. I shed a few tears that day, much to the surprise of my friends. They did not seem to think it was a particularly big deal. It was for a kid whose entire life was filled with singing.
 
-My Indian music teacher, realising I had not been selected, assumed there had been a mistake and asked me to join. I was grateful to join, but my was sticking out like a sore thumb. Two days before the competition, I was asked to leave the group.
+My Indian music teacher, realising I had not been selected, assumed there had been a mistake and asked me to join. I was grateful to join, but my voice was sticking out like a sore thumb. Two days before the competition, I was asked to leave the group.
 
 My house went on to win the competition. If I ever needed a signal that the sun had set on my singing ambitions, this felt fairly unambiguous. The timing could have been kinder, though.
 
