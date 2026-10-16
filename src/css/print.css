@@ -39,8 +39,7 @@
   .app-ruler,
   .app-statusbar,
   .post-nav,
-  .doc-nav,
-  .doc-versions {
+  .doc-nav {
     display: none !important;
   }
 

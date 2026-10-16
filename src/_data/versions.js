@@ -2,9 +2,11 @@
 // Snapshots of earlier versions are written to src/versions/ by
 // scripts/snapshot-versions.js; the latest version is the post itself.
 //
-// Each entry: { latest, all, newestFirst, byVersion } where all is oldest-first and every version is
-// { version, date, note, url, changesUrl, prev, next } — changesUrl is the page
-// showing what changed in that version, so the first has none.
+// Each entry: { latest, all, newestFirst, byVersion } where all is
+// oldest-first (all[0] is the original), and every version
+// is { version, date, note, url, changesUrl, original, nextVersion } —
+// changesUrl is the page showing what changed in that version, so the first
+// has none; nextVersion is the next version that exists.
 const fs = require("fs");
 const path = require("path");
 const matter = require("gray-matter");
@@ -36,12 +38,12 @@ module.exports = function () {
 
       all.push({ version: latest, date: live.versionDate || live.date, note: live.versionNote || "", url, latest: true });
       all.sort((a, b) => a.version - b.version);
-      // Versions can skip a number (bumped 1 → 3); compare each with the
-      // previous one that exists. byVersion["2"] looks a version up by number.
+      // Versions can skip a number (bumped 1 → 3), so byVersion["2"] looks a
+      // version up by number rather than by position.
       const byVersion = {};
       all.forEach((v, i) => {
-        v.prev = i > 0 ? all[i - 1].version : null;
-        v.next = i < all.length - 1 ? all[i + 1].version : null;
+        v.original = i === 0;
+        v.nextVersion = all[i + 1] || null;
         v.changesUrl = i > 0 ? `${all[i - 1].url}changes/` : null;
         byVersion[v.version] = v;
       });

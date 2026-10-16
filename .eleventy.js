@@ -5,6 +5,29 @@ const markdownItAttrs = require("markdown-it-attrs");
 const { ogImageSlug, ogImageExists } = require("./scripts/generate-og-images.js");
 const { diffArrays } = require("diff");
 
+// "15 Oct, 2026" — every date a reader sees (lists, posts, version notes,
+// chrome, margin notes, feed); machine dates stay ISO via isoDate. Month names
+// are our own, not the ICU build's en-GB data, so September is always "Sept".
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+const IST_PARTS = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "numeric",
+  year: "numeric",
+  timeZone: "Asia/Kolkata",
+});
+const IST_ISO = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" });
+
+function readableDate(date) {
+  if (!date) return "";
+  const part = Object.fromEntries(IST_PARTS.formatToParts(new Date(date)).map((p) => [p.type, p.value]));
+  return `${Number(part.day)} ${MONTHS[part.month - 1]}, ${part.year}`;
+}
+
+function isoDate(date) {
+  if (!date) return "";
+  return IST_ISO.format(new Date(date));
+}
+
 // Returns a WebP path for convertible uploads (jpg/jpeg/png/heic), otherwise null
 function webpSrc(src) {
   if (!src.startsWith("/images/uploads/")) return null;
@@ -205,22 +228,9 @@ module.exports = function (eleventyConfig) {
     return "·";
   });
 
-  eleventyConfig.addFilter("readableDate", function (date) {
-    if (!date) return "";
-    return new Date(date).toLocaleDateString("en-GB", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      timeZone: "Asia/Kolkata",
-    });
-  });
+  eleventyConfig.addFilter("readableDate", readableDate);
 
-  eleventyConfig.addFilter("isoDate", function (date) {
-    if (!date) return "";
-    return new Date(date).toLocaleDateString("en-CA", {
-      timeZone: "Asia/Kolkata",
-    });
-  });
+  eleventyConfig.addFilter("isoDate", isoDate);
 
   eleventyConfig.addFilter("atomDate", function (date) {
     if (!date) return "";
@@ -254,6 +264,30 @@ module.exports = function (eleventyConfig) {
       .filter((p) => p.data.versionOf === snap.data.versionOf && p.data.version > snap.data.version)
       .sort((a, b) => a.data.version - b.data.version);
     return later[0] || all.find((p) => p.inputPath === "./" + snap.data.versionOf);
+  });
+
+  // The version footnote (doc.njk) joins the post's own footnotes as the last
+  // item, or starts a footnotes section, using markdown-it-footnote's own markup
+  const fnOpen = md.renderer.rules.footnote_block_open([], 0, md.options);
+  const fnClose = md.renderer.rules.footnote_block_close();
+  eleventyConfig.addFilter("withVersionFootnote", function (html, item) {
+    const end = html.lastIndexOf(fnClose);
+    return end === -1 ? html + fnOpen + item + fnClose : html.slice(0, end) + item + html.slice(end);
+  });
+
+  // A version note as a sentence: adds a full stop unless it already ends in one
+  const sentence = (text) => (/[.!?]$/.test(text) ? text : text + ".");
+  eleventyConfig.addFilter("sentence", sentence);
+
+  // Changes page: what the title, description or tags used to be, in one
+  // sentence. parts is [[label, verb, oldValue]] for each that changed; only
+  // the first takes the verb ("Before, the title was ~…~ and the tags ~…~.")
+  eleventyConfig.addFilter("beforeSentence", function (parts) {
+    const esc = (t) => String(t).replace(/[&"'<>]/g, (c) => ({ "&": "&amp;", '"': "&quot;", "'": "&#39;", "<": "&lt;", ">": "&gt;" })[c]);
+    const items = parts.map(([label, verb, old], i) => `${label} ${i === 0 ? verb + " " : ""}${old ? `<del>${esc(old)}</del>` : "(none)"}`);
+    const list = items.length > 1 ? items.slice(0, -1).join(", ") + " and " + items[items.length - 1] : items[0];
+    const last = parts[parts.length - 1][2];
+    return `Before, ${list}${last && /[.!?]$/.test(last) ? "" : "."}`;
   });
 
   // `npm run build` runs scripts/snapshot-versions.js as a prebuild step; the
@@ -375,7 +409,7 @@ module.exports = function (eleventyConfig) {
     const commentAuthor = this.ctx.site.author;
     const date = written ? new Date(written) : this.page && this.page.date ? new Date(this.page.date) : null;
     const when = date && !isNaN(date)
-      ? `<time datetime="${date.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" })}">${date.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" })}</time>`
+      ? `<time datetime="${isoDate(date)}">${readableDate(date)}</time>`
       : "";
     const attr = anchor ? ` data-anchor="${escAttr(anchor)}"` : "";
     return `<aside class="margin-note"${attr}><header class="margin-note__meta"><span class="margin-note__av" aria-hidden="true">${escAttr(commentAuthor.charAt(0))}</span><b>${escAttr(commentAuthor)}</b>${when}</header>${md.render(content)}</aside>`;
