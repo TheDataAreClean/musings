@@ -8,6 +8,13 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-10-16 (v3.10.2)
+
+- change: a margin note now goes *after* the paragraph it is about in the Markdown, not before it, so the source, feed readers and no-JS pages read text first, note second. Existing notes are moved; the phrase is now looked for in the paragraph before the note.
+- fix: a paragraph that follows a margin note now gets the same first-line indent and tight spacing as any other follow-on paragraph. The hidden note left behind in the text broke the "paragraph after paragraph" rule, so those paragraphs started flush with a bigger gap above.
+
+---
+
 ## 2026-10-11 (v3.10.1)
 
 - chore: faster publishes. CI now builds on Node 24, which the runner already has, instead of downloading Node 20 on every run. Build and deploy run as one job instead of two, and the deploy actions moved to their Node 24 versions, so the Node 20 deprecation warning is gone. A publish now takes about 30s from push to live, down from 35–40s. Site output is unchanged.

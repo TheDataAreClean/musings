@@ -53,17 +53,17 @@
 
   function findAnchor(aside, phrase) {
     var ahead = neighbours(aside, 1), behind = neighbours(aside, -1);
-    // The phrase is looked for only in the block the note introduces: the one
-    // right after it (or right before, when the note ends the post).
-    var first = ahead[0] || behind[0];
+    // The phrase is looked for only in the block the note follows: the one
+    // right before it (or right after, when the note starts the post).
+    var first = behind[0] || ahead[0];
     if (phrase && first) {
       var mark = document.createElement('mark');
       mark.className = 'comment-anchor';
       if (wrapPhrase(first, phrase, mark)) return { el: mark, phrase: true };
-      console.warn('[comments] anchor phrase not found in the block after the note:', phrase);
+      console.warn('[comments] anchor phrase not found in the block before the note:', phrase);
     }
     // Whole-block anchor: the nearest block no other note has already taken
-    var free = ahead.concat(behind).filter(function (b) { return !b.classList.contains('comment-target'); })[0];
+    var free = behind.concat(ahead).filter(function (b) { return !b.classList.contains('comment-target'); })[0];
     return free ? { el: free, phrase: false } : null;
   }
 

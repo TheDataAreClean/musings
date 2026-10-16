@@ -14,9 +14,9 @@ I had a plan for how I wanted to start October. My house had some inputs on said
 
 Things have been breaking around my house for the last couple of days. Extension cords shot, a water purifier out of action, and many electronics going through their moody teenage phase.
 
-{% marginnote "heaviest rain of the year" %} i have not checked the data, so don't quote me on it. {% endmarginnote %}
-
 A couple of days ago in Bangalore, we had what felt like the heaviest rain of the year. It started pouring in the evening, paused briefly, then returned for a thunderous night.
+
+{% marginnote "heaviest rain of the year" %} i have not checked the data, so don't quote me on it. {% endmarginnote %}
 
 Anyway, September ended, and I am awake now – apparently for electrical repairs.
 
@@ -34,9 +34,9 @@ I keep wanting to treat all of this like a regular interruption, fix what needs 
 
 ---
 
-{% marginnote "half-parked" %} the constant anticipation. {% endmarginnote %}
-
 There is always another fix waiting in the wings: a fan that starts clicking in the middle of a call, the cabinet hinge that suddenly wants to squeak. My attention has been permanently half-parked on just looking after the house for years.
+
+{% marginnote "half-parked" %} the constant anticipation. {% endmarginnote %}
 
 I am not sure there was ever a stretch when the house didn't need something. I cannot even remember many conversations from my childhood with my parents, where repairs were not a part of it.
 
