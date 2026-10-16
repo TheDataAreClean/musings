@@ -6,6 +6,10 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+---
+
+## 2026-10-16 (v3.10.3)
+
 - fix: margin notes in the RSS feed no longer show as a jumbled "AArpit16 Oct" line. Each note is now a quoted aside labelled "Note on “phrase” · date" right after its paragraph.
 
 ---
