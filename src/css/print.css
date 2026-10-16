@@ -115,6 +115,7 @@
   /* Comments: keep the highlighted phrase and its numbered badge, and print
      each note in the flow as a numbered card (the rail and sheet are screen-only) */
   .margin-note[hidden] { display: block; }
+  .doc-body p + .margin-note[hidden] + p { text-indent: 0; margin-top: 0; }
   .comment-rail,
   .comment-sheet { display: none !important; }
   .margin-note { position: relative; page-break-inside: avoid; }

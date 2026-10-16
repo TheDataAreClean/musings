@@ -6,6 +6,8 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+- fix: a paragraph that follows a margin note now gets the same first-line indent and tight spacing as any other follow-on paragraph. The hidden note left behind in the text broke the "paragraph after paragraph" rule, so those paragraphs started flush with a bigger gap above.
+
 ---
 
 ## 2026-10-11 (v3.10.1)

@@ -43,7 +43,11 @@
 }
 
 /* Paragraph indent after first — classic document convention */
-.doc-body p + p {
+/* A margin note the script moved into the rail leaves a hidden <aside>
+   between the two paragraphs, so p + p no longer matches. Treat it as
+   invisible. Visible notes (no JS, unanchored, print) still reset. */
+.doc-body p + p,
+.doc-body p + .margin-note[hidden] + p {
   text-indent: 1.5em;
   margin-top: calc(var(--space-2) - var(--space-4));
 }
