@@ -13,8 +13,11 @@ eleventyComputed:
   description: "{{ (snap | newerVersion(collections.all)).data.description }}"
   oldTitle: "{{ snap.data.title }}"
   oldDescription: "{{ snap.data.description }}"
+  oldTags: "{{ snap.data.postTags | collectionTags | join(', ') }}"
+  newTags: "{% set newer = snap | newerVersion(collections.all) %}{{ (newer.data.postTags or newer.data.tags) | collectionTags | join(', ') }}"
   versionOf: "{{ snap.data.versionOf }}"
   changesFrom: "{{ snap.data.version }}"
+  changesTo: "{{ (snap | newerVersion(collections.all)).data.version or 1 }}"
 ---
 {# What changed between a snapshot (src/versions/) and the version after it.
    The page is the newer version (its title and description too), with

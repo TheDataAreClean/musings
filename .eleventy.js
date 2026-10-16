@@ -247,14 +247,13 @@ module.exports = function (eleventyConfig) {
   // Post versions — see scripts/snapshot-versions.js and src/_data/versions.js
   eleventyConfig.addFilter("htmlDiff", htmlDiff);
 
-  // The version right after a snapshot: the next snapshot, or the live post
+  // The version after a snapshot: the next snapshot that exists (a number can
+  // be skipped), or the live post
   eleventyConfig.addFilter("newerVersion", function (snap, all) {
-    const parent = "./" + snap.data.versionOf;
-    const next = snap.data.version + 1;
-    return (
-      all.find((p) => p.data.versionOf === snap.data.versionOf && p.data.version === next) ||
-      all.find((p) => p.inputPath === parent && (Number(p.data.version) || 1) === next)
-    );
+    const later = all
+      .filter((p) => p.data.versionOf === snap.data.versionOf && p.data.version > snap.data.version)
+      .sort((a, b) => a.data.version - b.data.version);
+    return later[0] || all.find((p) => p.inputPath === "./" + snap.data.versionOf);
   });
 
   // `npm run build` runs scripts/snapshot-versions.js as a prebuild step; the
