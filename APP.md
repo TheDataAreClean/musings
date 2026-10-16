@@ -82,7 +82,34 @@ slug: optional-custom-url-slug
 draft: true
 ```
 
+Optional on any post, once it has been revised (see Post versions below):
+```yaml
+version: 2                        # bump to publish a new version
+versionNote: One line on what changed.
+versionDate: 2026-10-20T…         # script-managed, do not set by hand
+```
+
 Layout is inherited from directory data files — do not repeat it in front matter. `tags` beyond the collection tag (`ideas`/`notes`/`snaps`, also inherited) are freeform, e.g. `personal`, `tech`, `design`.
+
+---
+
+## Post versions
+
+A post can be revised in public: readers land on the latest version at the post's usual URL, can open any earlier version, and can see what changed. Git history can't be the version store, because Sveltia commits on every save; a version is something the author declares with `version:`.
+
+**Authoring.** In the CMS, bump **Version** and fill **What changed** in the same save as the first edit of the new version. Saves publish immediately, so edits saved before the bump become part of the old version.
+
+**Snapshots.** `scripts/snapshot-versions.js` (prebuild, and before each dev-server rebuild) looks at every post with `version: N` (N ≥ 2). For each earlier version without a snapshot it finds, in the file's git history (`git log --follow`), the newest commit where the post was still at that version (no `version:` counts as 1), and writes it to `src/versions/{section}/{post-file-stem}/v{n}.md`. The deploy's auto-commit step saves it; from then on it's never regenerated and no longer depends on history. Snapshot front matter: `title`, `description`, `date`, `postTags` (not `tags`, so snapshots stay out of tag collections), `version`, `versionDate`, `versionNote`, `versionOf` (the live post's path) and `permalink`. The script also keeps each snapshot's `permalink` in step with its post's URL, and stamps `versionDate` on the live post when the bump is first committed (now, if it isn't committed yet).
+
+**URLs.** `{post-url}` is always the latest version. `{post-url}v{n}/` is an earlier version (`src/versions/`, layout from `src/versions/versions.json`). `{post-url}v{n}/changes/` is what changed from version n to n+1 (`src/changes.njk`, paginated over the `versions` collection). Earlier versions and changes pages set `rel=canonical` and `og:image` to the latest version.
+
+**Data.** `src/_data/versions.js` builds `versions[inputPath]` → `{ latest, all, newestFirst }` for every post with snapshots; each version is `{ version, date, note, url, changesUrl }`. `doc.njk`, `base.njk` and `feed.njk` look it up by `page.inputPath`, or by `"./" + versionOf` on snapshot and changes pages.
+
+**Reader UI** (`doc.njk`): "version n" in the meta line; a Version history panel (`<details id="versions">`) under the meta/tags line listing every version with its date, note and a "What changed" link; File → Version history opens it; a banner on earlier versions and changes pages. Listings show a `v2` marker after the date. Print hides the panel.
+
+**Diff.** The `htmlDiff` filter tokenizes both rendered bodies into tags and words, diffs them with `diff`'s `diffArrays`, and outputs the newer version's tags with added words in `<ins>` and removed words in `<del>`. A removed run that is balanced on its own (a whole paragraph) keeps its tags; images count as words. `--color-ins`/`--color-del` (+ `-bg`) style them.
+
+**Feed.** Same entry and id; `<published>` is the post date, `<updated>` the latest version's date, and the entry ends (after tags, before the sign-off) with "Revised: this is version n, date. note. See what changed or read an earlier version." Earlier versions never appear in the feed, listings or tag pages.
 
 ---
 
@@ -147,6 +174,8 @@ print.css       Print stylesheet — A4 page like the screen page, no chrome, fo
 | `--page-pad-h` | 96px | A4 horizontal padding |
 | `--chrome-h` | 114px | Sum of all chrome bar heights (34+26+32+22) |
 | `--doc-scale` | 1 | Document text size multiplier, set by the toolbar size picker (12 = 1) |
+| `--color-ins` / `--color-ins-bg` | #0a6b2d / #e6f4ea | Added text on a changes page |
+| `--color-del` / `--color-del-bg` | #b3261e / #fce8e6 | Removed text on a changes page |
 | `--comment-w` | 208px | Width of a comment card in the desk rail |
 | `--comment-gap` | 14px | Gap between the page edge and the comment rail |
 | `--titlebar-h` | 34px | |
@@ -202,6 +231,8 @@ Page break: `<hr class="page-break">` renders as a grey desk gap.
 | `excerpt` | HTML string | First 200 chars, tags stripped |
 | `limit` / `offset` | array, n | Slice helpers |
 | `findIndex` | array, page | Index of current page in collection |
+| `htmlDiff` | old HTML, new HTML | New HTML with `<ins>`/`<del>` marks (Post versions) |
+| `newerVersion` | snapshot, `collections.all` | The version after a snapshot: next snapshot or the live post |
 
 **Nav include:** `src/_includes/nav.njk` — shared navigation used by all pages. Set `{% set navRss = true %}` before including to show the RSS link (home, section index, and post pages).
 
@@ -250,11 +281,12 @@ Session persistence: `sessionStorage` only, and only within one visit. On load, 
 
 `deploy.yml` triggers on push to `main` and runs as a single `build-and-deploy` job on Node 24: `npm ci → npm run build` → commits any files the prebuild scripts generated (`[skip ci]`) → deploys `_site/` to GitHub Pages. Build and deploy share one job so a publish doesn't wait for a second runner to start. Node 24 is preinstalled on `ubuntu-latest`; a version the runner lacks, such as Node 20, gets downloaded on every run, costing 5–11s. Keep the `actions/*` steps on their Node 24 majors (checkout v5, setup-node v5, upload-pages-artifact v5, deploy-pages v5) or every run logs a Node 20 deprecation warning. A typical publish takes about 30–40s from push to live.
 
-`npm run build` runs `prebuild` automatically, which chains four scripts:
+`npm run build` runs `prebuild` automatically, which chains five scripts:
 1. `backfill-dates.js` — fills git creation time into date-only front matter
 2. `convert-webp.js` — converts JPEG/PNG/HEIC in `src/images/uploads/` to WebP (quality 82, auto-rotates via EXIF), deletes the original, then updates all markdown references in content files from the old extension to `.webp`. Existing `.webp` files are skipped.
 3. `backfill-permalink.js` — writes `permalink` to front matter for any post with a `slug` field
-4. `generate-og-images.js` — renders each post's `og:image` (see below). Must run after step 3, since it needs the final `permalink`.
+4. `snapshot-versions.js` — saves earlier versions of revised posts to `src/versions/` (see Post versions). Must run after step 3, since snapshot URLs follow the post's `permalink`.
+5. `generate-og-images.js` — renders each post's `og:image` (see below). Must run after step 3, since it needs the final `permalink`.
 
 `src/CNAME` is passthrough-copied to `_site/CNAME` — required for the custom domain to survive deploys.
 
@@ -281,7 +313,7 @@ Access: `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
 
 `/feed.xml` — combined Atom feed (ideas + notes + snaps), 15 most recent posts. Uses `atomDate` (UTC ISO 8601). `feed.njk` must have `layout: false`.
 
-Each entry's `<title>` is the bare post title; the blog name comes from the feed's own `<title>`. Entry content is: description (if present) → rule → body → tags → rule → a fixed sign-off ("Congratulations! You have reached the end. You should read more at {site} and subscribe to my RSS.", both linked from `site.url`). Styles are inline because feed readers ignore site CSS.
+Each entry's `<title>` is the bare post title; the blog name comes from the feed's own `<title>`. Entry content is: description (if present) → rule → body → tags → revision note (revised posts only, see Post versions) → rule → a fixed sign-off ("Congratulations! You have reached the end. You should read more at {site} and subscribe to my RSS.", both linked from `site.url`). Styles are inline because feed readers ignore site CSS.
 
 Post pages' `og:title` is likewise the bare title — the blog name lives in `og:site_name`. Only the browser-tab `<title>` keeps the `| {site.title}` suffix.
 
@@ -308,7 +340,8 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 |---|---|
 | `@11ty/eleventy` | SSG |
 | `@resvg/resvg-js` | Rasterizes the SVG `satori` produces into the final og:image PNG |
-| `gray-matter` | Front-matter parsing in `generate-og-images.js` |
+| `diff` | Word-level diff for post-version changes pages (`htmlDiff` filter) |
+| `gray-matter` | Front-matter parsing in `generate-og-images.js`, `snapshot-versions.js` and `_data/versions.js` |
 | `markdown-it-anchor` | Heading anchors |
 | `markdown-it-attrs` | Custom attributes |
 | `markdown-it-footnote` | Footnotes |

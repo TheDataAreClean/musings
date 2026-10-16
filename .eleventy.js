@@ -44,16 +44,22 @@ function balanced(tokens) {
 function wrapRun(tokens, tag, keepTags) {
   let out = "";
   let open = false;
+  // Close the mark before any trailing space, so it doesn't underline the gap
+  const close = () => {
+    const space = out.match(/\s*$/)[0];
+    out = out.slice(0, out.length - space.length) + `</${tag}>` + space;
+    open = false;
+  };
   for (const t of tokens) {
     if (isText(t)) {
       if (!open && t.trim()) { out += `<${tag}>`; open = true; }
       out += t;
     } else {
-      if (open) { out += `</${tag}>`; open = false; }
+      if (open) close();
       if (keepTags) out += t;
     }
   }
-  if (open) out += `</${tag}>`;
+  if (open) close();
   return out;
 }
 
@@ -246,6 +252,15 @@ module.exports = function (eleventyConfig) {
       all.find((p) => p.inputPath === parent && (Number(p.data.version) || 1) === next)
     );
   });
+
+  // `npm run build` runs scripts/snapshot-versions.js as a prebuild step; the
+  // dev server doesn't, so run it before each dev rebuild too. A bump saved in
+  // the CMS (local repository mode) then gets its snapshot straight away.
+  if (isDev) {
+    eleventyConfig.on("eleventy.before", () => {
+      require("child_process").execFileSync("node", ["scripts/snapshot-versions.js"], { stdio: "inherit" });
+    });
+  }
 
   eleventyConfig.addGlobalData("buildTime", () => new Date());
 

@@ -47,6 +47,9 @@ Any new asset directory or file needs a corresponding `addPassthroughCopy` in `.
 **New posts default to `draft: false` in Sveltia CMS**
 There is no separate draft pipeline — `draft` only hides a post from listings/feed, the URL still resolves once the file is on `main` (see `APP.md`). The `draft` field in `src/admin/config.yml` defaults to `false`, so a new post publishes immediately on save unless you tick Draft first.
 
+**Post versions: snapshots live in `src/versions/` and must never be hand-edited or regenerated**
+Once `snapshot-versions.js` writes `src/versions/{section}/{stem}/v{n}.md`, that file *is* version n; it is only ever created, never rewritten (apart from its `permalink`). Snapshots carry `postTags`, not `tags`, so they stay out of tag collections, listings and the feed; keep it that way. Renaming a post file orphans its snapshots (the folder is keyed by file stem), so move `src/versions/{section}/{stem}/` with it. See `APP.md` → Post versions.
+
 **`src/images` is a symlink — Sveltia CMS config must use the real path**
 See `APP.md`'s Passthrough copies section for why `media_folder` in `src/admin/config.yml` must point at `images/uploads`, never `src/images/uploads`.
 

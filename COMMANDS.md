@@ -16,6 +16,7 @@ All runnable commands. Source: `package.json`.
 | Backfill post datetimes from git | `npm run backfill` |
 | Backfill slug → permalink in front matter | `node scripts/backfill-permalink.js` |
 | Generate per-post og:image files | `npm run ogimages` |
+| Save earlier versions of revised posts | `npm run versions` |
 | Check vulnerabilities | `npm audit` |
 | List available updates | `npm outdated` |
 

@@ -21,7 +21,7 @@ ogType: article
   <p class="version-banner">You’re reading version {{ version }} of {{ vinfo.latest.version }}, from {{ versionDate | readableDate }}. <a href="{{ vinfo.latest.url }}">Read the latest version</a>{% if vinfo.all[version] and vinfo.all[version].changesUrl %} · <a href="{{ vinfo.all[version].changesUrl }}">See what changed in version {{ version + 1 }}</a>{% endif %}</p>
   {% elif vinfo and changesFrom %}
   {% set newerV = vinfo.all[curVersion - 1] %}{% set olderV = vinfo.all[curVersion - 2] %}
-  <p class="version-banner">What changed in version {{ curVersion }}, {{ newerV.date | readableDate }}{% if newerV.note %}: {{ newerV.note }}{% endif %}. <del>Struck out</del> is from version {{ olderV.version }}; <ins>underlined</ins> is new. <a href="{{ newerV.url }}">Read version {{ curVersion }}</a> · <a href="{{ olderV.url }}">Read version {{ olderV.version }}</a></p>
+  <p class="version-banner">What changed in version {{ curVersion }}, {{ newerV.date | readableDate }}{% if newerV.note %}: {{ newerV.note | replace(r/\.$/, "") }}{% endif %}. <del>Struck out</del> is from version {{ olderV.version }}; <ins>underlined</ins> is new. <a href="{{ newerV.url }}">Read version {{ curVersion }}</a> · <a href="{{ olderV.url }}">Read version {{ olderV.version }}</a></p>
   {% endif %}
 
   {% if versionOf %}{% set postSection = versionOf.split("/")[1] %}{% elif shownTags and ("snaps" in shownTags) %}{% set postSection = "snaps" %}{% elif shownTags and ("notes" in shownTags) %}{% set postSection = "notes" %}{% else %}{% set postSection = "ideas" %}{% endif %}

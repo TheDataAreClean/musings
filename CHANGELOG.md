@@ -6,6 +6,8 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ## UNRELEASED
 
+- add: post versions. Bump **Version** on a post in the CMS (with a one-line **What changed**) and the previous version is kept at `{post}/v1/`, with a banner pointing to the latest. The post's own URL always shows the latest version, with a Version history panel under the meta line (also in File → Version history). Each version has a "What changed" page at `{post}/v1/changes/` showing additions underlined in green and removals struck out in red. In the feed, a revised post keeps its entry, gets a new updated date, and ends with a note on what changed. Lists show a small `v2` after the date.
+
 ---
 
 ## 2026-10-16 (v3.10.4)
