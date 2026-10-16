@@ -4,7 +4,7 @@ pagination:
   data: collections.tagList
   size: 1
   alias: tag
-permalink: /tags/{{ tag }}/
+permalink: /tags/{{ tag | tagSlug }}/
 eleventyComputed:
   title: "{{ tag }}"
   description: "{% set n = (collections[tag] | published).length %}{{ n }} post{% if n != 1 %}s{% endif %} tagged as {{ tag }}."

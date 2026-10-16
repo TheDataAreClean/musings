@@ -11,6 +11,8 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 ## 2026-10-16 (v3.10.5)
 
 - fix: draft posts no longer show on tag pages or count towards a tag's "N posts tagged" line (on the page and in its og:image). Tag pages now page over a new `tagList` collection built from published posts only.
+- fix: tag links are built one way everywhere (`tagSlug`), so a tag with a capital letter or a space no longer links to a missing page from the section lists.
+- chore: the code-block and warning-callout backgrounds are now tokens (`--color-code-bg`, `--color-warning-bg`); removed four unused filters; `markdown-it` is now a direct dev dependency.
 - docs: APP.md, CLAUDE.md, README, COMMANDS, FUTURE and the release skill brought in line with the code (drafts, generated pages, passthrough list, filters, tokens, crawler policy, release flow).
 
 ---

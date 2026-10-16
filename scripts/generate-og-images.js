@@ -64,6 +64,15 @@ const colors = {
  * reimplemented) so the path this script writes and the URL base.njk
  * points at can never drift apart.
  */
+/**
+ * A tag's URL segment: lowercase, spaces → hyphens. Shared with .eleventy.js
+ * (the `tagSlug` filter) so tag links, tag page permalinks and the og:image
+ * written here all agree.
+ */
+function tagSlug(tag) {
+  return String(tag).toLowerCase().trim().replace(/\s+/g, "-");
+}
+
 function ogImageSlug(url) {
   // 404's permalink is "404.html" (no trailing slash, unlike every other
   // page), so page.url is "/404.html" — strip that extension too, or it'd
@@ -348,7 +357,7 @@ async function main() {
   }
   for (const [tag, count] of Object.entries(tagCounts)) {
     const description = `${count} post${count !== 1 ? "s" : ""} tagged as ${tag}.`;
-    await renderIfStale(`/tags/${tag}/`, null, { title: tag, description, tags: [], highlightTitle: true });
+    await renderIfStale(`/tags/${tagSlug(tag)}/`, null, { title: tag, description, tags: [], highlightTitle: true });
   }
 
   console.log(`Done — ${generated} generated, ${skipped} up to date.`);
@@ -361,4 +370,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { ogImageSlug, ogImageExists, buildCard, renderPng, resolveDocFont, resolveChromeFont };
+module.exports = { tagSlug, ogImageSlug, ogImageExists, buildCard, renderPng, resolveDocFont, resolveChromeFont };

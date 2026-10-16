@@ -47,6 +47,9 @@ Any new asset directory or file needs a corresponding `addPassthroughCopy` in `.
 **New posts default to `draft: false` in Sveltia CMS**
 There is no separate draft pipeline — `draft` only hides a post from listings, tag pages and the feed; the URL still resolves once the file is on `main` (see `APP.md` → Drafts). Any new listing must drop drafts too (`filterDrafts` or the `published` filter): Eleventy's own `collections[tag]` includes them. The `draft` field in `src/admin/config.yml` defaults to `false`, so a new post publishes immediately on save unless you tick Draft first.
 
+**Tag URLs always go through `tagSlug`**
+Every `/tags/` link, the tag page permalink and the og:image path use the `tagSlug` filter (shared with `generate-og-images.js`). Building a tag URL any other way breaks for a tag with a capital letter or a space.
+
 **`src/images` is a symlink — Sveltia CMS config must use the real path**
 See `APP.md`'s Passthrough copies section for why `media_folder` in `src/admin/config.yml` must point at `images/uploads`, never `src/images/uploads`.
 
@@ -91,7 +94,7 @@ When changing **any chrome element height**: recalculate `--chrome-h` and update
 - `--font-ui` is always Arial — do not change
 - `--font-doc` is the only font the JS easter egg touches
 - All chrome is `aria-hidden="true"`
-- `doc-chrome.css` is the only file permitted to hardcode hex colours (known exceptions to tokenise: `typography.css` `#f8f8f8`, `components.css` `#fff8f0`)
+- `doc-chrome.css` is the only file permitted to hardcode hex colours
 - The site is deliberately unindexed (`robots.txt`, `noindex` meta) — don't change it unless asked
 - No Nunjucks tags (`{% %}`) in content `.md` files except the paired shortcodes (`callout`, `marginnote`)
 - No `{#` anywhere in `.md` files

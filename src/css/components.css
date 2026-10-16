@@ -48,7 +48,7 @@
 .margin-note p:last-child,
 .comment p:last-child { margin-bottom: 0; }
 .callout--note { background: var(--color-mark-dim); }
-.callout--warning { background: #fff8f0; }
+.callout--warning { background: var(--color-warning-bg); }
 
 /* --------------------------------------------------------------------------
    Margin notes → document comments

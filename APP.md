@@ -113,7 +113,7 @@ Generated pages in `src/`:
 
 ```
 {ideas,notes,snaps}/index.njk   Section lists → /ideas/, /notes/, /snaps/
-tags/index.njk                  One page per tag → /tags/{tag}/ (paginates collections.tagList)
+tags/index.njk                  One page per tag → /tags/{tag | tagSlug}/ (paginates collections.tagList)
 feed.njk                        Atom XML → /feed.xml — must have layout: false
 posts.njk                       JSON list of post URLs → /posts.json (File → New)
 404.md                          Not-found page → /404.html
@@ -215,9 +215,8 @@ Page break: `<hr class="page-break">` renders as a grey desk gap.
 | `atomDate` | date | UTC ISO 8601 for Atom feed |
 | `rssContent` | HTML string | Feed-only rewrite: inline figure spacing, margin notes as labelled blockquotes |
 | `ogImageSlug` / `ogImageExists` | URL / slug | og:image path and existence check (from `generate-og-images.js`) |
+| `tagSlug` | tag | URL segment for a tag (lowercase, spaces → hyphens). Use it for every `/tags/` link and the tag page permalink; `generate-og-images.js` uses the same function |
 | `limit` | array, n | First n items (feed) |
-
-Also defined but currently unused: `groupByYear`, `excerpt`, `offset`, `findIndex`.
 
 **Nav include:** `src/_includes/nav.njk` — shared navigation used by all pages. Set `{% set navRss = true %}` before including to show the RSS link (home, section index, and post pages).
 
@@ -329,7 +328,7 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 | `@11ty/eleventy` | SSG |
 | `@resvg/resvg-js` | Rasterizes the SVG `satori` produces into the final og:image PNG |
 | `gray-matter` | Front-matter parsing in `generate-og-images.js` |
-| `markdown-it` | Markdown parser — required directly by `.eleventy.js`, but installed only as Eleventy's own dependency |
+| `markdown-it` | Markdown parser (configured in `.eleventy.js`) |
 | `markdown-it-anchor` | Heading anchors |
 | `markdown-it-attrs` | Custom attributes |
 | `markdown-it-footnote` | Footnotes |

@@ -2,7 +2,7 @@ const markdownIt = require("markdown-it");
 const markdownItFootnote = require("markdown-it-footnote");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItAttrs = require("markdown-it-attrs");
-const { ogImageSlug, ogImageExists } = require("./scripts/generate-og-images.js");
+const { tagSlug, ogImageSlug, ogImageExists } = require("./scripts/generate-og-images.js");
 
 // Returns a WebP path for convertible uploads (jpg/jpeg/png/heic), otherwise null
 function webpSrc(src) {
@@ -129,6 +129,8 @@ module.exports = function (eleventyConfig) {
   // can never drift apart.
   eleventyConfig.addFilter("ogImageSlug", ogImageSlug);
   eleventyConfig.addFilter("ogImageExists", ogImageExists);
+  // Tag URL segment — use for every /tags/ link and the tag page permalink
+  eleventyConfig.addFilter("tagSlug", tagSlug);
 
   eleventyConfig.addFilter("postSigil", function (tags) {
     if (!tags) return "·";
@@ -191,34 +193,8 @@ module.exports = function (eleventyConfig) {
     fs.writeFileSync(main, css.replace(/@import "([^"?]+\.css)";/g, `@import "$1?v=${assetVersion}";`));
   });
 
-  eleventyConfig.addFilter("groupByYear", function (posts) {
-    const groups = {};
-    posts.forEach((post) => {
-      const year = new Date(post.data.date).getFullYear();
-      if (!groups[year]) groups[year] = [];
-      groups[year].push(post);
-    });
-    return Object.entries(groups)
-      .sort(([a], [b]) => b - a)
-      .map(([year, items]) => ({ year, items }));
-  });
-
-  eleventyConfig.addFilter("excerpt", function (content) {
-    if (!content) return "";
-    const text = content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-    return text.slice(0, 200) + (text.length > 200 ? "…" : "");
-  });
-
   eleventyConfig.addFilter("limit", function (arr, n) {
     return arr.slice(0, n);
-  });
-
-  eleventyConfig.addFilter("offset", function (arr, n) {
-    return arr.slice(n);
-  });
-
-  eleventyConfig.addFilter("findIndex", function (arr, page) {
-    return arr.findIndex((p) => p.url === page.url);
   });
 
   // Collections
