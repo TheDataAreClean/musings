@@ -1,13 +1,13 @@
 ---
 title: The day I stopped singing
 slug: singing
-permalink: /ideas/2026-10-16-singing/
 date: 2026-10-16T11:18:00+05:30
 draft: true
 description: Exploring a creative wound.
 tags:
   - personal
   - creativity
+permalink: /ideas/2026-10-16-singing/
 ---
 
 I have a fairly deep voice. A voice that travels and fills a room. It is truly a joy using my vocal cords and feel them reverberate every time I speak.
@@ -64,4 +64,6 @@ I will go try that now.
 
 Written in response to:
 
-> _Time Travel: Select and write out one horror story from your monster hall of fame. You do not need to write long or much, but do jot down whatever details come back to you-the room you were in, the way people looked at you, the way you felt, what your parent said or didn't say when you told about it._– Prompt from Week 1 of [_The Artist’s Way_](https://en.wikipedia.org/wiki/The_Artist%27s_Way) by Julia Cameron
+> \_Time Travel: Select and write out one horror story from your monster hall of fame. You do not need to write long or much, but do jot down whatever details come back to you-the room you were in, the way people looked at you, the way you felt, what your parent said or didn't say when you told about it.\_
+>
+> – Prompt from Week 1 of [_The Artist’s Way_](https://en.wikipedia.org/wiki/The_Artist%27s_Way) by Julia Cameron
