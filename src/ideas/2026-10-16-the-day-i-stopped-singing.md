@@ -2,7 +2,7 @@
 title: The day I stopped singing
 slug: singing
 date: 2026-10-16T11:25:00+05:30
-draft: false
+draft: true
 description: Exploring a creative wound.
 tags:
   - personal
@@ -24,17 +24,13 @@ At school, I was part of the Indian Music group, and music period was easily my 
 
 My Indian music teacher encouraged and supported my singing like no one else and deserves a special mention here. Unfortunately, I am forgetting her name right now, which is a terrible way to give someone a special mention.
 
-But the seeds of my singing were truly planted at home.
-
-My dad used to play [_Kishore Kumar_](https://en.wikipedia.org/wiki/Kishore_Kumar) and [_Mohammed Rafi_](https://en.wikipedia.org/wiki/Mohammed_Rafi) cassettes every morning, and I would sing along. As far as I was concerned, that was the best music there had ever been, and loved singing them. In the infinite wisdom of youth, I imagined I would only get better at singing those songs.
+But the seeds of my singing were truly planted at home. My dad used to play [_Kishore Kumar_](https://en.wikipedia.org/wiki/Kishore_Kumar) and [_Mohammed Rafi_](https://en.wikipedia.org/wiki/Mohammed_Rafi) cassettes every morning, and I would sing along. As far as I was concerned, that was the best music there had ever been, and loved singing them. In the infinite wisdom of youth, I imagined I would only get better at singing those songs.
 
 {% marginnote "best" %} this still holds true today. {% endmarginnote %}
 
-And then the worst thing that could happen to my singing aspirations happened. I hit puberty.
-
 ***
 
-Suddenly, my voice grew deeper and coarser and could no longer carry the songs that had brought me so much joy. Cracks had appeared in my voice, and the notes were leaking out.
+And then the worst thing that could happen to my singing aspirations happened. I hit puberty, my voice grew deeper and coarser and could no longer carry the songs that had brought me so much joy. Cracks had appeared in my voice, and the notes were leaking out.
 
 For the first few weeks, I was completely thrown off. Losing a big part of my identity, a teenage me had no idea what to do about it. I tried changing the songs. [_Kailash Kher_](https://en.wikipedia.org/wiki/Kailash_Kher) became a favourite. His songs gave my increasingly coarse voice somewhere to go. Then it was [_Sukhwinder_](https://en.wikipedia.org/wiki/Sukhwinder_Singh), [_Rabbi Shergill_](https://en.wikipedia.org/wiki/Rabbi_Shergill), and an optimistic attempt at [_Nusrat Fateh Ali Khan_](https://en.wikipedia.org/wiki/Nusrat_Fateh_Ali_Khan).
 
