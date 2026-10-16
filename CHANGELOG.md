@@ -8,6 +8,12 @@ Version bump policy: MAJOR = complete visual redesign or change in site concept;
 
 ---
 
+## 2026-10-16 (v3.10.3)
+
+- fix: margin notes in the RSS feed no longer show as a jumbled "AArpit16 Oct" line. Each note is now a quoted aside labelled "Note on “phrase” · date" right after its paragraph.
+
+---
+
 ## 2026-10-16 (v3.10.2)
 
 - change: a margin note now goes *after* the paragraph it is about in the Markdown, not before it, so the source, feed readers and no-JS pages read text first, note second. Existing notes are moved; the phrase is now looked for in the paragraph before the note.
