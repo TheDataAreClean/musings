@@ -58,6 +58,6 @@ Somewhere along the way, I became careful with something I had never had to thin
 
 Written in response to:
 
-> \_Time Travel: Select and write out one horror story from your monster hall of fame. You do not need to write long or much, but do jot down whatever details come back to you-the room you were in, the way people looked at you, the way you felt, what your parent said or didn't say when you told about it.\_
+> _Time Travel: Select and write out one horror story from your monster hall of fame. You do not need to write long or much, but do jot down whatever details come back to you-the room you were in, the way people looked at you, the way you felt, what your parent said or didn't say when you told about it._
 >
 > – Prompt from Week 1 of [_The Artist’s Way_](https://en.wikipedia.org/wiki/The_Artist%27s_Way) by Julia Cameron
