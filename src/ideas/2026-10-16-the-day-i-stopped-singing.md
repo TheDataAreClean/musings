@@ -1,8 +1,8 @@
 ---
 title: The day I stopped singing
 slug: singing
-date: 2026-10-16T11:25:00+05:30
-draft: true
+date: 2026-10-16T11:54:00+05:30
+draft: false
 description: Exploring a creative wound.
 tags:
   - personal
