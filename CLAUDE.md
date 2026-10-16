@@ -35,6 +35,9 @@ Sticky chrome (titlebar, menubar, toolbar, ruler, statusbar) lives outside `.app
 **Session persistence is `sessionStorage`, not `localStorage`**
 Font and zoom reset on a new tab by design. Do not upgrade to `localStorage` unless explicitly asked.
 
+**CSS and JS URLs carry a per-build `?v=` stamp**
+`base.njk` links `/css/main.css?v={{ assetVersion }}` and `/js/comments.js?v=…`, and an `eleventy.after` hook in `.eleventy.js` stamps the `@import`s inside `_site/css/main.css`. GitHub Pages caches assets for 10 minutes, so without it a deploy can pair new HTML with an old script. Any new `<script src>` or stylesheet link needs the same `?v={{ assetVersion }}`.
+
 **Passthrough copies must be registered**
 Any new asset directory or file needs a corresponding `addPassthroughCopy` in `.eleventy.js`. Missing entries silently 404 in production.
 
