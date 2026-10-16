@@ -4,9 +4,9 @@ Operating manual for Claude. Architecture lives in [APP.md](APP.md). Commands li
 
 ---
 
-## Before you change code
+## Before you push
 
-- Run `npm run build` — must exit zero errors, zero warnings
+- Run `npm run build` on a clean tree — `prebuild` can rewrite content files (dates, permalinks, image paths), so review `git status` after — must exit zero errors, zero warnings
 - Check browser console — no JS errors, no 404s
 - Test the golden path: home page loads → post opens → font/zoom dropdowns work → anchor links land below chrome
 
@@ -24,7 +24,7 @@ Without it, XML output gets wrapped in the base HTML layout. Always confirm the 
 `.doc-body hr` (0-1-1) beats `.page-break` (0-1-0). All `hr` rules in `typography.css` are scoped to `hr:not(.page-break)`. Removing it makes page breaks inherit prose `hr` styles.
 
 **`--chrome-h` must equal the sum of its parts**
-`--chrome-h` = `--titlebar-h + --menubar-h + --toolbar-h + --ruler-h` = 34 + 26 + 32 + 22 = **114px**. `scroll-margin-top` on headings depends on this. It does not auto-compute — update it manually when any chrome bar height changes.
+`--chrome-h` = `--titlebar-h + --menubar-h + --toolbar-h + --ruler-h` = 34 + 26 + 32 + 22 = **114px** (92px on mobile, where `--ruler-h` is 0). `scroll-margin-top` on headings depends on this. It does not auto-compute — update it manually when any chrome bar height changes.
 
 **Page-break bleed breaks with a second grid column**
 `.page-break` uses `width: calc(100% + var(--page-pad-h) * 2)` — only works when `.doc-layout` has `grid-template-columns: 1fr`.
@@ -33,7 +33,7 @@ Without it, XML output gets wrapped in the base HTML layout. Always confirm the 
 Sticky chrome (titlebar, menubar, toolbar, ruler, statusbar) lives outside `.app-canvas`. Moving chrome inside breaks sticky positioning.
 
 **Session persistence is `sessionStorage`, not `localStorage`**
-Font and zoom reset on a new tab by design. Do not upgrade to `localStorage` unless explicitly asked.
+Font, text size, zoom and ¶ marks reset on a new tab or a fresh arrival by design. Do not upgrade to `localStorage` unless explicitly asked.
 
 **CSS and JS URLs carry a per-build `?v=` stamp**
 `base.njk` links `/css/main.css?v={{ assetVersion }}` and `/js/comments.js?v=…`, and an `eleventy.after` hook in `.eleventy.js` stamps the `@import`s inside `_site/css/main.css`. GitHub Pages caches assets for 10 minutes, so without it a deploy can pair new HTML with an old script. Any new `<script src>` or stylesheet link needs the same `?v={{ assetVersion }}`.
@@ -45,7 +45,10 @@ Any new asset directory or file needs a corresponding `addPassthroughCopy` in `.
 `npm run build` runs `prebuild` scripts (`convert-webp.js`, `backfill-dates.js`, etc.) that write through the `src/images` symlink; those writes land at the real repo path `images/...`, outside `src/`. The deploy workflow (`.github/workflows/deploy.yml`) used to run `git status`/`git add` scoped to `-- src/` only, so a converted upload landing under `images/` was left unstaged — the auto-commit then hit "cannot pull with rebase: you have unstaged changes" and the push (and deploy) silently failed. Always use unscoped `git status --porcelain` / `git add -A` in that step so it catches generated files no matter where a script writes them.
 
 **New posts default to `draft: false` in Sveltia CMS**
-There is no separate draft pipeline — `draft` only hides a post from listings/feed, the URL still resolves once the file is on `main` (see `APP.md`). The `draft` field in `src/admin/config.yml` defaults to `false`, so a new post publishes immediately on save unless you tick Draft first.
+There is no separate draft pipeline — `draft` only hides a post from listings, tag pages and the feed; the URL still resolves once the file is on `main` (see `APP.md` → Drafts). Any new listing must drop drafts too (`filterDrafts` or the `published` filter): Eleventy's own `collections[tag]` includes them. The `draft` field in `src/admin/config.yml` defaults to `false`, so a new post publishes immediately on save unless you tick Draft first.
+
+**Tag URLs always go through `tagSlug`**
+Every `/tags/` link, the tag page permalink and the og:image path use the `tagSlug` filter (shared with `generate-og-images.js`). Building a tag URL any other way breaks for a tag with a capital letter or a space.
 
 **`src/images` is a symlink — Sveltia CMS config must use the real path**
 See `APP.md`'s Passthrough copies section for why `media_folder` in `src/admin/config.yml` must point at `images/uploads`, never `src/images/uploads`.
@@ -92,6 +95,7 @@ When changing **any chrome element height**: recalculate `--chrome-h` and update
 - `--font-doc` is the only font the JS easter egg touches
 - All chrome is `aria-hidden="true"`
 - `doc-chrome.css` is the only file permitted to hardcode hex colours
+- The site is deliberately unindexed (`robots.txt`, `noindex` meta) — don't change it unless asked
 - No Nunjucks tags (`{% %}`) in content `.md` files except the paired shortcodes (`callout`, `marginnote`)
 - No `{#` anywhere in `.md` files
 - `atomDate` uses UTC ISO 8601 — do not apply IST to feed timestamps

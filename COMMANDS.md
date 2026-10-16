@@ -23,23 +23,20 @@ All runnable commands. Source: `package.json`.
 
 ## Release
 
+The version bump ships inside the change's own PR; the tag comes after it merges.
+
 ```sh
-# 1. Pull any remote changes
-git pull
-
-# 2. Bump version in package.json (patch / minor / major)
+# In the PR branch: bump package.json (patch / minor / major)
 npm version patch --no-git-tag-version
+# …and move UNRELEASED entries in CHANGELOG.md to a dated version block
 
-# 3. Move UNRELEASED entries in CHANGELOG.md to a dated version block
-
-# 4. Commit and tag
-git add package.json CHANGELOG.md
-git commit -m "Chore: bump version to x.y.z"
+# After the PR merges, on cube's Mac:
+git checkout main && git pull
 git tag -a vx.y.z -m "Brief description"
-
-# 5. Push commits and tag
-git push && git push origin vx.y.z
+git push origin vx.y.z
 ```
+
+Full checklist and bump policy: [release skill](.claude/skills/release/SKILL.md).
 
 ---
 

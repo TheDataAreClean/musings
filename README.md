@@ -22,13 +22,16 @@ src/              Content, templates, CSS, JS, static assets
   ideas/          Long-form essays
   notes/          Short observations
   snaps/          Photography posts
-  css/            All stylesheets (6 files)
+  css/            All stylesheets (main.css imports the other 6)
+  js/             comments.js (margin notes)
+  tags/           Tag pages
   _includes/      Nunjucks layouts
-  _data/          Global data (site.json)
+  _data/          Global data (site.json, tokens.js)
   images/         Static images (symlink → top-level images/, see APP.md)
-  fonts/          Static fonts
   admin/          Sveltia CMS entry point + config
 .eleventy.js      Eleventy config — collections, filters, shortcodes
+scripts/          Prebuild scripts (dates, WebP, permalinks, og:images)
+images/           Uploads (served via the src/images symlink)
 .github/          Deploy workflow
 ```
 

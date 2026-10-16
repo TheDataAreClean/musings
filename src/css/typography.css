@@ -132,7 +132,7 @@
 .doc-body pre {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  background: #f8f8f8;
+  background: var(--color-code-bg);
   border-left: 3px solid var(--color-border);
   padding: var(--space-4) var(--space-6);
   overflow-x: auto;

@@ -2,7 +2,7 @@ const markdownIt = require("markdown-it");
 const markdownItFootnote = require("markdown-it-footnote");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItAttrs = require("markdown-it-attrs");
-const { ogImageSlug, ogImageExists } = require("./scripts/generate-og-images.js");
+const { tagSlug, ogImageSlug, ogImageExists } = require("./scripts/generate-og-images.js");
 
 // Returns a WebP path for convertible uploads (jpg/jpeg/png/heic), otherwise null
 function webpSrc(src) {
@@ -129,6 +129,8 @@ module.exports = function (eleventyConfig) {
   // can never drift apart.
   eleventyConfig.addFilter("ogImageSlug", ogImageSlug);
   eleventyConfig.addFilter("ogImageExists", ogImageExists);
+  // Tag URL segment — use for every /tags/ link and the tag page permalink
+  eleventyConfig.addFilter("tagSlug", tagSlug);
 
   eleventyConfig.addFilter("postSigil", function (tags) {
     if (!tags) return "·";
@@ -191,34 +193,8 @@ module.exports = function (eleventyConfig) {
     fs.writeFileSync(main, css.replace(/@import "([^"?]+\.css)";/g, `@import "$1?v=${assetVersion}";`));
   });
 
-  eleventyConfig.addFilter("groupByYear", function (posts) {
-    const groups = {};
-    posts.forEach((post) => {
-      const year = new Date(post.data.date).getFullYear();
-      if (!groups[year]) groups[year] = [];
-      groups[year].push(post);
-    });
-    return Object.entries(groups)
-      .sort(([a], [b]) => b - a)
-      .map(([year, items]) => ({ year, items }));
-  });
-
-  eleventyConfig.addFilter("excerpt", function (content) {
-    if (!content) return "";
-    const text = content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-    return text.slice(0, 200) + (text.length > 200 ? "…" : "");
-  });
-
   eleventyConfig.addFilter("limit", function (arr, n) {
     return arr.slice(0, n);
-  });
-
-  eleventyConfig.addFilter("offset", function (arr, n) {
-    return arr.slice(n);
-  });
-
-  eleventyConfig.addFilter("findIndex", function (arr, page) {
-    return arr.findIndex((p) => p.url === page.url);
   });
 
   // Collections
@@ -255,6 +231,19 @@ module.exports = function (eleventyConfig) {
     return sortPosts(filterDrafts(collectionApi.getFilteredByGlob("src/snaps/**/*.md")));
   });
 
+  // Tag pages (src/tags/index.njk) page over this list and render
+  // `collections[tag] | published`, so a draft never shows on a tag page and
+  // a tag used only by drafts gets no page at all (outside `npm run dev`).
+  eleventyConfig.addFilter("published", (posts) => filterDrafts(posts || []));
+
+  eleventyConfig.addCollection("tagList", function (collectionApi) {
+    const tags = new Set();
+    for (const post of filterDrafts(collectionApi.getAll())) {
+      for (const t of post.data.tags || []) if (!COLLECTION_TAGS.includes(t)) tags.add(t);
+    }
+    return [...tags].sort();
+  });
+
   eleventyConfig.addCollection("feed", function (collectionApi) {
     return sortPosts(filterDrafts([
       ...collectionApi.getFilteredByGlob("src/ideas/**/*.md"),
@@ -271,8 +260,8 @@ module.exports = function (eleventyConfig) {
   // Margin note → document comment. Renders a plain <aside> (readable with no
   // JS, in print, and in feed readers); src/js/comments.js upgrades it into a
   // comment card on the desk (wide screens) or a bottom sheet (narrow ones).
-  // Optional first argument is the phrase to highlight in the block right after
-  // the note — without it, the whole next block is the anchor. The card shows
+  // Optional first argument is the phrase to highlight in the block right before
+  // the note — without it, the whole previous block is the anchor. The card shows
   // the post's date; an optional second argument (any date string) overrides it.
   // To date a note that has no phrase, pass an empty first argument: "", "2026-03-01".
   const escAttr = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
