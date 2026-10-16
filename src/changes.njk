@@ -9,12 +9,15 @@ permalink: "{{ snap.url }}changes/"
 eleventyExcludeFromCollections: true
 hideMeta: true
 eleventyComputed:
-  title: "{{ snap.data.title }}"
-  description: "{{ snap.data.description }}"
+  title: "{{ (snap | newerVersion(collections.all)).data.title }}"
+  description: "{{ (snap | newerVersion(collections.all)).data.description }}"
+  oldTitle: "{{ snap.data.title }}"
+  oldDescription: "{{ snap.data.description }}"
   versionOf: "{{ snap.data.versionOf }}"
   changesFrom: "{{ snap.data.version }}"
 ---
 {# What changed between a snapshot (src/versions/) and the version after it.
-   The page is the newer version, with additions in <ins> and removals in <del>. #}
+   The page is the newer version (its title and description too), with
+   additions in <ins> and removals in <del>. #}
 {% set newer = snap | newerVersion(collections.all) %}
 {{ snap.templateContent | htmlDiff(newer.templateContent) | safe }}

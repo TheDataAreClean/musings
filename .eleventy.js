@@ -45,9 +45,13 @@ function wrapRun(tokens, tag, keepTags) {
   let out = "";
   let open = false;
   // Close the mark before any trailing space, so it doesn't underline the gap
+  // (in <pre>, a removed line's newline would push the added text onto the
+  // next line, so after a removal the gap is always a single space)
   const close = () => {
-    const space = out.match(/\s*$/)[0];
-    out = out.slice(0, out.length - space.length) + `</${tag}>` + space;
+    let space = out.match(/\s*$/)[0];
+    out = out.slice(0, out.length - space.length) + `</${tag}>`;
+    if (space && tag === "del") space = " ";
+    out += space;
     open = false;
   };
   for (const t of tokens) {

@@ -569,7 +569,7 @@ a.post-tag:hover { text-decoration: none; }
 .doc-versions__item { margin-bottom: var(--space-2); color: var(--color-muted); }
 .doc-versions__item b { color: var(--color-text); }
 .doc-versions__note { display: block; color: var(--color-text); }
-.doc-versions__changes { display: inline-block; }
+.doc-versions__changes { display: block; }
 
 .doc-body ins,
 .version-banner ins {
