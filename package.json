@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "dev": "eleventy --serve --watch --port=8081",
-    "prebuild": "node scripts/backfill-dates.js && node scripts/convert-webp.js && node scripts/backfill-permalink.js && node scripts/generate-og-images.js",
+    "prebuild": "node scripts/backfill-dates.js && node scripts/convert-webp.js && node scripts/backfill-permalink.js && node scripts/snapshot-versions.js && node scripts/generate-og-images.js",
     "build": "eleventy",
     "clean": "rm -rf _site",
     "webp": "node scripts/convert-webp.js",
     "backfill": "node scripts/backfill-dates.js",
-    "ogimages": "node scripts/generate-og-images.js"
+    "ogimages": "node scripts/generate-og-images.js",
+    "versions": "node scripts/snapshot-versions.js"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +19,7 @@
   "devDependencies": {
     "@11ty/eleventy": "^3.1.5",
     "@resvg/resvg-js": "^2.6.2",
+    "diff": "^8.0.4",
     "gray-matter": "^4.0.3",
     "markdown-it-anchor": "^9.2.0",
     "markdown-it-attrs": "^4.3.1",

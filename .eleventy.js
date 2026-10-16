@@ -3,6 +3,7 @@ const markdownItFootnote = require("markdown-it-footnote");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItAttrs = require("markdown-it-attrs");
 const { ogImageSlug, ogImageExists } = require("./scripts/generate-og-images.js");
+const { diffArrays } = require("diff");
 
 // Returns a WebP path for convertible uploads (jpg/jpeg/png/heic), otherwise null
 function webpSrc(src) {
@@ -10,6 +11,63 @@ function webpSrc(src) {
   const ext = (src.match(/\.[^.]+$/)?.[0] || "").toLowerCase();
   if (![".jpg", ".jpeg", ".png", ".heic"].includes(ext)) return null;
   return src.slice(0, -ext.length) + ".webp";
+}
+
+// Word-level diff of two rendered post bodies, for /v{n}/changes/ pages.
+// Tags and words are diffed as tokens; the output keeps every tag of the newer
+// version (so it stays balanced) with added words in <ins> and removed words in
+// <del>. A removed run whose tags balance on their own (a whole paragraph)
+// keeps its tags, so it shows as a struck-out block in place. An image counts
+// as a word, so an added or removed image is marked too.
+const VOID_TAG = /^<(area|br|col|embed|hr|img|input|link|meta|source|wbr)\b/i;
+
+function diffTokens(html) {
+  return html.match(/<[^>]+>|[^<\s]+\s*|\s+/g) || [];
+}
+
+function isText(tok) {
+  return !tok.startsWith("<") || /^<img\b/i.test(tok);
+}
+
+function balanced(tokens) {
+  const stack = [];
+  for (const t of tokens) {
+    if (isText(t) || !t.startsWith("<") || VOID_TAG.test(t) || t.startsWith("<!")) continue;
+    const close = t.match(/^<\/(\w+)/);
+    if (close) {
+      if (stack.pop() !== close[1].toLowerCase()) return false;
+    } else stack.push(t.match(/^<(\w+)/)[1].toLowerCase());
+  }
+  return stack.length === 0;
+}
+
+function wrapRun(tokens, tag, keepTags) {
+  let out = "";
+  let open = false;
+  for (const t of tokens) {
+    if (isText(t)) {
+      if (!open && t.trim()) { out += `<${tag}>`; open = true; }
+      out += t;
+    } else {
+      if (open) { out += `</${tag}>`; open = false; }
+      if (keepTags) out += t;
+    }
+  }
+  if (open) out += `</${tag}>`;
+  return out;
+}
+
+function htmlDiff(oldHtml, newHtml) {
+  const parts = diffArrays(diffTokens(oldHtml || ""), diffTokens(newHtml || ""), {
+    comparator: (a, b) => a.trim() === b.trim(),
+  });
+  return parts
+    .map((part) => {
+      if (part.added) return wrapRun(part.value, "ins", true);
+      if (part.removed) return wrapRun(part.value, "del", balanced(part.value));
+      return part.value.join("");
+    })
+    .join("");
 }
 
 // Wraps an img tag in a <picture> with a WebP source when available
@@ -176,6 +234,19 @@ module.exports = function (eleventyConfig) {
       );
   });
 
+  // Post versions — see scripts/snapshot-versions.js and src/_data/versions.js
+  eleventyConfig.addFilter("htmlDiff", htmlDiff);
+
+  // The version right after a snapshot: the next snapshot, or the live post
+  eleventyConfig.addFilter("newerVersion", function (snap, all) {
+    const parent = "./" + snap.data.versionOf;
+    const next = snap.data.version + 1;
+    return (
+      all.find((p) => p.data.versionOf === snap.data.versionOf && p.data.version === next) ||
+      all.find((p) => p.inputPath === parent && (Number(p.data.version) || 1) === next)
+    );
+  });
+
   eleventyConfig.addGlobalData("buildTime", () => new Date());
 
   // Cache-busting: each build stamps CSS/JS URLs with a new ?v=, so a deploy
@@ -261,6 +332,11 @@ module.exports = function (eleventyConfig) {
       ...collectionApi.getFilteredByGlob("src/notes/**/*.md"),
       ...collectionApi.getFilteredByGlob("src/snaps/**/*.md"),
     ]));
+  });
+
+  // Frozen earlier versions of posts — not in listings, tags or the feed
+  eleventyConfig.addCollection("versions", function (collectionApi) {
+    return collectionApi.getFilteredByGlob("src/versions/**/*.md");
   });
 
   // Shortcodes

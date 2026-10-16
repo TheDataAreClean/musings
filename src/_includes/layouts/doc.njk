@@ -2,6 +2,12 @@
 layout: layouts/base.njk
 ogType: article
 ---
+{# Post versions: vinfo is the post's version history (src/_data/versions.js).
+   A snapshot page (src/versions/) and a changes page (src/changes.njk) find it
+   through versionOf, the live post's source path. #}
+{% set vinfo = versions[page.inputPath] or (versions["./" + versionOf] if versionOf else null) %}
+{% set shownTags = postTags or tags %}
+{% if changesFrom %}{% set curVersion = (changesFrom | int) + 1 %}{% else %}{% set curVersion = version or 1 %}{% endif %}
 {% if date %}{% set words = content | wordcount %}{% set readtime = content | readtime %}{% endif %}
 <article class="doc-page{% if not hidePostNav %} doc-page--with-nav{% endif %}"{% if date %} data-words="{{ words }}" data-readtime="{{ readtime }}"{% endif %}>
 
@@ -11,10 +17,18 @@ ogType: article
 
   {% if description %}<p class="doc-description">{{ description }}</p>{% endif %}
 
-  {% if tags and ("snaps" in tags) %}
+  {% if vinfo and versionOf and not changesFrom %}
+  <p class="version-banner">You’re reading version {{ version }} of {{ vinfo.latest.version }}, from {{ versionDate | readableDate }}. <a href="{{ vinfo.latest.url }}">Read the latest version</a>{% if vinfo.all[version] and vinfo.all[version].changesUrl %} · <a href="{{ vinfo.all[version].changesUrl }}">See what changed in version {{ version + 1 }}</a>{% endif %}</p>
+  {% elif vinfo and changesFrom %}
+  {% set newerV = vinfo.all[curVersion - 1] %}{% set olderV = vinfo.all[curVersion - 2] %}
+  <p class="version-banner">What changed in version {{ curVersion }}, {{ newerV.date | readableDate }}{% if newerV.note %}: {{ newerV.note }}{% endif %}. <del>Struck out</del> is from version {{ olderV.version }}; <ins>underlined</ins> is new. <a href="{{ newerV.url }}">Read version {{ curVersion }}</a> · <a href="{{ olderV.url }}">Read version {{ olderV.version }}</a></p>
+  {% endif %}
+
+  {% if versionOf %}{% set postSection = versionOf.split("/")[1] %}{% elif shownTags and ("snaps" in shownTags) %}{% set postSection = "snaps" %}{% elif shownTags and ("notes" in shownTags) %}{% set postSection = "notes" %}{% else %}{% set postSection = "ideas" %}{% endif %}
+  {% if postSection == "snaps" %}
     {% set sectionLabel = "snaps" %}
     {% set sectionUrl = "/snaps/" %}
-  {% elif tags and ("notes" in tags) %}
+  {% elif postSection == "notes" %}
     {% set sectionLabel = "notes" %}
     {% set sectionUrl = "/notes/" %}
   {% else %}
@@ -30,12 +44,29 @@ ogType: article
       · {{ readtime }} min read
     {% endif %}
     · <a href="{{ sectionUrl }}">{{ sectionLabel }}</a>
+    {% if vinfo %}· <a href="#versions" class="doc-meta__version">version {{ curVersion }}</a>{% endif %}
   </p>
-  {% if tags | collectionTags | length %}
+  {% if shownTags | collectionTags | length %}
   <p class="doc-tags">
-    {% for tag in tags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endfor %}
+    {% for tag in shownTags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | lower | replace(' ', '-') }}/">{{ tag }}</a>{% endfor %}
   </p>
   {% endif %}
+  {% endif %}
+
+  {% if vinfo %}
+  <details class="doc-versions" id="versions">
+    <summary>Version history <span class="doc-versions__count">{{ vinfo.all.length }} versions</span></summary>
+    <ol class="doc-versions__list" reversed>
+      {% for v in vinfo.newestFirst %}
+      <li class="doc-versions__item{% if v.version == curVersion %} doc-versions__item--current{% endif %}">
+        {% if v.version == curVersion and not changesFrom %}<b>Version {{ v.version }}</b>{% else %}<a href="{{ v.url }}">Version {{ v.version }}</a>{% endif %}
+        · <time datetime="{{ v.date | isoDate }}">{{ v.date | readableDate }}</time>{% if v.latest %} · latest{% endif %}{% if v.version == curVersion and not changesFrom %} · reading now{% endif %}
+        {% if v.note %}<span class="doc-versions__note">{{ v.note }}</span>{% endif %}
+        {% if v.changesUrl %}<a class="doc-versions__changes" href="{{ v.changesUrl }}">What changed</a>{% endif %}
+      </li>
+      {% endfor %}
+    </ol>
+  </details>
   {% endif %}
 
   <div class="doc-layout">

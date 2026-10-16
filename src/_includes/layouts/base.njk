@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% if title and title != "Home" %}{{ title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  {# Earlier versions and changes pages of a post point search engines and
+     link previews at the latest version (see doc.njk for vinfo) #}
+  {% set vinfo = versions[page.inputPath] or (versions["./" + versionOf] if versionOf else null) %}
+  {% set canonicalUrl = vinfo.latest.url if versionOf and vinfo else page.url %}
+  <title>{% if title and title != "Home" %}{{ title }}{% if changesFrom %} (changes in version {{ (changesFrom | int) + 1 }}){% elif versionOf %} (version {{ version }}){% endif %} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
   <meta name="description" content="{{ description or site.description }}">
   <meta name="author" content="{{ site.author }}">
   <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
@@ -12,7 +16,7 @@
   <meta property="og:type" content="{{ ogType or 'website' }}">
   <meta property="og:url" content="{{ site.url }}{{ page.url }}">
   <meta property="og:site_name" content="{{ site.title }}">
-  {% set ogImageSlugValue = page.url | ogImageSlug %}
+  {% set ogImageSlugValue = canonicalUrl | ogImageSlug %}
   {% if ogImageSlugValue | ogImageExists %}
   {# Generated at build time by scripts/generate-og-images.js — a real
      screenshot of the site's own doc-chrome, not a generic social card.
@@ -28,7 +32,7 @@
   <meta name="twitter:card" content="summary">
   {% endif %}
   <meta name="theme-color" content="#f0f0f0">
-  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  <link rel="canonical" href="{{ site.url }}{{ canonicalUrl }}">
   <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="/feed.xml">
   {# Favicon stack: ICO for bookmark managers/RSS readers, SVG for modern browsers,
      apple-touch-icon for iOS Safari home screen, manifest for Android Chrome.
@@ -76,7 +80,8 @@
         <div class="app-menu__sep"></div>
         <div class="app-menu__option" data-action="copy-link">Copy link<span class="app-menu__key">⌘L</span></div>
         <div class="app-menu__option" data-href="/feed.xml">Subscribe<span class="app-menu__hint">RSS feed</span></div>
-        <div class="app-menu__option" data-action="print">Print / PDF<span class="app-menu__key">⌘P</span></div>
+        {% if vinfo %}<div class="app-menu__option" data-action="versions">Version history<span class="app-menu__hint">{{ vinfo.all.length }} versions</span></div>
+        {% endif %}<div class="app-menu__option" data-action="print">Print / PDF<span class="app-menu__key">⌘P</span></div>
         <div class="app-menu__sep"></div>
         <div class="app-menu__option" data-action="close">Close tab<span class="app-menu__key">⌘W</span></div>
       </div>
@@ -433,6 +438,7 @@
         }
       },
       print:        function () { window.print(); },
+      versions:     function () { openVersions(true); },
       close:        function () { window.close(); },
       'zoom-in':    function () { applyZoom(zi + 1); },
       'zoom-out':   function () { applyZoom(zi - 1); },
@@ -446,6 +452,19 @@
         if (opt.dataset.href) location.href = opt.dataset.href;
         else if (actions[opt.dataset.action]) actions[opt.dataset.action](opt);
       });
+    });
+
+    // Version history: File → Version history and the meta line's "version n"
+    // link open the <details id="versions"> panel under the meta line
+    function openVersions(scroll) {
+      var panel = document.getElementById('versions');
+      if (!panel) return;
+      panel.open = true;
+      if (scroll) panel.scrollIntoView({ block: 'start' });
+    }
+    if (location.hash === '#versions') openVersions(false);
+    window.addEventListener('hashchange', function () {
+      if (location.hash === '#versions') openVersions(false);
     });
 
     // ── 8. STOPLIGHT — red closes tab; all dots dim on window blur ────────────

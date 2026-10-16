@@ -367,6 +367,9 @@
   color: var(--color-muted);
 }
 
+/* Version marker after the date, only on posts revised past version 1 */
+.post-list__version { margin-left: var(--space-2); }
+
 /* Yellow highlight — used on post list sigils, article page tag links, and tag page title. */
 mark {
   background: var(--color-mark);
@@ -518,3 +521,69 @@ a.post-tag:hover { text-decoration: none; }
 
 .post-nav a:visited { color: var(--color-visited); }
 .post-nav a:hover { text-decoration: none; }
+
+/* --------------------------------------------------------------------------
+   Post versions — banner on earlier versions and changes pages, the version
+   history panel under the meta line, and track-changes marks
+   -------------------------------------------------------------------------- */
+
+.version-banner {
+  background: var(--color-mark-dim);
+  border: 1px solid var(--color-border-soft);
+  padding: var(--space-2) var(--space-4);
+  margin: var(--space-2) 0 var(--space-4);
+  font-size: var(--text-sm);
+  line-height: var(--leading-doc);
+}
+
+/* Sits right under the meta or tags line, which keeps its space-8 gap
+   below the panel instead */
+.doc-meta:has(+ .doc-versions),
+.doc-tags:has(+ .doc-versions) { margin-bottom: var(--space-2); }
+
+.doc-versions {
+  margin: 0 0 var(--space-8);
+  font-size: var(--text-sm);
+  scroll-margin-top: calc(var(--chrome-h) + var(--space-6));
+}
+
+.doc-versions summary {
+  cursor: pointer;
+  color: var(--color-link);
+  list-style: none;
+  user-select: none;
+}
+
+.doc-versions summary::-webkit-details-marker { display: none; }
+.doc-versions summary::before { content: "▸ "; }
+.doc-versions[open] summary::before { content: "▾ "; }
+.doc-versions__count { color: var(--color-muted); margin-left: var(--space-1); }
+
+.doc-versions__list {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0 0 0 var(--space-4);
+  border-left: 1px solid var(--color-border-soft);
+}
+
+.doc-versions__item { margin-bottom: var(--space-2); color: var(--color-muted); }
+.doc-versions__item b { color: var(--color-text); }
+.doc-versions__note { display: block; color: var(--color-text); }
+.doc-versions__changes { display: inline-block; }
+
+.doc-body ins,
+.version-banner ins {
+  color: var(--color-ins);
+  background: var(--color-ins-bg);
+  text-decoration: underline;
+}
+
+.doc-body del,
+.version-banner del {
+  color: var(--color-del);
+  background: var(--color-del-bg);
+  text-decoration: line-through;
+}
+
+.doc-body ins img { outline: 3px solid var(--color-ins); }
+.doc-body del img { outline: 3px solid var(--color-del); opacity: 0.6; }
