@@ -52,9 +52,7 @@ My house went on to win the competition. If I ever needed a signal that the sun 
 
 My love for singing endures even today. I sing by myself, and sometimes around people I am close to. But I have not let my voice loose the same way I used to in nearly two decades.
 
-Somewhere along the way, I became careful with something I had never had to think about before. While I like my voice now, I am curious about what it would feel like to give it a little room again.
-
-I will go try that now.
+Somewhere along the way, I became careful with something I had never had to think about before. While I like my voice now, I am curious about what it would feel like to give it a little room again. I will go try that now.
 
 ***
 
