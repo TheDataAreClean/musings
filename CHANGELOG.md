@@ -11,7 +11,8 @@ Version bump policy: MAJOR = complete visual redesign, change in site concept, o
 - fix: "Earlier versions" in the footnote follows its link if the titlebar has no version menu, instead of doing nothing.
 - fix: a changes page or tag page whose title has an `&` or an apostrophe no longer shows it as `&amp;` or `&#39;`.
 - fix: the link preview image of a revised post shows "Edited [date] ▾" in its titlebar, like the page.
-- fix: an image uploaded twice now points at its existing WebP copy instead of a broken one, and earlier versions of a post keep their images when an upload is renamed.
+- fix: an upload gets its final file name on the build that converts it, instead of being renamed again on the next build (which also left a second auto-commit). The same image uploaded twice shares one WebP file.
+- fix: earlier versions of a post keep their images when an upload is renamed (for example after a slug change).
 - fix: an image that can't be converted (such as HEIC) stops the build with a message naming the file.
 - fix: the font, size, zoom and menus still work when the browser blocks site storage.
 

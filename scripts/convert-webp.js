@@ -69,23 +69,24 @@ async function convertAll() {
   await Promise.all(
     toConvert.map(async (file) => {
       const src = path.join(uploadsDir, file);
-      const buf = fs.readFileSync(src);
-      const hash = crypto.createHash("sha256").update(buf).digest("hex").slice(0, 8);
+      let webp;
+      try {
+        webp = await sharp(src).rotate().webp({ quality: 82 }).toBuffer();
+      } catch (err) {
+        throw new Error(`convert-webp: could not convert ${file} (${err.message}). Re-upload it as a JPEG or PNG.`);
+      }
+      // Hash the WebP, not the original: the rename pass below checks names
+      // against the WebP's own hash, so this name is final on the first build
+      const hash = crypto.createHash("sha256").update(webp).digest("hex").slice(0, 8);
 
       const postFile = imagePostMap.get(file);
       const base = postFile
         ? `${postBaseName(postFile, original.get(postFile))}-${hash}`
         : `${path.basename(file, path.extname(file))}-${hash}`;
 
-      // Already converted (the same image uploaded again): point at that copy
+      // An identical image already converted is reused
       const dest = path.join(uploadsDir, base + ".webp");
-      if (!fs.existsSync(dest)) {
-        try {
-          await sharp(src).rotate().webp({ quality: 82 }).toFile(dest);
-        } catch (err) {
-          throw new Error(`convert-webp: could not convert ${file} (${err.message}). Re-upload it as a JPEG or PNG.`);
-        }
-      }
+      if (!fs.existsSync(dest)) fs.writeFileSync(dest, webp);
       fs.unlinkSync(src);
       renames.set(file, base + ".webp");
       console.log(`converted: ${file} → ${base}.webp`);

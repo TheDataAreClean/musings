@@ -4,9 +4,10 @@
 // `prebuild`, after backfill-permalink.js (so each post's final URL is
 // already resolved before this reads it).
 //
-// Reused elsewhere: `ogImageSlug` and `readableDate` are required directly by .eleventy.js so the
-// og:image URL emitted in base.njk is computed by the exact same function
-// that names the file here — one function, not two copies that can drift.
+// Reused elsewhere: `ogImageSlug` and `readableDate` are required directly by
+// .eleventy.js, so the og:image URL emitted in base.njk and the dates in the
+// card's titlebar come from the same functions the site uses — one function,
+// not two copies that can drift.
 //
 // Skips regenerating a post's image if the PNG is already newer than its
 // source .md file — same caching pattern as convert-webp.js.
