@@ -4,7 +4,7 @@ Version bump policy: MAJOR = complete visual redesign, change in site concept, o
 
 ---
 
-## UNRELEASED
+## 2026-10-17 (v4.0.1)
 
 - fix: a footnote's ↩ back-link now lands on its marker in the text below the app chrome, instead of hidden under the toolbar. Every anchor on the page does the same.
 - fix: lines in a quote written without a blank line between them now break onto new lines, as they look in the CMS (lyrics, verse). Elsewhere a single line break still joins lines.
