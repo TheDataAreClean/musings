@@ -66,7 +66,22 @@
       </div>
     </div>
     <span class="app-titlebar__doc">{{ title or site.shortTitle }}</span>
+    {# A revised post lists its versions here, in place of the save state:
+       newest first, the one on screen bold. The page's edit note carries the
+       same information. #}
+    {% if vinfo %}
+    {% if changesFrom %}{% set curVersion = changesTo | int %}{% else %}{% set curVersion = version or vinfo.latest.version %}{% endif %}
+    <span class="app-titlebar__saved app-menu app-menu--right app-titlebar__versions">{% if curVersion == vinfo.latest.version %}Edited{% else %}Version of{% endif %} {{ vinfo.byVersion[curVersion].date | readableDate }}&#8200;&#9662;
+      <div class="app-menu__panel">
+        <div class="app-menu__label">Version history</div>
+        {% for v in vinfo.newestFirst %}
+        <div class="app-menu__option" data-href="{{ v.url }}">{% if v.version == curVersion %}<b>{{ v.date | readableDate }}</b>{% else %}{{ v.date | readableDate }}{% endif %}{% if v.latest %}<span class="app-menu__hint">latest</span>{% elif v.original %}<span class="app-menu__hint">original</span>{% endif %}</div>
+        {% endfor %}
+      </div>
+    </span>
+    {% else %}
     <span class="app-titlebar__saved">{{ site.chrome.saveState }}</span>
+    {% endif %}
   </div>
 
   {# Menu bar: File and Help open real menus; the rest are dead text #}
@@ -81,16 +96,6 @@
         <div class="app-menu__option" data-action="copy-link">Copy link<span class="app-menu__key">⌘L</span></div>
         <div class="app-menu__option" data-href="/feed.xml">Subscribe<span class="app-menu__hint">RSS feed</span></div>
         <div class="app-menu__option" data-action="print">Print / PDF<span class="app-menu__key">⌘P</span></div>
-        {# A revised post lists its versions here, newest first, the one on
-           screen bold. The page's edit note carries the same information. #}
-        {% if vinfo %}
-        {% if changesFrom %}{% set curVersion = changesTo | int %}{% else %}{% set curVersion = version or vinfo.latest.version %}{% endif %}
-        <div class="app-menu__sep"></div>
-        <div class="app-menu__label">Version history</div>
-        {% for v in vinfo.newestFirst %}
-        <div class="app-menu__option" data-href="{{ v.url }}">{% if v.version == curVersion %}<b>{{ v.date | readableDate }}</b>{% else %}{{ v.date | readableDate }}{% endif %}{% if v.latest %}<span class="app-menu__hint">latest</span>{% elif v.original %}<span class="app-menu__hint">original</span>{% endif %}</div>
-        {% endfor %}
-        {% endif %}
         <div class="app-menu__sep"></div>
         <div class="app-menu__option" data-action="close">Close tab<span class="app-menu__key">⌘W</span></div>
       </div>
@@ -429,7 +434,7 @@
       });
       // Like a real menu bar: once one menu is open, hovering opens its neighbour
       menu.addEventListener('mouseenter', function () {
-        if (!document.querySelector('.app-menu--open') || menu.classList.contains('app-menu--open')) return;
+        if (!menu.closest('.app-menubar') || !document.querySelector('.app-menu--open') || menu.classList.contains('app-menu--open')) return;
         openMenu(menu);
       });
     });
@@ -466,13 +471,13 @@
       });
     });
 
-    // "Earlier versions" in the version footnote opens the File menu, where
-    // the version history is; its href (the original) is the fallback
+    // "Earlier versions" in the version footnote opens the version history in
+    // the titlebar; its href (the original) is the fallback
     document.querySelectorAll('[data-open-versions]').forEach(function (a) {
       a.addEventListener('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
-        openMenu(document.querySelector('.app-menu--file'));
+        openMenu(document.querySelector('.app-titlebar__versions'));
       });
     });
 

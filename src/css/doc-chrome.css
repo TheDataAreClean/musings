@@ -140,6 +140,17 @@ body {
   white-space: nowrap;
 }
 
+/* On a revised post the save state is the version history menu */
+.app-titlebar__versions {
+  justify-self: end;
+  padding: 0 var(--space-2);
+  margin-right: calc(-1 * var(--space-2));
+}
+
+.app-titlebar__versions .app-menu__panel {
+  text-align: left;
+}
+
 /* ==========================================================================
    MENU BAR — static decoration only, all items dead
    Items are black (readable) not grey (disabled-looking).

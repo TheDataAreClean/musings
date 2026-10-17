@@ -108,7 +108,7 @@ A post can be revised in public: readers land on the latest version at the post'
 
 **Reader UI.** Two places, one in the chrome and one in the document:
 
-- **File → Version history** (`base.njk`). On a revised post the File menu ends with a "Version history" section: every version's date, newest first, the one on screen bold, marked "latest" and "original". Dates only; notes and links live in the footnote. The titlebar, the browser tab title and the save state are unchanged on every page type. Like all chrome it's `aria-hidden` and doesn't print.
+- **Version history menu** (`base.njk`). On a revised post, from two versions up, the titlebar's right (`.app-titlebar__versions`) shows "Edited [latest date] ▾" in place of the save state ("Version of [date] ▾" on an earlier version; a changes page counts as its newer version) and opens a "Version history" list: every version's date, newest first, the one on screen bold, marked "latest" and "original". Dates only; notes and links live in the footnote. The titlebar's title and the browser tab title are unchanged. Like all chrome it's `aria-hidden` and doesn't print.
 - **Edit note** (the document's only version note, so it prints and reaches screen readers). A one-line quote, `.version-line` (styled with `.doc-body blockquote` in `typography.css`, same bar and padding, so every quote looks the same), sits after the tags (after the description on changes pages, which have no meta) and ends in a superscript `[*]` linking to `#fn-version`. That footnote is the last item of the post's footnotes: `withVersionFootnote` adds it to markdown-it-footnote's list, built from the plugin's own markup, or starts a footnotes section. `.footnote-item--version` sets its marker to `*` so its text lines up with the numbered notes; it has the usual ↩ back-link. The macros live in `src/_includes/version-notes.njk`, shared with the feed.
 
 | Page | Line | Footnote |
@@ -118,7 +118,7 @@ A post can be revised in public: readers land on the latest version at the post'
 | Original | This is the original version of this post, from 10 Oct, 2026[*] | Edited on [next version's date]. What changed · Latest version |
 | Changes page | These are the edits made on 15 Oct, 2026[*] | [note]. Red is removed, green is added. Before, the title was ~…~, the description ~…~ and the tags ~…~. Latest version · Previous version |
 
-A missing note reads "Edited on [date].". The "Before, …" sentence lists only what changed (`beforeSentence`). "Previous version" is the diff's "before" side. "Earlier versions" opens the File menu at its version history, however many versions there are (`data-open-versions`; its href, the original, is the no-JS fallback). These are the only link names. Version notes get a full stop unless they end in `.`, `!` or `?` (`sentence`).
+A missing note reads "Edited on [date].". The "Before, …" sentence lists only what changed (`beforeSentence`). "Previous version" is the diff's "before" side. "Earlier versions" opens the titlebar's version history, however many versions there are (`data-open-versions`; its href, the original, is the no-JS fallback). These are the only link names. Version notes get a full stop unless they end in `.`, `!` or `?` (`sentence`).
 
 **Listings** show a revised post's latest version date, marked "(updated)", in place of its original date; the list stays in original-date order.
 
@@ -304,7 +304,7 @@ All code in an IIFE — no globals leaked.
 | Status bar | "Page x of y" counts `.page-break`s above mid-screen on scroll; words · read time from `data-words`/`data-readtime` on posts (same filters as the meta line); transient messages |
 | Stoplight dot | `window.close()` — browser-blocked for normal tabs, silent no-op |
 | Titlebar dimming | `setActive` on `blur`, `focus`, `visibilitychange` — all three needed |
-| Version history | On revised posts, a section at the end of the File menu (`.app-menu--file`); the edit note footnote's "Earlier versions" link (`[data-open-versions]`) opens that menu instead of following its href |
+| Version history | On revised posts, a menu at the titlebar's right (`.app-titlebar__versions`), the only place the history is listed; the edit note footnote's "Earlier versions" link (`[data-open-versions]`) opens the titlebar menu instead of following its href. Hovering between menus only moves along the menu bar |
 
 `initDropdown` returns `{ setValue }` — used by zoom to sync label with keyboard shortcuts.
 
