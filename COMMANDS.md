@@ -16,6 +16,7 @@ All runnable commands. Source: `package.json`.
 | Backfill post datetimes from git | `npm run backfill` |
 | Backfill slug → permalink in front matter | `node scripts/backfill-permalink.js` |
 | Generate per-post og:image files | `npm run ogimages` |
+| Regenerate every og:image (after changing the generator, fonts or tokens) | `rm -rf images/og && npm run ogimages` |
 | Save earlier versions of revised posts | `npm run versions` |
 | Check vulnerabilities | `npm audit` |
 | List available updates | `npm outdated` |
@@ -33,8 +34,8 @@ npm version patch --no-git-tag-version
 
 # After the PR merges, on cube's Mac:
 git checkout main && git pull
-git tag -a vx.y.z -m "Brief description"
-git push origin vx.y.z
+git tag -a vX.Y.Z -m "Brief description"
+git push origin vX.Y.Z
 ```
 
 Full checklist and bump policy: [release skill](.claude/skills/release/SKILL.md).

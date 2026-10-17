@@ -17,7 +17,7 @@ Ideas and backlog. Not history — see [CHANGELOG.md](CHANGELOG.md) for shipped 
 - **Search** — client-side (Pagefind or similar); no server required
 
 ### Tech Debt
-- **CSS line count audit** — `components.css` has grown; consider splitting post-nav and archive into separate files
+- **CSS line count audit** — `doc-chrome.css` (~760 lines) and `components.css` (~560) have grown; consider splitting the menus/dropdowns and margin-note styles into their own files
 - **Feed validation in CI** — currently a manual post-push step; worth automating in `deploy.yml`
 
 ---

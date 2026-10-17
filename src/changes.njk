@@ -9,17 +9,19 @@ permalink: "{{ snap.url }}changes/"
 eleventyExcludeFromCollections: true
 hideMeta: true
 eleventyComputed:
-  title: "{{ (snap | newerVersion(collections.all)).data.title }}"
-  description: "{{ (snap | newerVersion(collections.all)).data.description }}"
-  oldTitle: "{{ snap.data.title }}"
-  oldDescription: "{{ snap.data.description }}"
-  oldTags: "{{ snap.data.postTags | collectionTags | join(', ') }}"
-  newTags: "{% set newer = snap | newerVersion(collections.all) %}{{ (newer.data.postTags or newer.data.tags) | collectionTags | join(', ') }}"
-  versionOf: "{{ snap.data.versionOf }}"
+  title: "{{ (snap | newerVersion(collections.all)).data.title | safe }}"
+  description: "{{ (snap | newerVersion(collections.all)).data.description | safe }}"
+  oldTitle: "{{ snap.data.title | safe }}"
+  oldDescription: "{{ snap.data.description | safe }}"
+  oldTags: "{{ snap.data.postTags | collectionTags | join(', ') | safe }}"
+  newTags: "{% set newer = snap | newerVersion(collections.all) %}{{ (newer.data.postTags or newer.data.tags) | collectionTags | join(', ') | safe }}"
+  versionOf: "{{ snap.data.versionOf | safe }}"
   changesFrom: "{{ snap.data.version }}"
   changesTo: "{{ (snap | newerVersion(collections.all)).data.version or 1 }}"
 ---
-{# What changed between a snapshot (src/versions/) and the version after it.
+{# eleventyComputed strings are Nunjucks templates, so they autoescape; `safe`
+   keeps a title like "Tom & Jerry" from being escaped twice on the page.
+   What changed between a snapshot (src/versions/) and the version after it.
    The page is the newer version (its title and description too), with
    additions in <ins> and removals in <del>. #}
 {% set newer = snap | newerVersion(collections.all) %}

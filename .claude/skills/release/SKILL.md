@@ -19,10 +19,11 @@ description: Pre-push checklist (build/content/behaviour/infrastructure) and rel
 
 ### Behaviour
 - [ ] Font, size and zoom dropdowns work; persist across page navigation; reset on fresh tab
+- [ ] Uploads: a new image converts to WebP (HEIC too) and shows on the post
 - [ ] Margin notes: cards on desktop, bottom sheet on mobile, inline asides with JS off and in print preview
 - [ ] Stoplight dims on tab switch, restores on return
 - [ ] Anchor links land below sticky chrome
-- [ ] Revised posts: the edit note line and `[*]` footnote show on the latest, an earlier version and a changes page; File → Version history lists the versions
+- [ ] Revised posts: the edit note line and `[*]` footnote show on the latest, an earlier version and a changes page; the titlebar menu lists the versions, and "Earlier versions" in the footnote opens it
 
 ### Infrastructure
 - [ ] `site.url` in `site.json` — no trailing slash
@@ -34,12 +35,15 @@ description: Pre-push checklist (build/content/behaviour/infrastructure) and rel
 
 ## Release workflow
 
-Bump `package.json` and move the CHANGELOG entries inside the change's own PR. After it merges, cube tags `main` from their Mac:
+Bump `package.json` and move the CHANGELOG entries inside the change's own PR. Tag only after the PR has merged, on the merge commit (tagging early once put v4.1.0 on the wrong commit). cube tags `main` from their Mac:
 
 ```sh
-git tag -a v3.1.0 -m "Brief description"
-git push origin v3.1.0
+git checkout main && git pull
+git tag -a vX.Y.Z -m "Brief description"
+git push origin vX.Y.Z
 ```
+
+GitHub Releases are made for major versions only (`gh release create vX.0.0`).
 
 | Part | When to increment |
 |---|---|
@@ -50,4 +54,6 @@ git push origin v3.1.0
 Move UNRELEASED entries in [CHANGELOG.md](../../../CHANGELOG.md) to a dated version block on each release.
 Update `version` in `package.json` with `npm version <tag> --no-git-tag-version`.
 
-**Commit convention:** `{Type}: {description}` — types: `Add` `Fix` `Update` `Redesign` `Refactor` `Docs` `Chore`
+**Commit convention:** `{Type}: {description}` — types: `Add` `Fix` `Update` `Redesign` `Refactor` `Docs` `Chore`.
+
+**Changelog entries** use lowercase prefixes, for what a reader sees: `add`, `fix`, `change`, `docs`, `chore`.

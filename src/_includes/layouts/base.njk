@@ -52,11 +52,12 @@
 <body>
 
   {# ── APPLICATION CHROME — decoration, with a few working controls ────── #}
-  {# Working: File and Help menus, outline, font, text size, ¶ marks, zoom,
-     red stoplight. Everything else is dead text. All of it is aria-hidden:
+  {# Working: File and Help menus, the titlebar's version history, outline,
+     font, text size, ¶ marks, zoom, red stoplight. Everything else is dead text. All of it is aria-hidden:
      the real navigation lives in the document (nav.njk). #}
 
-  {# Title bar: stoplight left · document name centre · save state right #}
+  {# Title bar: stoplight left · document name centre · save state (or a
+     revised post's version history menu) right #}
   <div class="app-titlebar" aria-hidden="true">
     <div class="app-titlebar__left">
       <div class="stoplight">
@@ -69,8 +70,8 @@
     {# A revised post lists its versions here, in place of the save state:
        newest first, the one on screen bold. The page's edit note carries the
        same information. #}
-    {% if vinfo %}
-    {% if changesFrom %}{% set curVersion = changesTo | int %}{% else %}{% set curVersion = version or vinfo.latest.version %}{% endif %}
+    {% if vinfo %}{% if changesFrom %}{% set curVersion = changesTo | int %}{% else %}{% set curVersion = version or vinfo.latest.version %}{% endif %}{% endif %}
+    {% if vinfo and vinfo.byVersion[curVersion] %}
     <span class="app-titlebar__saved app-menu app-menu--right app-titlebar__versions">{% if curVersion == vinfo.latest.version %}Edited{% else %}Version of{% endif %} {{ vinfo.byVersion[curVersion].date | readableDate }}&#8200;&#9662;
       <div class="app-menu__panel">
         <div class="app-menu__label">Version history</div>
@@ -88,7 +89,7 @@
   <div class="app-menubar" aria-hidden="true">
     {% for item in site.chrome.menu %}
     {% if item == "File" %}
-    <span class="app-menubar__item app-menu app-menu--file">File
+    <span class="app-menubar__item app-menu">File
       <div class="app-menu__panel">
         <div class="app-menu__option" data-action="random">New<span class="app-menu__hint">random post</span><span class="app-menu__key">⌘N</span></div>
         <div class="app-menu__option" data-href="/">Open…<span class="app-menu__hint">all posts</span><span class="app-menu__key">⌘O</span></div>
@@ -260,6 +261,11 @@
     // saved font, size, zoom and ¶. Moving between pages, reload and back/forward
     // keep them. Storage stays sessionStorage, so a new tab is fresh too.
     var KEY = { font: 'musings-font', size: 'musings-size', zoom: 'musings-zoom', marks: 'musings-marks' };
+    // Storage can throw (cookies blocked); formatting then just doesn't persist
+    var store = {
+      get: function (k) { try { return sessionStorage.getItem(k); } catch (err) { return null; } },
+      set: function (k, v) { try { sessionStorage.setItem(k, v); } catch (err) {} }
+    };
     try {
       var navEntry = performance.getEntriesByType('navigation')[0];
       var navType  = navEntry ? navEntry.type : 'navigate';
@@ -277,12 +283,12 @@
 
     function applyFont(key) {
       document.documentElement.style.setProperty('--font-doc', fontMap[key] || fontMap.arial);
-      sessionStorage.setItem(KEY.font, key);
+      store.set(KEY.font, key);
     }
 
     var fontDropdown = initDropdown(document.querySelector('.app-toolbar__font'), applyFont);
 
-    var savedFont = sessionStorage.getItem(KEY.font);
+    var savedFont = store.get(KEY.font);
     if (savedFont && fontMap[savedFont]) {
       applyFont(savedFont);
       fontDropdown.setValue(savedFont);
@@ -304,10 +310,10 @@
       canvas.style.zoom      = pct / 100;
       zoomStatus.textContent = pct + '%';
       zoomDropdown.setValue(pct);
-      sessionStorage.setItem(KEY.zoom, pct);
+      store.set(KEY.zoom, pct);
     }
 
-    var savedZoom = sessionStorage.getItem(KEY.zoom);
+    var savedZoom = store.get(KEY.zoom);
     if (savedZoom) applyZoom(levels.indexOf(Number(savedZoom)));
 
     document.addEventListener('keydown', function (e) {
@@ -321,14 +327,14 @@
     // 12 is the 1rem baseline; --doc-scale feeds the type scale inside .doc-page
     function applySize(pt) {
       document.documentElement.style.setProperty('--doc-scale', pt / 12);
-      sessionStorage.setItem(KEY.size, pt);
+      store.set(KEY.size, pt);
     }
 
     var sizeDropdown = initDropdown(document.querySelector('.app-toolbar__size'), function (value) {
       applySize(Number(value));
     });
 
-    var savedSize = sessionStorage.getItem(KEY.size);
+    var savedSize = store.get(KEY.size);
     if (savedSize && document.querySelector('.app-toolbar__size [data-value="' + savedSize + '"]')) {
       applySize(Number(savedSize));
       sizeDropdown.setValue(savedSize);
@@ -358,13 +364,13 @@
     function applyMarks(on) {
       document.documentElement.classList.toggle('show-marks', on);
       marks.classList.toggle('app-toolbar__fmt--active', on);
-      sessionStorage.setItem(KEY.marks, on ? '1' : '');
+      store.set(KEY.marks, on ? '1' : '');
     }
 
     marks.addEventListener('click', function () {
       applyMarks(!document.documentElement.classList.contains('show-marks'));
     });
-    if (sessionStorage.getItem(KEY.marks)) applyMarks(true);
+    if (store.get(KEY.marks)) applyMarks(true);
 
     // ── 6. STATUS BAR — page x of y (page breaks), word count, messages ─────
     var pageStatus = document.querySelector('.app-statusbar__page');
@@ -410,7 +416,7 @@
       msgTimer = setTimeout(function () { msg.hidden = true; }, 2000);
     }
 
-    // ── 7. MENU BAR — File and Help ──────────────────────────────────────────
+    // ── 7. MENUS — File, Help and the titlebar's version history ──────────────────────────────────────────
     // Shortcut hints are labels only; the browser keeps ⌘N/⌘P/⌘W.
     if (!/Mac|iPhone|iPad/.test(navigator.platform)) {
       document.querySelectorAll('.app-menu__key').forEach(function (k) {
@@ -432,9 +438,11 @@
         closeAll();
         if (!isOpen) openMenu(menu);
       });
-      // Like a real menu bar: once one menu is open, hovering opens its neighbour
+      // Like a real menu bar: once one menu is open, hovering opens its
+      // neighbour in the same bar (never the titlebar's, or from it)
       menu.addEventListener('mouseenter', function () {
-        if (!menu.closest('.app-menubar') || !document.querySelector('.app-menu--open') || menu.classList.contains('app-menu--open')) return;
+        var open = document.querySelector('.app-menu--open');
+        if (!open || open === menu || open.parentNode !== menu.parentNode) return;
         openMenu(menu);
       });
     });
@@ -475,9 +483,11 @@
     // the titlebar; its href (the original) is the fallback
     document.querySelectorAll('[data-open-versions]').forEach(function (a) {
       a.addEventListener('click', function (e) {
+        var versions = document.querySelector('.app-titlebar__versions');
+        if (!versions) return;
         e.preventDefault();
         e.stopPropagation();
-        openMenu(document.querySelector('.app-titlebar__versions'));
+        openMenu(versions);
       });
     });
 

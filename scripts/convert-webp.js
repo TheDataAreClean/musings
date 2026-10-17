@@ -1,4 +1,5 @@
 const sharp = require("sharp");
+const decodeHeic = require("heic-decode");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
@@ -9,7 +10,28 @@ const contentDirs = [
   path.join(__dirname, "../src/notes"),
   path.join(__dirname, "../src/snaps"),
 ];
+const versionsDir = path.join(__dirname, "../src/versions");
 const convertExts = new Set([".jpg", ".jpeg", ".png", ".heic"]);
+
+// sharp's prebuilt binaries can't decode HEIC (no HEVC), so a HEIC upload is
+// decoded by libheif (heic-decode, WebAssembly) first, with its rotation
+// already applied, and handed to sharp as raw pixels
+async function toWebp(src) {
+  if (path.extname(src).toLowerCase() !== ".heic") {
+    return sharp(src).rotate().webp({ quality: 82 }).toBuffer();
+  }
+  const { width, height, data } = await decodeHeic({ buffer: fs.readFileSync(src) });
+  return sharp(Buffer.from(data), { raw: { width, height, channels: 4 } }).webp({ quality: 82 }).toBuffer();
+}
+
+// Snapshots of earlier versions (src/versions/{section}/{stem}/v{n}.md) keep
+// the image paths they were frozen with, so a rename must reach them too
+function getSnapshotFiles() {
+  if (!fs.existsSync(versionsDir)) return [];
+  return fs.readdirSync(versionsDir, { recursive: true })
+    .filter((f) => f.endsWith(".md"))
+    .map((f) => path.join(versionsDir, f));
+}
 
 function getMdFiles() {
   return contentDirs.flatMap((dir) => {
@@ -35,14 +57,17 @@ function postBaseName(postFile, content) {
 
 async function convertAll() {
   const files = fs.readdirSync(uploadsDir);
-  const mdFiles = getMdFiles();
+  const postFiles = getMdFiles();
+  const mdFiles = [...postFiles, ...getSnapshotFiles()];
 
   // Read all md contents once — used for post map and ref updates
   const original = new Map(mdFiles.map((f) => [f, fs.readFileSync(f, "utf8")]));
 
-  // Build image filename → post file map from md contents
+  // Build image filename → post file map from the live posts (a snapshot never
+  // names an image)
   const imagePostMap = new Map();
-  for (const [mdFile, content] of original) {
+  for (const mdFile of postFiles) {
+    const content = original.get(mdFile);
     for (const match of content.matchAll(/\(\/images\/uploads\/([^)"\s]+)/g)) {
       const name = path.basename(match[1]);
       if (!imagePostMap.has(name)) imagePostMap.set(name, mdFile);
@@ -56,17 +81,24 @@ async function convertAll() {
   await Promise.all(
     toConvert.map(async (file) => {
       const src = path.join(uploadsDir, file);
-      const buf = fs.readFileSync(src);
-      const hash = crypto.createHash("sha256").update(buf).digest("hex").slice(0, 8);
+      let webp;
+      try {
+        webp = await toWebp(src);
+      } catch (err) {
+        throw new Error(`convert-webp: could not convert ${file} (${err.message}). Re-upload it as a JPEG or PNG.`);
+      }
+      // Hash the WebP, not the original: the rename pass below checks names
+      // against the WebP's own hash, so this name is final on the first build
+      const hash = crypto.createHash("sha256").update(webp).digest("hex").slice(0, 8);
 
       const postFile = imagePostMap.get(file);
       const base = postFile
         ? `${postBaseName(postFile, original.get(postFile))}-${hash}`
         : `${path.basename(file, path.extname(file))}-${hash}`;
 
+      // An identical image already converted is reused
       const dest = path.join(uploadsDir, base + ".webp");
-      if (fs.existsSync(dest)) return;
-      await sharp(src).rotate().webp({ quality: 82 }).toFile(dest);
+      if (!fs.existsSync(dest)) fs.writeFileSync(dest, webp);
       fs.unlinkSync(src);
       renames.set(file, base + ".webp");
       console.log(`converted: ${file} → ${base}.webp`);

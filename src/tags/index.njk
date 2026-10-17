@@ -6,8 +6,8 @@ pagination:
   alias: tag
 permalink: /tags/{{ tag | tagSlug }}/
 eleventyComputed:
-  title: "{{ tag }}"
-  description: "{% set n = (collections[tag] | published).length %}{{ n }} post{% if n != 1 %}s{% endif %} tagged as {{ tag }}."
+  title: "{{ tag | safe }}"
+  description: "{% set n = (collections[tag] | published).length %}{{ n }} post{% if n != 1 %}s{% endif %} tagged as {{ tag | safe }}."
 eleventyExcludeFromCollections: true
 ---
 

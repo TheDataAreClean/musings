@@ -4,9 +4,10 @@
 // `prebuild`, after backfill-permalink.js (so each post's final URL is
 // already resolved before this reads it).
 //
-// Reused elsewhere: `ogImageSlug` is required directly by .eleventy.js so the
-// og:image URL emitted in base.njk is computed by the exact same function
-// that names the file here — one function, not two copies that can drift.
+// Reused elsewhere: `ogImageSlug` and `readableDate` are required directly by
+// .eleventy.js, so the og:image URL emitted in base.njk and the dates in the
+// card's titlebar come from the same functions the site uses — one function,
+// not two copies that can drift.
 //
 // Skips regenerating a post's image if the PNG is already newer than its
 // source .md file — same caching pattern as convert-webp.js.
@@ -52,6 +53,23 @@ const colors = {
   muted: "#666666",
   mark: "#ffff00",
 };
+
+// "15 Oct, 2026" — every date a reader sees (lists, posts, version notes,
+// chrome, margin notes, feed); machine dates stay ISO via isoDate. Month names
+// are our own, not the ICU build's en-GB data, so September is always "Sept".
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+const IST_PARTS = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "numeric",
+  year: "numeric",
+  timeZone: "Asia/Kolkata",
+});
+
+function readableDate(date) {
+  if (!date) return "";
+  const part = Object.fromEntries(IST_PARTS.formatToParts(new Date(date)).map((p) => [p.type, p.value]));
+  return `${Number(part.day)} ${MONTHS[part.month - 1]}, ${part.year}`;
+}
 
 // ---- URL / filename ---------------------------------------------------------
 
@@ -179,7 +197,18 @@ function tagPill(text, fontSize) {
   );
 }
 
-function titlebar() {
+// Small inline SVG, not the ▾ glyph: Arimo doesn't cover it (see sigilIcon)
+function caret(color) {
+  return h(
+    "svg",
+    { width: 8, height: 8, viewBox: "0 0 8 8", style: { display: "flex", marginLeft: 5 } },
+    h("polygon", { points: "0 2 8 2 4 7", fill: color })
+  );
+}
+
+// saveState mirrors the real titlebar's right: "All changes saved", or
+// "Edited [date] ▾" on a revised post (base.njk's version menu)
+function titlebar(edited) {
   return h(
     "div",
     {
@@ -200,8 +229,9 @@ function titlebar() {
     ),
     h(
       "div",
-      { style: { width: 140, display: "flex", justifyContent: "flex-end", fontSize: CHROME_SAVE_STATE_FONT_SIZE, color: colors.muted } },
-      "All changes saved" // real value, src/_data/site.json's chrome.saveState
+      { style: { minWidth: 140, display: "flex", alignItems: "center", justifyContent: "flex-end", fontSize: CHROME_SAVE_STATE_FONT_SIZE, color: colors.muted } },
+      edited ? `Edited ${readableDate(edited)}` : "All changes saved", // real value, src/_data/site.json's chrome.saveState
+      edited && caret(colors.muted)
     )
   );
 }
@@ -250,7 +280,7 @@ function buildCard(content, docFontName, chromeFontName) {
   const page = h(
     "div",
     { style: { flex: 1, display: "flex", flexDirection: "column", background: colors.pageBg, border: `1px solid ${colors.text}` } },
-    titlebar(),
+    titlebar(content.edited),
     pageContent(content, docFontName)
   );
   return h(
@@ -300,6 +330,7 @@ async function main() {
   }
 
   // ---- posts --------------------------------------------------------------
+  const versions = require("../src/_data/versions.js")();
   for (const { dir, name } of SECTIONS) {
     const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md"));
     for (const file of files) {
@@ -307,7 +338,8 @@ async function main() {
       const { data } = matter(fs.readFileSync(srcPath, "utf8"));
       const url = computePostUrl(name, file, data);
       const tags = (data.tags || []).filter((t) => !COLLECTION_TAGS.has(t));
-      await renderIfStale(url, srcPath, { title: data.title, description: data.description, tags });
+      const vinfo = versions[`./src/${name}/${file}`];
+      await renderIfStale(url, srcPath, { title: data.title, description: data.description, tags, edited: vinfo && vinfo.latest.date });
     }
   }
 
@@ -370,4 +402,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { tagSlug, ogImageSlug, ogImageExists, buildCard, renderPng, resolveDocFont, resolveChromeFont };
+module.exports = { tagSlug, ogImageSlug, ogImageExists, readableDate, buildCard, renderPng, resolveDocFont, resolveChromeFont };

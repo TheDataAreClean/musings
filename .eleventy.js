@@ -2,26 +2,10 @@ const markdownIt = require("markdown-it");
 const markdownItFootnote = require("markdown-it-footnote");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItAttrs = require("markdown-it-attrs");
-const { tagSlug, ogImageSlug, ogImageExists } = require("./scripts/generate-og-images.js");
+const { tagSlug, ogImageSlug, ogImageExists, readableDate } = require("./scripts/generate-og-images.js");
 const { diffArrays } = require("diff");
 
-// "15 Oct, 2026" — every date a reader sees (lists, posts, version notes,
-// chrome, margin notes, feed); machine dates stay ISO via isoDate. Month names
-// are our own, not the ICU build's en-GB data, so September is always "Sept".
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-const IST_PARTS = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "numeric",
-  year: "numeric",
-  timeZone: "Asia/Kolkata",
-});
 const IST_ISO = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" });
-
-function readableDate(date) {
-  if (!date) return "";
-  const part = Object.fromEntries(IST_PARTS.formatToParts(new Date(date)).map((p) => [p.type, p.value]));
-  return `${Number(part.day)} ${MONTHS[part.month - 1]}, ${part.year}`;
-}
 
 function isoDate(date) {
   if (!date) return "";
