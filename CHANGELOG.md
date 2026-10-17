@@ -7,6 +7,8 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 ## UNRELEASED
 
 - add: HEIC photos (the iPhone default) can be uploaded; they're converted to WebP like any other image. Until now a HEIC upload stopped the deploy.
+- docs: CHANGELOG entries added for v3.0.1, v3.0.2, v3.1.0 and v3.3.2, which were tagged but never written up; v3.0.0 dated to its tag (19 Apr).
+- content: About now says "The chrome menu bars around the page are not just decoration."
 - docs: every doc checked against the code. Fixed what was stale (upload naming, og:image, prebuild count, the `/reference/` quote and heading examples), added rules for computed titles and storage to CLAUDE.md, cut duplication, and made `{% pagebreak %}` the one way to write a page break.
 - fix: with the version history open, moving the pointer across File or Help no longer closes it and opens that menu.
 - fix: a revised post's titlebar never shows "Edited" or "Version of" with no date; it falls back to the save state.
@@ -197,6 +199,12 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## 2026-05-10 (v3.3.2)
+
+- update: first version of the post nav, blockquote styles, and the section as the first tag in the meta line (all reworked in v3.4.0)
+
+---
+
 ## 2026-05-03 (v3.3.1)
 
 - fix: image filenames now use the post's `slug` front matter field (e.g. `2026-05-02-year-offline-{hash}.webp`) instead of the raw filename stem; falls back to filename stem when no slug is set
@@ -259,7 +267,28 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
-## 2026-04-24 (v3.0.0)
+## 2026-04-30 (v3.1.0)
+
+- feat: image captions via markdown — `![alt](url "Caption")` renders as `<figure>` with `<figcaption>` (shipped with WebP in v3.1.1 the same day)
+
+---
+
+## 2026-04-29 (v3.0.2)
+
+- feat: Sveltia CMS branding — site name and 512px logo
+- fix: favicon on the admin page
+- docs: CLAUDE.md split into focused reference files
+
+---
+
+## 2026-04-19 (v3.0.1)
+
+- fix: no underline on post-tag hover
+- chore: images moved from `notion/` to `uploads/`; stale test-content entries removed from `.gitignore`
+
+---
+
+## 2026-04-19 (v3.0.0)
 
 - feat: Notion pipeline removed — Sveltia CMS (Git-based) is now the canonical authoring layer
 - feat: slug override field added to Sveltia CMS collections

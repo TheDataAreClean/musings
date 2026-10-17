@@ -24,7 +24,7 @@ Tags like [personal](/tags/personal/){ .post-tag }, [tech](/tags/tech/){ .post-t
 
 ## Reading it like a document
 
-The bars around the page are not just decoration. Go explore!
+The chrome menu bars around the page are not just decoration. Go explore!
 
 ## How it is put together
 
