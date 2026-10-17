@@ -4,7 +4,7 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
-## UNRELEASED
+## 2026-10-17 (v4.2.0)
 
 - add: HEIC photos (the iPhone default) can be uploaded; they're converted to WebP like any other image. Until now a HEIC upload stopped the deploy.
 - docs: CHANGELOG entries added for v3.0.1, v3.0.2, v3.1.0 and v3.3.2, which were tagged but never written up; v3.0.0 dated to its tag (19 Apr).
