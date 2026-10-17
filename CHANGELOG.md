@@ -4,6 +4,19 @@ Version bump policy: MAJOR = complete visual redesign, change in site concept, o
 
 ---
 
+## UNRELEASED
+
+- fix: with the version history open, moving the pointer across File or Help no longer closes it and opens that menu.
+- fix: a revised post's titlebar never shows "Edited" or "Version of" with no date; it falls back to the save state.
+- fix: "Earlier versions" in the footnote follows its link if the titlebar has no version menu, instead of doing nothing.
+- fix: a changes page or tag page whose title has an `&` or an apostrophe no longer shows it as `&amp;` or `&#39;`.
+- fix: the link preview image of a revised post shows "Edited [date] ▾" in its titlebar, like the page.
+- fix: an image uploaded twice now points at its existing WebP copy instead of a broken one, and earlier versions of a post keep their images when an upload is renamed.
+- fix: an image that can't be converted (such as HEIC) stops the build with a message naming the file.
+- fix: the font, size, zoom and menus still work when the browser blocks site storage.
+
+---
+
 ## 2026-10-17 (v4.1.0)
 
 - add: on a revised post, the top right of the titlebar shows "Edited 16 Oct, 2026 ▾" in place of "All changes saved" ("Version of …" on an earlier version), and opens the version history. It shows from two versions up. It replaces File → Version history, and the footnote's "Earlier versions" now opens it.

@@ -10,8 +10,9 @@ body {
 }
 
 /* ==========================================================================
-   TITLE BAR — static decoration only
-   App name left · document name centre · save state right
+   TITLE BAR — decoration, except the red stoplight and, on a revised post,
+   the version history menu in place of the save state
+   Stoplight left · document name centre · save state right
    ========================================================================== */
 
 .app-titlebar {
@@ -152,7 +153,7 @@ body {
 }
 
 /* ==========================================================================
-   MENU BAR — static decoration only, all items dead
+   MENU BAR — File and Help open real menus; the other items are dead
    Items are black (readable) not grey (disabled-looking).
    Deadness comes from not responding — not from colour.
    ========================================================================== */
@@ -229,7 +230,7 @@ body {
 }
 
 /* ==========================================================================
-   TOOLBAR — static decoration only
+   TOOLBAR — outline, font, size, ¶ and zoom work; the rest is decoration
    Dense, realistic content. Dark text so items read as formatted, not disabled.
    ========================================================================== */
 
@@ -716,7 +717,7 @@ body {
 }
 
 /* ==========================================================================
-   STATUS BAR — static decoration only
+   STATUS BAR — page, word count, messages and zoom are live; language is decoration
    ========================================================================== */
 
 .app-statusbar {

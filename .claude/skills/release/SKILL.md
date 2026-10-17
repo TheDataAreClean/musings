@@ -22,7 +22,7 @@ description: Pre-push checklist (build/content/behaviour/infrastructure) and rel
 - [ ] Margin notes: cards on desktop, bottom sheet on mobile, inline asides with JS off and in print preview
 - [ ] Stoplight dims on tab switch, restores on return
 - [ ] Anchor links land below sticky chrome
-- [ ] Revised posts: the edit note line and `[*]` footnote show on the latest, an earlier version and a changes page; File → Version history lists the versions
+- [ ] Revised posts: the edit note line and `[*]` footnote show on the latest, an earlier version and a changes page; the titlebar menu lists the versions, and "Earlier versions" in the footnote opens it
 
 ### Infrastructure
 - [ ] `site.url` in `site.json` — no trailing slash
