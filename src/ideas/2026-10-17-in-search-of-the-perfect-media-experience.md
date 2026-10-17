@@ -1,6 +1,7 @@
 ---
 title: In search of the perfect media experience
 slug: media
+permalink: /ideas/2026-10-17-media/
 date: 2026-10-17T11:06:00+05:30
 draft: false
 description: One feed at a time.
