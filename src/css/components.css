@@ -524,12 +524,9 @@ a.post-tag:hover { text-decoration: none; }
    and track-changes marks. The version history menu is chrome (doc-chrome.css).
    -------------------------------------------------------------------------- */
 
-/* A blockquote's left bar (typography.css), trimmed: no vertical padding,
-   so the bar is one line tall */
+/* Bar and padding are a blockquote's (typography.css) */
 .version-line {
   margin-bottom: var(--space-6);
-  padding-left: var(--space-3);
-  border-left: 2px solid var(--color-border-soft);
 }
 
 .doc-meta:has(+ .version-line),

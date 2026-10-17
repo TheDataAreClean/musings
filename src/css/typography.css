@@ -19,7 +19,13 @@
   color: var(--color-text);
   margin-top: var(--space-6);
   margin-bottom: var(--space-4);
-  scroll-margin-top: calc(var(--chrome-h) + var(--space-6)); /* keeps anchor targets below sticky chrome — update --chrome-h tokens if any chrome layer height changes */
+}
+
+/* Every anchor target (headings, footnotes, the footnote back-links in the
+   text and the edit note's [*]) lands below the sticky chrome — update the
+   --chrome-h tokens if any chrome layer height changes */
+main [id] {
+  scroll-margin-top: calc(var(--chrome-h) + var(--space-6));
 }
 
 .doc-body > h2:first-child,
@@ -98,13 +104,19 @@
 }
 
 /* --------------------------------------------------------------------------
-   Blockquote — indented only, no italic, no colour change
+   Blockquote — indented only, no italic, no colour change. The edit note
+   (.version-line, components.css) is a quote too and shares the bar and
+   padding, so every quote on the page looks the same.
    -------------------------------------------------------------------------- */
+
+.doc-body blockquote,
+.version-line {
+  padding: var(--space-3) var(--space-4);
+  border-left: 2px solid var(--color-border-soft);
+}
 
 .doc-body blockquote {
   margin: var(--space-6) 0;
-  padding: var(--space-3) var(--space-4);
-  border-left: 2px solid var(--color-border-soft);
 }
 
 .doc-body blockquote p {
