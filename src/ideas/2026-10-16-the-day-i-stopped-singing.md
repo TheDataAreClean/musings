@@ -8,9 +8,9 @@ tags:
   - personal
   - creativity
 version: 2
-versionDate: 2026-10-16T22:55:28+05:30
 versionNote: Added some more colour, and a new ending. Some typos fixed along the way.
 permalink: /ideas/2026-10-16-singing/
+versionDate: 2026-10-16T22:55:28+05:30
 ---
 
 I have a fairly deep voice. A voice that travels and fills a room. It is truly a joy using my vocal cords and feel them reverberate every time I speak.
@@ -21,7 +21,7 @@ There is nothing wrong with people listening to me; I just had a different dream
 
 ***
 
-At school, I was part of the Indian Music group, and music period was easily my favourite part of the week. Singing my heart out, I loved hearing my voice bounce around in that bright corner room of the school building.
+At school, I was part of the Indian music group, and music period was easily my favourite part of the week. Singing my heart out, I loved hearing my voice bounce around in that bright corner room of the school building.
 
 {% marginnote "Singing" %} i also tried learning the bongo, though that never progressed much beyond hyperactive teenage boy being given permission to bang on drums. {% endmarginnote %}
 
@@ -49,7 +49,7 @@ That memory still stings. I shed a few tears that day, much to the surprise of m
 
 My Indian music teacher, realising I had not been selected, assumed there had been a mistake and asked me to join. I was grateful to join, but my voice was sticking out like a sore thumb. Two days before the competition, the other teacher who had rejected me earlier stopped by during a practice session and thought the sound was a little off.
 
-To find out why, she pointed at me and asked me to sing alone. As my cracked voice came through, the whole group looked at me with horror. She asked me to stop, then had the rest of the group sing without me. After hearing the group sing without me, she asked me to leave.
+To find out why, she pointed at me and asked me to sing alone. As my cracked voice came through, the whole group looked at me with horror. She asked me to stop, then had the rest of the group sing without me. After hearing the group, she asked me to leave.
 
 My house went on to win the competition. If I ever needed a signal that the sun had set on my singing ambitions, this felt fairly unambiguous. The timing could have been kinder, though.
 
