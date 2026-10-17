@@ -109,16 +109,16 @@ A post can be revised in public: readers land on the latest version at the post'
 **Reader UI.** Two places, one in the chrome and one in the document:
 
 - **File → Version history** (`base.njk`). On a revised post the File menu ends with a "Version history" section: every version's date, newest first, the one on screen bold, marked "latest" and "original". Dates only; notes and links live in the footnote. The titlebar, the browser tab title and the save state are unchanged on every page type. Like all chrome it's `aria-hidden` and doesn't print.
-- **Edit note** (the document's only version note, so it prints and reaches screen readers). A one-line quote, `.version-line` (a blockquote's left bar, no vertical padding), sits after the tags (after the description on changes pages, which have no meta) and ends in a superscript `[*]` linking to `#fn-version`. That footnote is the last item of the post's footnotes: `withVersionFootnote` adds it to markdown-it-footnote's list, built from the plugin's own markup, or starts a footnotes section. `.footnote-item--version` sets its marker to `*` so its text lines up with the numbered notes; it has the usual ↩ back-link. The macros live in `src/_includes/version-notes.njk`, shared with the feed.
+- **Edit note** (the document's only version note, so it prints and reaches screen readers). A one-line quote, `.version-line` (styled with `.doc-body blockquote` in `typography.css`, same bar and padding, so every quote looks the same), sits after the tags (after the description on changes pages, which have no meta) and ends in a superscript `[*]` linking to `#fn-version`. That footnote is the last item of the post's footnotes: `withVersionFootnote` adds it to markdown-it-footnote's list, built from the plugin's own markup, or starts a footnotes section. `.footnote-item--version` sets its marker to `*` so its text lines up with the numbered notes; it has the usual ↩ back-link. The macros live in `src/_includes/version-notes.njk`, shared with the feed.
 
 | Page | Line | Footnote |
 |---|---|---|
-| Latest | This post was edited on 15 Oct, 2026[*] | [note]. What changed · Original |
+| Latest | This post was edited on 15 Oct, 2026[*] | [note]. What changed · Earlier versions |
 | Middle version | This is an older version of this post, from 13 Oct, 2026[*] | [its note]. What changed · Latest version |
 | Original | This is the original version of this post, from 10 Oct, 2026[*] | Edited on [next version's date]. What changed · Latest version |
 | Changes page | These are the edits made on 15 Oct, 2026[*] | [note]. Red is removed, green is added. Before, the title was ~…~, the description ~…~ and the tags ~…~. Latest version · Previous version |
 
-A missing note reads "Edited on [date].". The "Before, …" sentence lists only what changed (`beforeSentence`). "Previous version" is the diff's "before" side. When more than one version came before the latest, "Original" becomes "Earlier versions", which opens the File menu at its version history (`data-open-versions`; its href, the original, is the no-JS fallback). These are the only link names. Version notes get a full stop unless they end in `.`, `!` or `?` (`sentence`).
+A missing note reads "Edited on [date].". The "Before, …" sentence lists only what changed (`beforeSentence`). "Previous version" is the diff's "before" side. "Earlier versions" opens the File menu at its version history, however many versions there are (`data-open-versions`; its href, the original, is the no-JS fallback). These are the only link names. Version notes get a full stop unless they end in `.`, `!` or `?` (`sentence`).
 
 **Listings** show a revised post's latest version date, marked "(updated)", in place of its original date; the list stays in original-date order.
 
@@ -230,6 +230,10 @@ Defined in `.eleventy.js`:
 | `{% pagebreak %}` | Non-paired | `<div>` grey desk gap between pages |
 
 `callout` and `marginnote` call `md.render()` — Markdown is supported inside them.
+
+**Quotes.** Inside a blockquote a single line break is kept as a line break (a `quote_breaks` core rule in `.eleventy.js`), so lyrics and verse written line by line in the CMS read the same on the page and in the feed; everywhere else markdown-it's `breaks: false` applies. A blank `>` line still starts a new paragraph.
+
+**Anchor targets.** `main [id]` (`typography.css`) gives every id in the page `scroll-margin-top: calc(var(--chrome-h) + var(--space-6))`, so headings, footnotes and the footnote back-links (`#fnref1`, `#fnref-version`) all land below the sticky chrome.
 
 **Paragraph indent.** In `typography.css`, a paragraph's first line is indented 1.5em only when the element right before it is another paragraph (`.doc-body p + p`), with the gap above tightened to match. After a heading, list, quote, code block, rule, figure or table it starts flush. A margin note the script has hidden counts as invisible (`p + .margin-note[hidden] + p`), so a note never breaks the indent on screen; in print the note shows inline and the next paragraph starts flush.
 

@@ -4,6 +4,15 @@ Version bump policy: MAJOR = complete visual redesign, change in site concept, o
 
 ---
 
+## 2026-10-17 (v4.0.1)
+
+- fix: a footnote's ↩ back-link now lands on its marker in the text below the app chrome, instead of hidden under the toolbar. Every anchor on the page does the same.
+- fix: lines in a quote written without a blank line between them now break onto new lines, as they look in the CMS (lyrics, verse). Elsewhere a single line break still joins lines.
+- change: the edit note ("This post was edited on …") has the same bar and padding as every other quote on the page, and in the feed.
+- change: the edit note's footnote always says "Earlier versions" and opens File → Version history, even when a post has only two versions (it used to say "Original" and go to the original).
+
+---
+
 ## 2026-10-16 (v4.0.0)
 
 - add: post versions. A post can now be revised in public. In the CMS, bump **Version** and write a one-line **What changed** in the same save as the first edit. The post's URL always shows the latest version; each earlier version stays readable at `{post}/v1/`, `{post}/v2/`, … and each edit has a "What changed" page (`{post}/v1/changes/`) with additions underlined in green and removals struck out in red.

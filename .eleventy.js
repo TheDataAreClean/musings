@@ -176,6 +176,21 @@ module.exports = function (eleventyConfig) {
     .use(markdownItAttrs)
     .use(markdownItFigures);
 
+  // Inside a quote, a single line break is a line break (lyrics, verse), as
+  // the CMS editor shows it; elsewhere it stays a space (breaks: false)
+  md.core.ruler.push("quote_breaks", (state) => {
+    let depth = 0;
+    for (const token of state.tokens) {
+      if (token.type === "blockquote_open") depth++;
+      else if (token.type === "blockquote_close") depth--;
+      else if (depth && token.type === "inline" && token.children) {
+        for (const child of token.children) {
+          if (child.type === "softbreak") child.type = "hardbreak";
+        }
+      }
+    }
+  });
+
   eleventyConfig.setLibrary("md", md);
 
   // Passthrough copies
