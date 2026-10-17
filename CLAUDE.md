@@ -20,8 +20,8 @@ Never write `{#` anywhere in a `.md` file — not in prose, not in code blocks, 
 **`feed.njk` must have `layout: false`**
 Without it, XML output gets wrapped in the base HTML layout. Always confirm the front matter.
 
-**`.doc-body hr:not(.page-break)` — the `:not` is load-bearing**
-`.doc-body hr` (0-1-1) beats `.page-break` (0-1-0). All `hr` rules in `typography.css` are scoped to `hr:not(.page-break)`. Removing it makes page breaks inherit prose `hr` styles.
+**Page breaks are the `{% pagebreak %}` shortcode**
+It renders `<div class="page-break" role="separator">`; write it on its own line between paragraphs. The `hr` rules in `typography.css` stay scoped to `hr:not(.page-break)` so a hand-written `<hr class="page-break">` still works, but don't use that in content.
 
 **`--chrome-h` must equal the sum of its parts**
 `--chrome-h` = `--titlebar-h + --menubar-h + --toolbar-h + --ruler-h` = 34 + 26 + 32 + 22 = **114px** (92px on mobile, where `--ruler-h` is 0). `scroll-margin-top` on headings depends on this. It does not auto-compute — update it manually when any chrome bar height changes.
@@ -42,7 +42,7 @@ Font, text size, zoom and ¶ marks reset on a new tab or a fresh arrival by desi
 Any new asset directory or file needs a corresponding `addPassthroughCopy` in `.eleventy.js`. Missing entries silently 404 in production.
 
 **The CI "Commit generated content changes" step must stage the whole working tree**
-`npm run build` runs `prebuild` scripts (`convert-webp.js`, `backfill-dates.js`, etc.) that write through the `src/images` symlink; those writes land at the real repo path `images/...`, outside `src/`. The deploy workflow (`.github/workflows/deploy.yml`) used to run `git status`/`git add` scoped to `-- src/` only, so a converted upload landing under `images/` was left unstaged — the auto-commit then hit "cannot pull with rebase: you have unstaged changes" and the push (and deploy) silently failed. Always use unscoped `git status --porcelain` / `git add -A` in that step so it catches generated files no matter where a script writes them.
+Prebuild scripts write through the `src/images` symlink, so their output lands at `images/...`, outside `src/`. Keep `git status --porcelain` / `git add -A` unscoped in `deploy.yml`: a step scoped to `-- src/` once left a converted upload unstaged, and the auto-commit and deploy failed silently.
 
 **New posts default to `draft: false` in Sveltia CMS**
 There is no separate draft pipeline — `draft` only hides a post from listings, tag pages and the feed; the URL still resolves once the file is on `main` (see `APP.md` → Drafts). Any new listing must drop drafts too (`filterDrafts` or the `published` filter): Eleventy's own `collections[tag]` includes them. The `draft` field in `src/admin/config.yml` defaults to `false`, so a new post publishes immediately on save unless you tick Draft first.
@@ -59,11 +59,17 @@ Once `snapshot-versions.js` writes `src/versions/{section}/{stem}/v{n}.md`, that
 **`src/images` is a symlink — Sveltia CMS config must use the real path**
 See `APP.md`'s Passthrough copies section for why `media_folder` in `src/admin/config.yml` must point at `images/uploads`, never `src/images/uploads`.
 
-**og:image generation never *ships* Arial or Georgia directly**
-`scripts/generate-og-images.js` renders each post's `og:image` at build time using Satori, which needs an actual embeddable font file — it has no OS font-fallback to lean on the way a browser does. Arial and Georgia are proprietary; there's no redistributable file for either, so `scripts/og-fonts/` carries **Arimo** (Arial's metric-compatible OFL substitute) and **Gelasio** (Georgia's — *not* Tinos, which is actually a Times New Roman clone and visibly wrong here) as the committed fallback. `resolveFont()` in that script *will* use a real Arial/Georgia `.ttf` if one exists at a known local system path (macOS: `/System/Library/Fonts/Supplemental/`) — that's fine, nothing from those paths is ever committed or shipped, only read at render time to embed glyph outlines. CI (GitHub Actions) has neither installed, so it always falls back to Arimo/Gelasio there. Don't add a real Arial/Georgia `.ttf` to the repo itself — that would actually violate the license. Same reasoning applies to any glyph a chosen font doesn't cover (e.g. the `→` sigil, or `▾` dropdown carets) — draw it as a small inline SVG instead of trusting font fallback.
+**og:image generation never *ships* Arial or Georgia**
+Satori needs a real font file and has no fallback. Never commit an Arial or Georgia `.ttf` (proprietary); `scripts/og-fonts/` carries the OFL substitutes Arimo and Gelasio (not Tinos, a Times clone). A local system copy may be read at render time, never committed. Draw any glyph the font lacks (`→`, `▾`) as inline SVG. Background in `APP.md` → OG images.
 
 **The comment rail lives in `<main>`, never inside `.doc-page`**
 `.doc-page` has `overflow-x: clip`, so anything positioned past the page edge is cut off. `src/js/comments.js` appends the rail to `<main>` (`position: relative` on `.app-canvas > main` in `doc-chrome.css`) at `left: calc(100% + var(--comment-gap))`. It also works in the canvas's own unzoomed coordinates (it divides by `canvas.style.zoom`), which is why it stays aligned under the zoom dropdown. Moving the rail inside the page, or dropping `position: relative` on `main`, clips or misplaces every comment.
+
+**`eleventyComputed` strings autoescape**
+A computed value like `title: "{{ x.data.title }}"` is rendered by Nunjucks, which escapes it, and the template escapes it again: `&` shows as `&amp;`. Add `| safe` inside computed strings (see `changes.njk`, `tags/index.njk`).
+
+**Storage goes through `store` in `base.njk`**
+`sessionStorage` throws when the browser blocks site data, and one uncaught throw stops every chrome control. Use `store.get` / `store.set`, never `sessionStorage` directly.
 
 **`--chrome-h` can't be read from JS**
 It's a `calc()` of other custom properties, so `getComputedStyle(...).getPropertyValue('--chrome-h')` returns the literal string `calc(34px + …)` and `parseFloat` gives `NaN` (which `|| 0` then hides as zero). `comments.js` measures the bottom of `.app-toolbar` and `.app-ruler` instead. Any new script that needs the sticky-chrome offset should do the same.
@@ -89,7 +95,7 @@ When adding a **new npm script**: add it to [COMMANDS.md](COMMANDS.md).
 
 When changing **permalink or slug logic**: update [APP.md](APP.md) — these are URL-stability decisions.
 
-When shipping a **new feature**: add an entry to [CHANGELOG.md](CHANGELOG.md) under UNRELEASED.
+When shipping **any change a reader can see** (feature or fix): add an entry to [CHANGELOG.md](CHANGELOG.md) under UNRELEASED.
 
 When changing **any chrome element height**: recalculate `--chrome-h` and update the token.
 
@@ -98,11 +104,11 @@ When changing **any chrome element height**: recalculate `--chrome-h` and update
 ## Constraints and guardrails
 
 - `--font-ui` is always Arial — do not change
-- `--font-doc` is the only font the JS easter egg touches
+- `--font-doc` is the only font the toolbar's font dropdown changes
 - All chrome is `aria-hidden="true"`
 - `doc-chrome.css` is the only file permitted to hardcode hex colours
 - The site is deliberately unindexed (`robots.txt`, `noindex` meta) — don't change it unless asked
-- No Nunjucks tags (`{% %}`) in content `.md` files except the paired shortcodes (`callout`, `marginnote`)
+- No Nunjucks tags (`{% %}`) in content `.md` files except the shortcodes (`callout`, `marginnote`, `pagebreak`)
 - No `{#` anywhere in `.md` files
 - `atomDate` uses UTC ISO 8601 — do not apply IST to feed timestamps
 - `site.url` in `site.json` must have no trailing slash

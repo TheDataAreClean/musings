@@ -30,7 +30,7 @@ Headings here are the same size and weight as body text. Structure is in the spa
 
 A third-level heading, introduced by `###`. Used for subsections within a section.
 
-### Fourth-level heading
+#### Fourth-level heading
 
 A fourth-level heading, `####`. Use sparingly — if you need four levels of hierarchy in a single document, the document may need restructuring.
 
@@ -61,7 +61,7 @@ A list where items are full sentences should end each sentence with a full stop.
 
 ## Blockquote
 
-A blockquote is for quotation — text that originates elsewhere. It is indented without decoration. The source, if needed, follows as a regular paragraph.
+A blockquote is for quotation — text that originates elsewhere. It sits behind a thin bar on the left, with no quotation marks. The source, if needed, follows as a regular paragraph.
 
 > The test of a first-rate intelligence is the ability to hold two opposed ideas in mind at the same time and still retain the ability to function.
 
@@ -86,7 +86,7 @@ A shell example:
 ```bash
 npm run dev
 # → Watching for changes…
-# → Server at <http://localhost:8080>
+# → Server at <http://localhost:8081>
 ```
 
 Code blocks scroll horizontally if the content is wider than the page. They do not wrap.
@@ -104,17 +104,17 @@ Tables use the standard pipe syntax. Column alignment is set with colons in the 
 | Strikethrough | `~~text~~` | ~~text~~ |
 | Inline code | `code` | `code` |
 | Horizontal rule | `---` | * \* \* |
-| Page break | `<hr class="page-break">` | grey strip |
+| Page break | `pagebreak` shortcode | grey strip |
 
 Tables should be used for genuinely tabular data. If you find yourself merging cells or nesting tables, a list or prose is probably the right tool.
 
-<hr class="page-break">
+{% pagebreak %}
 
 ## Page break
 
 The grey strip above is a page break. It is for long documents that are conceptually divided into pages. It renders as a full-bleed band of the desk colour, with a page counter.
 
-Use `<hr class="page-break">` to insert one. A plain `---` in the body renders as the typographic `* * *` section break, which is lighter.
+Insert one with the `pagebreak` shortcode, on a line of its own between paragraphs. A plain `---` in the body renders as the typographic `* * *` section break, which is lighter.
 
 ***
 

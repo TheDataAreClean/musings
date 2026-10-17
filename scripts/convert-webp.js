@@ -1,4 +1,5 @@
 const sharp = require("sharp");
+const decodeHeic = require("heic-decode");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
@@ -11,6 +12,17 @@ const contentDirs = [
 ];
 const versionsDir = path.join(__dirname, "../src/versions");
 const convertExts = new Set([".jpg", ".jpeg", ".png", ".heic"]);
+
+// sharp's prebuilt binaries can't decode HEIC (no HEVC), so a HEIC upload is
+// decoded by libheif (heic-decode, WebAssembly) first, with its rotation
+// already applied, and handed to sharp as raw pixels
+async function toWebp(src) {
+  if (path.extname(src).toLowerCase() !== ".heic") {
+    return sharp(src).rotate().webp({ quality: 82 }).toBuffer();
+  }
+  const { width, height, data } = await decodeHeic({ buffer: fs.readFileSync(src) });
+  return sharp(Buffer.from(data), { raw: { width, height, channels: 4 } }).webp({ quality: 82 }).toBuffer();
+}
 
 // Snapshots of earlier versions (src/versions/{section}/{stem}/v{n}.md) keep
 // the image paths they were frozen with, so a rename must reach them too
@@ -71,7 +83,7 @@ async function convertAll() {
       const src = path.join(uploadsDir, file);
       let webp;
       try {
-        webp = await sharp(src).rotate().webp({ quality: 82 }).toBuffer();
+        webp = await toWebp(src);
       } catch (err) {
         throw new Error(`convert-webp: could not convert ${file} (${err.message}). Re-upload it as a JPEG or PNG.`);
       }

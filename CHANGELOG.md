@@ -1,11 +1,13 @@
 # CHANGELOG
 
-Version bump policy: MAJOR = complete visual redesign, change in site concept, or a change in how posts work; MINOR = new feature, section, or page type; PATCH = bug fix, design tweak, content or docs update.
+Version bump policy and entry prefixes: see the [release skill](.claude/skills/release/SKILL.md).
 
 ---
 
 ## UNRELEASED
 
+- add: HEIC photos (the iPhone default) can be uploaded; they're converted to WebP like any other image. Until now a HEIC upload stopped the deploy.
+- docs: every doc checked against the code. Fixed what was stale (upload naming, og:image, prebuild count, the `/reference/` quote and heading examples), added rules for computed titles and storage to CLAUDE.md, cut duplication, and made `{% pagebreak %}` the one way to write a page break.
 - fix: with the version history open, moving the pointer across File or Help no longer closes it and opens that menu.
 - fix: a revised post's titlebar never shows "Edited" or "Version of" with no date; it falls back to the save state.
 - fix: "Earlier versions" in the footnote follows its link if the titlebar has no version menu, instead of doing nothing.
@@ -13,7 +15,7 @@ Version bump policy: MAJOR = complete visual redesign, change in site concept, o
 - fix: the link preview image of a revised post shows "Edited [date] ▾" in its titlebar, like the page.
 - fix: an upload gets its final file name on the build that converts it, instead of being renamed again on the next build (which also left a second auto-commit). The same image uploaded twice shares one WebP file.
 - fix: earlier versions of a post keep their images when an upload is renamed (for example after a slug change).
-- fix: an image that can't be converted (such as HEIC) stops the build with a message naming the file.
+- fix: an image that can't be converted (a damaged file) stops the build with a message naming the file.
 - fix: the font, size, zoom and menus still work when the browser blocks site storage.
 
 ---

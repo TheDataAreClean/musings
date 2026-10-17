@@ -6,10 +6,14 @@ Personal blog at [musings.thedataareclean.com](https://musings.thedataareclean.c
 
 ## Quickstart
 
+Needs Node 24 (what CI uses).
+
 ```sh
 npm install
 npm run dev      # dev server → http://localhost:8081
 ```
+
+Posts are written in Sveltia CMS at [/admin/](https://musings.thedataareclean.com/admin/) (sign in with GitHub) or as Markdown files in `src/`. Every save to `main` deploys, so a new post is live within a minute unless it's marked Draft.
 
 Full command reference: [COMMANDS.md](COMMANDS.md)
 
@@ -32,8 +36,7 @@ src/              Content, templates, CSS, JS, static assets
   admin/          Sveltia CMS entry point + config
 scripts/          Prebuild scripts — dates, WebP, permalinks, version snapshots, og:images
 .eleventy.js      Eleventy config — collections, filters, shortcodes
-scripts/          Prebuild scripts (dates, WebP, permalinks, og:images)
-images/           Uploads (served via the src/images symlink)
+images/           Uploads, and generated og:images in images/og/ (gitignored)
 .github/          Deploy workflow
 ```
 

@@ -2,13 +2,15 @@
 
 Architecture and technical reference. Claude's operating manual lives in [CLAUDE.md](CLAUDE.md).
 
+**Contents:** [Architecture](#architecture-at-a-glance) · [Stack](#stack) · [Content collections](#content-collections) · [Post versions](#post-versions) · [Eleventy config](#eleventy-config-eleventyjs) · [Templates](#template-hierarchy) · [CSS](#css-architecture) · [Shortcodes](#shortcodes) · [Markdown](#markdown-extensions) · [Inline JS](#inline-js-basenjk-script-block) · [Infrastructure](#infrastructure) · [Dependencies](#dependencies)
+
 ---
 
 ## Architecture at a glance
 
 Static site generator (Eleventy 3.x) → HTML + CSS + JS → GitHub Pages.
 
-No bundler. Eleventy templates produce static HTML; all CSS and JS are served as-is. Four Node `prebuild` scripts run before each build (dates, WebP, permalinks, og:images — see Deployment).
+No bundler. Eleventy templates produce static HTML; all CSS and JS are served as-is. Five Node `prebuild` scripts run before each build (dates, WebP, permalinks, version snapshots, og:images — see Deployment).
 
 **Author/deploy flow:**
 1. Author writes `.md` in `src/` (directly, or via Sveltia CMS at `/admin/`)
@@ -47,42 +49,20 @@ No bundler. Eleventy templates produce static HTML; all CSS and JS are served as
 
 **Front matter per type:**
 
-Fields: `title`, `description`, `date`, `tags`, `slug`, `permalink` (script-managed), `draft`, and optional `updated` (tie-break in the sort above). Order doesn't matter; Sveltia CMS writes `title, slug, date, draft, description, tags`.
+Fields: `title`, `description`, `date`, `tags`, `slug`, `permalink` (script-managed), `draft`, and optional `updated` (tie-break in the sort above). Order doesn't matter; Sveltia CMS writes `title, slug, date, draft, description, tags`. All three sections take the same fields:
 
-Ideas (long-form):
 ```yaml
-title: The title
-description: One sentence for OG, meta, and article subtitle.
-date: 2026-03-26
+title: The title                 # snaps: the place or subject
+description: One sentence — shown as subtitle and used for OG meta.
+date: 2026-03-26                 # a bare date gets its time from git (backfill-dates.js)
 tags:
   - design
-slug: optional-custom-url-slug   # omit to use filename
+slug: optional-custom-url-slug   # omit to use the filename
 draft: true                      # omit to publish
 ```
 
-Notes (short observations):
-```yaml
-title: The title
-description: One sentence — shown as subtitle and used for OG meta.
-date: 2026-03-26
-tags:
-  - personal
-slug: optional-custom-url-slug
-draft: true
-```
-
-Snaps (photography):
-```yaml
-title: Place or subject
-description: One line of context.
-date: 2026-03-26
-tags:
-  - luru
-slug: optional-custom-url-slug
-draft: true
-```
-
 **Drafts.** `draft: true` keeps a post off the home page, section lists, tag pages, the feed and `/posts.json` (`filterDrafts` and the `published` filter in `.eleventy.js`; `generate-og-images.js` leaves drafts out of tag counts). The post page itself is still built, so its URL works once the file is on `main`. Under `npm run dev` drafts show everywhere, so you can preview them in lists.
+
 Optional on any post, once it has been revised (see Post versions below):
 ```yaml
 version: 2                        # bump to publish a new version
@@ -90,7 +70,7 @@ versionNote: One line on what changed.
 versionDate: 2026-10-20T…         # script-managed, do not set by hand
 ```
 
-Layout is inherited from directory data files — do not repeat it in front matter. `tags` beyond the collection tag (`ideas`/`notes`/`snaps`, also inherited) are freeform, e.g. `personal`, `tech`, `design`.
+Layout is inherited from directory data files (`src/ideas/ideas.json`, `src/notes/notes.json`, `src/snaps/snaps.json`, and `src/versions/versions.json` for snapshots) — do not repeat it in front matter. `tags` beyond the collection tag (`ideas`/`notes`/`snaps`, also inherited) are freeform, e.g. `personal`, `tech`, `design`.
 
 ---
 
@@ -131,11 +111,14 @@ A missing note reads "Edited on [date].". The "Before, …" sentence lists only 
 ## Eleventy config (`.eleventy.js`)
 
 - `markdownTemplateEngine: "njk"` — Nunjucks runs on all `.md` files before Markdown
-- `isoDate` filter → `YYYY-MM-DD` in IST (`Asia/Kolkata`)
-- `readableDate` filter → human-readable in IST
-- `atomDate` filter → full UTC ISO 8601 (RFC 3339, for Atom feed — do not apply IST)
+- `sortPosts` shared function handles all four collection sorts; `filterDrafts` drops drafts, except under `npm run dev`
+- `quote_breaks` core rule keeps single line breaks inside quotes (see Shortcodes → Quotes)
+- Under `npm run dev`, `snapshot-versions.js` runs before each rebuild (it's a prebuild step otherwise)
+- `assetVersion` global → the per-build `?v=` stamp on CSS/JS links; an `eleventy.after` hook stamps the `@import`s in `main.css`
 - `buildTime` global → feed fallback timestamp
-- `sortPosts` shared function handles all four collection sorts
+- Filters and shortcodes: see the tables below
+
+Global data in `src/_data/`: `site.json` (title, author, URL, chrome labels), `tokens.js` (parses `tokens.css` for `/style/`), `versions.js` (post version history, see Post versions).
 
 ---
 
@@ -227,7 +210,7 @@ Defined in `.eleventy.js`:
 | `{% marginnote %}…{% endmarginnote %}` | Paired | `<aside class="margin-note">` — a document comment, anchored to the paragraph before it |
 | `{% marginnote "phrase" %}…{% endmarginnote %}` | Paired | Same, anchored to that phrase (highlighted) in the paragraph before it |
 | `{% marginnote "phrase", "2026-03-01" %}…{% endmarginnote %}` | Paired | Same, with the card dated that day instead of the post's date (use `""` for the phrase to anchor the whole paragraph) |
-| `{% pagebreak %}` | Non-paired | `<div>` grey desk gap between pages |
+| `{% pagebreak %}` | Non-paired | `<div class="page-break">`: a grey desk gap between pages. On its own line between paragraphs |
 
 `callout` and `marginnote` call `md.render()` — Markdown is supported inside them.
 
@@ -247,8 +230,7 @@ Defined in `.eleventy.js`:
 - **No JS, print, feed readers**: the original `<aside>` shows inline as a boxed card. The script sets `hidden` on each aside it built a card for, numbers it (`data-c`) and moves it after the block it anchors to; `print.css` shows those again after their text, numbered to match the badge on the highlighted phrase, and hides the rail and sheet. Without JS the note stays where the author put it, after its block. In the feed, the `rssContent` filter rewrites each note as a `<blockquote>` with an inline-styled "Note on “phrase” · date" label, since feed readers drop the site CSS.
 - Comment cards are built from the aside's HTML, so the aside must contain everything (header + body). Cards live outside `.doc-body`, so lists, inline code and links inside a note are styled by extra `.comment` selectors in `typography.css`. `base.njk` loads the script (with `defer`) only on pages whose rendered content contains a margin note. `--chrome-h` is a `calc()` and can't be read as a number from JS, so the sheet's scroll-into-view measures the sticky toolbar and ruler instead.
 
-Section break: `---` in body renders as `* * *`.
-Page break: `<hr class="page-break">` renders as a grey desk gap.
+Section break: `---` in body renders as `* * *`. Page break: the `pagebreak` shortcode above.
 
 **Template filters (`.eleventy.js`):**
 
@@ -300,7 +282,7 @@ All code in an IIFE — no globals leaked.
 | ¶ toggle | Adds `html.show-marks` — pilcrow after each paragraph, list item and heading, "Page break" label on breaks; never printed; persists `musings-marks` |
 | File menu | New (random post from `/posts.json`, built by `src/posts.njk` from `collections.feed` and fetched on click), Open… (`/`), Copy link (status bar confirms), Subscribe (`/feed.xml`), Print / PDF, Close tab. Shortcut hints are labels only (⌘ becomes Ctrl+ off Mac) |
 | Help menu | Zoom in/out/actual size (same as the keys), About |
-| Menu bar | Only File and Help open; once one is open, hovering the other switches. Click outside or Escape closes |
+| Menu bar | Only File and Help open; once one is open, hovering another menu in the same bar switches (never into or out of the titlebar's version menu). Click outside or Escape closes |
 | Status bar | "Page x of y" counts `.page-break`s above mid-screen on scroll; words · read time from `data-words`/`data-readtime` on posts (same filters as the meta line); transient messages |
 | Stoplight dot | `window.close()` — browser-blocked for normal tabs, silent no-op |
 | Titlebar dimming | `setActive` on `blur`, `focus`, `visibilitychange` — all three needed |
@@ -308,7 +290,7 @@ All code in an IIFE — no globals leaked.
 
 `initDropdown` returns `{ setValue }` — used by zoom to sync label with keyboard shortcuts.
 
-Session persistence: `sessionStorage` only, and only within one visit. On load, a fresh arrival (`navigation.type` is `navigate` and the referrer is not this site: typed URL, bookmark, external link) clears `musings-font`, `musings-size`, `musings-zoom` and `musings-marks`. Moving between pages, reload and back/forward keep them; a new tab starts fresh as before.
+Session persistence: `sessionStorage` only, and only within one visit. On load, a fresh arrival (`navigation.type` is `navigate` and the referrer is not this site: typed URL, bookmark, external link) clears `musings-font`, `musings-size`, `musings-zoom` and `musings-marks`. Moving between pages, reload and back/forward keep them; a new tab starts fresh as before. All reads and writes go through a small `store` wrapper that swallows the error `sessionStorage` throws when the browser blocks site data, so the controls still work and simply don't persist.
 
 **Other scripts.** Margin-note comments live in `src/js/comments.js`, not in this block: `base.njk` loads it (`defer`) and adds a small head script that sets `html.comments-pending`, only on pages whose content contains a margin note. See Shortcodes → Margin notes. The comment rail listens for the zoom above by watching `.app-canvas`'s `style` attribute, so the zoom code needs no hook for it.
 
@@ -322,7 +304,7 @@ Session persistence: `sessionStorage` only, and only within one visit. On load, 
 
 `npm run build` runs `prebuild` automatically, which chains five scripts:
 1. `backfill-dates.js` — fills git creation time into date-only front matter
-2. `convert-webp.js` — converts JPEG/PNG/HEIC in `src/images/uploads/` to WebP (quality 82, auto-rotates via EXIF), deletes the original, then updates all markdown references in content files from the old extension to `.webp`. Existing `.webp` files are skipped.
+2. `convert-webp.js` — converts JPEG/PNG/HEIC in `src/images/uploads/` to WebP (quality 82, auto-rotated), names it `{date}-{slug}-{hash}.webp` after the post that uses it (hash of the WebP's own bytes, so the same image uploaded twice shares one file), deletes the original and rewrites the references. Existing WebP files are renamed when their post's slug changes. References are rewritten in posts and in `src/versions/` snapshots. HEIC is decoded by `heic-decode` (libheif in WebAssembly), since sharp's prebuilt binaries can't read it; a large iPhone photo takes a few seconds. A file that can't be converted stops the build with its name.
 3. `backfill-permalink.js` — writes `permalink` to front matter for any post with a `slug` field
 4. `snapshot-versions.js` — saves earlier versions of revised posts to `src/versions/` (see Post versions). Must run after step 3, since snapshot URLs follow the post's `permalink`.
 5. `generate-og-images.js` — renders each post's `og:image` (see below). Must run after step 3, since it needs the final `permalink`.
@@ -362,15 +344,15 @@ Post pages' `og:title` is likewise the bare title — the blog name lives in `og
 
 ### OG images
 
-`scripts/generate-og-images.js` renders an `og:image` at build time for every page type — a 1200×630 screenshot of the site's own doc-chrome (titlebar showing the site domain, title, description, tags), not a generic redesigned social card. It's a real render (Satori → SVG → `@resvg/resvg-js` → PNG), not a screenshot tool — no headless browser dependency.
+`scripts/generate-og-images.js` renders an `og:image` at build time for every page type — a 1200×630 screenshot of the site's own doc-chrome (titlebar showing the site domain, and "Edited [date] ▾" on a revised post; title, description, tags), not a generic redesigned social card. It's a real render (Satori → SVG → `@resvg/resvg-js` → PNG), not a screenshot tool — no headless browser dependency.
 
 Covers: every post, the home page, the three section indices (`/ideas/`, `/notes/`, `/snaps/` — with their real `postSigil`), every tag page (`/tags/{tag}/` — title highlighted like the real page's `<mark>{{ tag }}</mark>`, description a live-computed `"N posts tagged as {tag}."`), About, the standalone `/reference/` and `/style/` pages, and 404. Deliberately not covered: the feed (XML, no meta tags). 404's permalink is the one exception to the URL-mirrors-path rule below — its `page.url` is `/404.html`, so `ogImageSlug` strips a trailing `.html` too, or it'd collide with the `.png` this script appends.
 
 - Output: `images/og/<slug>.png`, where `<slug>` comes from `ogImageSlug(page.url)` — mirrors the page's own URL hierarchy rather than flattening it (`/ideas/2026-08-15-grandmother/` → `ideas/2026-08-15-grandmother`, `/tags/family/` → `tags/family`, `/` → `home`), so posts/tags land in their own subfolder (`images/og/ideas/`, `images/og/tags/`, …) instead of one flat directory. A section index (`/ideas/`) sits as `images/og/ideas.png`, right beside its own `images/og/ideas/` subfolder of posts — a file and a directory of the same name coexist fine, no collision. `images/og/` is gitignored — regenerated every build, same as `_site/`.
 - `ogImageSlug` and `ogImageExists` are exported from `generate-og-images.js` and required directly by `.eleventy.js` (registered as filters) — `base.njk` gates its `<meta property="og:image">` block on `ogImageExists`, not on page type (`ogType`), so any page this script covers gets the tags automatically and a page it doesn't cover never emits a broken reference. `og:type` itself (`article` vs `website`) is still driven by `ogType` as before — the two are deliberately decoupled.
-- Skips regenerating a page's image if its PNG is already newer than that page's one source file (post `.md`, `index.njk`, `about.md`, `reference.md`, `style.njk`) — same caching pattern as `convert-webp.js`. Tag pages have no single source file (their content depends on every post carrying that tag) and always regenerate.
+- Skips regenerating a page's image if its PNG is already newer than that page's one source file (post `.md`, `index.njk`, `about.md`, `reference.md`, `style.njk`). Tag pages have no single source file (their content depends on every post carrying that tag) and always regenerate. The cache doesn't notice changes to the generator, fonts or tokens: after one, delete `images/og/` locally (CI always starts without it).
 - Descriptions are pulled from each page's own real content, not invented copy: per-post `description`, each section index's own on-page blurb (`Things felt deeply.` etc., front matter), About's own blurb, and tag pages' live post count.
-- Font: reads `--font-doc` from `tokens.css` at generation time, so the card can't silently drift from whichever font the site actually defaults to. Uses the real Arial/Georgia `.ttf` when one is installed locally (pixel-perfect); falls back to the committed OFL substitutes, Arimo/Gelasio, when it isn't (always the case in CI). See `CLAUDE.md`'s trap entry.
+- Font: reads `--font-doc` from `tokens.css` at generation time, so the card can't silently drift from whichever font the site actually defaults to. Uses the real Arial/Georgia `.ttf` when one is installed locally (pixel-perfect); falls back to the committed OFL substitutes, Arimo/Gelasio, when it isn't (always the case in CI). Satori has no OS font fallback, so it needs a real file; Arial and Georgia have no redistributable one. `resolveFont()` reads a local system copy if present (macOS: `/System/Library/Fonts/Supplemental/`) only to embed glyph outlines at render time; nothing from there is committed. Gelasio is Georgia's metric match; Tinos is a Times New Roman clone and looks wrong here. See `CLAUDE.md`'s trap entry.
 - Chrome (the titlebar) is drawn at its real fixed pixel size, never scaled — content (title/description/tags) is scaled uniformly by a zoom factor matching one of the site's own zoom-dropdown rungs (200%). This mirrors the real site: chrome lives outside `.app-canvas` and never zooms with content.
 
 ---
@@ -385,9 +367,10 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 | `@resvg/resvg-js` | Rasterizes the SVG `satori` produces into the final og:image PNG |
 | `diff` | Word-level diff for post-version changes pages (`htmlDiff` filter) |
 | `gray-matter` | Front-matter parsing in `generate-og-images.js`, `snapshot-versions.js` and `_data/versions.js` |
+| `heic-decode` | Decodes HEIC uploads for `convert-webp.js` (sharp can't) |
 | `markdown-it` | Markdown parser (configured in `.eleventy.js`) |
 | `markdown-it-anchor` | Heading anchors |
 | `markdown-it-attrs` | Custom attributes |
 | `markdown-it-footnote` | Footnotes |
 | `satori` | Lays out each post's og:image (title/description/tags) as SVG |
-| `sharp` | Image conversion — JPEG/PNG/HEIC → WebP in `convert-webp.js` |
+| `sharp` | Image conversion — JPEG/PNG (and decoded HEIC) → WebP in `convert-webp.js` |
