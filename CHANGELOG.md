@@ -4,7 +4,7 @@ Version bump policy: MAJOR = complete visual redesign, change in site concept, o
 
 ---
 
-## UNRELEASED
+## 2026-10-17 (v4.1.0)
 
 - add: on a revised post, the top right of the titlebar shows "Edited 16 Oct, 2026 ▾" in place of "All changes saved" ("Version of …" on an earlier version), and opens the version history. It shows from two versions up. It replaces File → Version history, and the footnote's "Earlier versions" now opens it.
 
