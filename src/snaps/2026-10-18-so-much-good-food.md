@@ -1,15 +1,15 @@
 ---
 title: So much good food!
 slug: food
-permalink: /snaps/2026-10-18-food/
 date: 2026-10-18T22:13:00+05:30
-draft: true
+draft: false
 description: The perks of marrying a chef.
 tags:
   - family
   - life
 version: 1
 versionNote: ''
+permalink: /snaps/2026-10-18-food/
 ---
 
 The last couple of weeks have just been an extravaganza of great food by [Shaoni](https://sundaytable.in/) at home for friends, family and her customers. I want to remember all of this for a very long time.
