@@ -23,19 +23,19 @@ collections:
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Saving publishes straight away, so tick this first if the post isn't ready. Drafts stay off the home page, tag pages and feed, but the link still works." }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
       - { name: title, label: Title, widget: string, hint: "The post's headline." }
-      - { name: description, label: Description, widget: text, required: false, hint: "One sentence, shown under the title and in link previews." }
+      - { name: description, label: Description, widget: text, required: false, hint: "One sentence. Shown under the title and in link previews." }
       - name: tags
         label: Tags
         widget: list
         required: false
-        hint: "Any extra tags, e.g. design, tech, personal. 'ideas' is added for you."
+        hint: "Extra tags, e.g. design, tech, personal. 'ideas' is automatic."
       - { name: body, label: Body, widget: markdown, hint: "Write the post here." }
-      - { name: slug, label: Slug, widget: string, required: false, hint: "Leave blank to build the URL from the title. To set your own, use lowercase words joined by hyphens." }
+      - { name: slug, label: Slug, widget: string, required: false, hint: "Optional. Blank uses the title. Lowercase, hyphens only." }
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm", hint: "Shown on the post and used to sort it." }
-      - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Editing a published post? Raise this by 1 in the same save as your first change, and the old version stays readable from the version menu on the post. Changes saved without raising it go into the current version." }
-      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version. Shown in the post's edit note and in the feed." }
+      - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Raise by 1 in the same save as your first edit to keep the old version." }
+      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version." }
 
   - name: notes
     label: Notes
@@ -44,19 +44,19 @@ collections:
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Saving publishes straight away, so tick this first if the post isn't ready. Drafts stay off the home page, tag pages and feed, but the link still works." }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
       - { name: title, label: Title, widget: string, hint: "The post's headline." }
-      - { name: description, label: Description, widget: text, required: false, hint: "One sentence, shown under the title and in link previews." }
+      - { name: description, label: Description, widget: text, required: false, hint: "One sentence. Shown under the title and in link previews." }
       - name: tags
         label: Tags
         widget: list
         required: false
-        hint: "Any extra tags, e.g. personal, tech, create. 'notes' is added for you."
+        hint: "Extra tags, e.g. personal, tech, create. 'notes' is automatic."
       - { name: body, label: Body, widget: markdown, hint: "Write the post here." }
-      - { name: slug, label: Slug, widget: string, required: false, hint: "Leave blank to build the URL from the title. To set your own, use lowercase words joined by hyphens." }
+      - { name: slug, label: Slug, widget: string, required: false, hint: "Optional. Blank uses the title. Lowercase, hyphens only." }
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm", hint: "Shown on the post and used to sort it." }
-      - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Editing a published post? Raise this by 1 in the same save as your first change, and the old version stays readable from the version menu on the post. Changes saved without raising it go into the current version." }
-      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version. Shown in the post's edit note and in the feed." }
+      - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Raise by 1 in the same save as your first edit to keep the old version." }
+      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version." }
 
   - name: snaps
     label: Snaps
@@ -65,16 +65,16 @@ collections:
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Saving publishes straight away, so tick this first if the post isn't ready. Drafts stay off the home page, tag pages and feed, but the link still works." }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
       - { name: title, label: Title, widget: string, hint: "The post's headline." }
-      - { name: description, label: Description, widget: text, required: false, hint: "One line of context, shown under the title and in link previews." }
+      - { name: description, label: Description, widget: text, required: false, hint: "One line of context." }
       - name: tags
         label: Tags
         widget: list
         required: false
-        hint: "Any extra tags, e.g. luru, family, street. 'snaps' is added for you."
-      - { name: body, label: Body, widget: markdown, hint: "Add your photo with the image button, then any caption below it." }
-      - { name: slug, label: Slug, widget: string, required: false, hint: "Leave blank to build the URL from the title. To set your own, use lowercase words joined by hyphens." }
+        hint: "Extra tags, e.g. luru, family, street. 'snaps' is automatic."
+      - { name: body, label: Body, widget: markdown, hint: "Add the photo, then any caption." }
+      - { name: slug, label: Slug, widget: string, required: false, hint: "Optional. Blank uses the title. Lowercase, hyphens only." }
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm", hint: "Shown on the post and used to sort it." }
-      - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Editing a published post? Raise this by 1 in the same save as your first change, and the old version stays readable from the version menu on the post. Changes saved without raising it go into the current version." }
-      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version. Shown in the post's edit note and in the feed." }
+      - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Raise by 1 in the same save as your first edit to keep the old version." }
+      - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version." }
