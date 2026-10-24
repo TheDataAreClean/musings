@@ -12,7 +12,7 @@ versionNote: ''
 permalink: /notes/2026-10-24-name/
 ---
 
-# Part #1 - Plurality
+# Part #1: Plurality
 
 When I say the word “**data**”, what comes to your mind?
 
@@ -28,7 +28,7 @@ There is also this strip about the same topic from _[PhD Comics](https://phdcomi
 
 ***
 
-# Part #2 - Insanity
+# Part #2: Insanity
 
 “Does this job have analytics?”
 
