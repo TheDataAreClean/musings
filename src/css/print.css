@@ -100,9 +100,10 @@
      doesn't spill its last line onto a near-empty one */
   .doc-body hr:not(.page-break) { margin: var(--space-6) 0; }
 
-  /* Where the page came from — printed at the end, hidden on screen */
-  .print-source {
-    display: block; /* beats the [hidden] the page ships with */
+  /* Where the page came from — printed at the end (doc.njk's data-source) */
+  .doc-layout__content::after {
+    content: attr(data-source);
+    display: block;
     break-before: avoid;
     margin-top: var(--space-6);
     padding-top: var(--space-2);

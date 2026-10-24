@@ -1,31 +1,38 @@
 {
   "name": "musings",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "eleventy --serve --watch --port=8081",
     "prebuild": "node scripts/backfill-dates.js && node scripts/convert-webp.js && node scripts/backfill-permalink.js && node scripts/snapshot-versions.js && node scripts/generate-og-images.js",
     "build": "eleventy",
+    "postbuild": "node scripts/check-readers.js",
     "clean": "rm -rf _site",
     "webp": "node scripts/convert-webp.js",
     "backfill": "node scripts/backfill-dates.js",
     "ogimages": "node scripts/generate-og-images.js",
-    "versions": "node scripts/snapshot-versions.js"
+    "versions": "node scripts/snapshot-versions.js",
+    "check:readers": "node scripts/check-readers.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@11ty/eleventy": "^3.1.5",
+    "@extractus/article-extractor": "^9.0.1",
+    "@mozilla/readability": "^0.6.0",
+    "@postlight/parser": "^2.2.3",
     "@resvg/resvg-js": "^2.6.2",
     "diff": "^8.0.4",
     "gray-matter": "^4.0.3",
     "heic-decode": "^2.1.0",
+    "jsdom": "^29.1.1",
     "markdown-it": "^14.1.1",
     "markdown-it-anchor": "^9.2.0",
     "markdown-it-attrs": "^4.3.1",
     "markdown-it-footnote": "^4.0.0",
+    "microformats-parser": "^2.0.6",
     "satori": "^0.33.4",
     "sharp": "^0.34.5"
   }

@@ -14,6 +14,7 @@
   <meta property="og:title" content="{% if title and title != "Home" %}{{ title }}{% else %}{{ site.title }}{% endif %}">
   <meta property="og:description" content="{{ description or site.description }}">
   <meta property="og:type" content="{{ ogType or 'website' }}">
+  {% if ogType == 'article' and date and not hideMeta %}<meta property="article:published_time" content="{{ date | isoDate }}">{% endif %}
   <meta property="og:url" content="{{ site.url }}{{ page.url }}">
   <meta property="og:site_name" content="{{ site.title }}">
   {% set ogImageSlugValue = canonicalUrl | ogImageSlug %}
@@ -34,6 +35,26 @@
   <meta name="theme-color" content="#f0f0f0">
   <link rel="canonical" href="{{ site.url }}{{ canonicalUrl }}">
   <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="/feed.xml">
+  {% if ogType == 'article' and date and not hideMeta %}
+  {# The post's facts for apps that read structured data instead of guessing
+     from the page (Readability takes title, author, summary and date from
+     here). doc.njk marks the same up as an h-entry for IndieWeb readers. #}
+  {% set ld = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": title,
+    "description": description or site.description,
+    "datePublished": date | isoDate,
+    "dateModified": (vinfo.latest.date if vinfo else date) | isoDate,
+    "author": { "@type": "Person", "name": site.author, "url": site.url + "/about/" },
+    "publisher": { "@type": "Person", "name": site.author },
+    "url": site.url + canonicalUrl,
+    "mainEntityOfPage": site.url + canonicalUrl,
+    "inLanguage": site.lang,
+    "keywords": (postTags or tags) | collectionTags
+  } %}
+  <script type="application/ld+json">{{ ld | dump | replace("<", "\\u003c") | safe }}</script>
+  {% endif %}
   {# Favicon stack: ICO for bookmark managers/RSS readers, SVG for modern browsers,
      apple-touch-icon for iOS Safari home screen, manifest for Android Chrome.
      All four are passthrough-copied from src/ — see .eleventy.js. #}
@@ -399,8 +420,9 @@
     }
     updatePage();
 
+    // An image-only snap has no words; show nothing rather than "0 words"
     var post = document.querySelector('.doc-page[data-words]');
-    if (post) {
+    if (post && Number(post.dataset.words)) {
       var words = document.querySelector('.app-statusbar__words');
       words.textContent = Number(post.dataset.words).toLocaleString('en-GB') + ' words · ' +
         post.dataset.readtime + ' min read';
