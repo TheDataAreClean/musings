@@ -10,15 +10,19 @@ ogType: article
 {% if date %}{% set words = content | wordcount %}{% set readtime = content | readtime %}{% endif %}
 <article class="doc-page{% if not hidePostNav %} doc-page--with-nav{% endif %}"{% if date %} data-words="{{ words }}" data-readtime="{{ readtime }}"{% endif %}>
 
-  {# The title, nav, description, meta and tags are the page's header, not
-     its content: reader views and feed apps that scrape the page (Readability
-     and the like) drop a <header> and a heading that matches the title, so
-     keep them in here and keep the title an <h1>. #}
-  <header class="doc-header">
+  {# Reader views and apps that pull a post from its page (Reeder, Safari
+     Reader, blogrolls) should show what the feed shows: the description, then
+     the body. Extractors drop a heading that repeats the title and every
+     <footer>, on every pass, so the title is an <h1> and the nav and the
+     meta/tags lines sit in footers (display: contents, so the layout doesn't
+     change). Not a <header>: it can't hold a footer, and its class must not
+     contain "header", which Readability's first pass strips with the
+     description inside. #}
+  <div class="doc-head">
 
   <h1 class="doc-title">{{ title }}</h1>
 
-  {% set navRss = true %}{% include "nav.njk" %}
+  <footer class="doc-head__nav">{% set navRss = true %}{% include "nav.njk" %}</footer>
 
   {% if description %}<p class="doc-description">{{ description }}</p>{% endif %}
 
@@ -35,6 +39,7 @@ ogType: article
   {% endif %}
 
   {% if not hideMeta %}
+  <footer class="doc-head__info">
   <p class="doc-meta">
     {% if date %}
       <time datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
@@ -48,9 +53,10 @@ ogType: article
     {% for tag in shownTags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | tagSlug }}/">{{ tag }}</a>{% endfor %}
   </p>
   {% endif %}
+  </footer>
   {% endif %}
 
-  </header>
+  </div>
 
   {% if vinfo %}
   {# The version line and its footnote are the document's only version note;
@@ -92,6 +98,7 @@ ogType: article
       </div>
 
       {% if not hidePostNav %}
+      <footer class="doc-foot">
       <nav class="post-nav" aria-label="Post navigation">
         <div class="post-nav__prev">
           <a href="{{ sectionUrl }}">← More {{ sectionLabel }}</a>
@@ -100,6 +107,7 @@ ogType: article
           <a href="/">All posts →</a>
         </div>
       </nav>
+      </footer>
       {% endif %}
     </div>
 

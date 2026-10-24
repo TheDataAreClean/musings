@@ -507,6 +507,14 @@ a.post-tag:hover { text-decoration: none; }
 
 /* Pin the post nav to the bottom of the page on short posts; on long posts
    it simply follows the content. Flex chain: page → layout → content. */
+/* Footers around the nav, meta and post nav are there for reader views
+   (doc.njk); they take no box, so the page lays out as if they weren't there */
+.doc-head__nav,
+.doc-head__info,
+.doc-foot {
+  display: contents;
+}
+
 .doc-page--with-nav {
   display: flex;
   flex-direction: column;
@@ -553,14 +561,14 @@ a.post-tag:hover { text-decoration: none; }
   margin-bottom: var(--space-6);
 }
 
-/* The meta and tags lines close the .doc-header (doc.njk) */
-.doc-header:has(+ .version-line) > .doc-meta:last-child,
-.doc-header:has(+ .version-line) > .doc-tags:last-child {
+/* The meta and tags lines close the .doc-head (doc.njk) */
+.doc-head:has(+ .version-line) .doc-meta:last-child,
+.doc-head:has(+ .version-line) .doc-tags:last-child {
   margin-bottom: var(--space-4);
 }
 
 /* On changes pages it follows the description, which sits tight (space-2) */
-.doc-header:has(> .doc-description:last-child) + .version-line {
+.doc-head:has(> .doc-description:last-child) + .version-line {
   margin-top: var(--space-4);
 }
 
