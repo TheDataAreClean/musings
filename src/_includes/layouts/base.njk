@@ -400,8 +400,9 @@
     }
     updatePage();
 
+    // An image-only snap has no words; show nothing rather than "0 words"
     var post = document.querySelector('.doc-page[data-words]');
-    if (post) {
+    if (post && Number(post.dataset.words)) {
       var words = document.querySelector('.app-statusbar__words');
       words.textContent = Number(post.dataset.words).toLocaleString('en-GB') + ' words · ' +
         post.dataset.readtime + ' min read';

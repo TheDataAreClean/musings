@@ -81,10 +81,10 @@ It's a `calc()` of other custom properties, so `getComputedStyle(...).getPropert
 The print footer in `print.css` sets its font and colour on `@page` with literal values (`8pt Arial…`, `dimgray` for `--color-muted`) because margin boxes don't inherit `:root` variables. The three empty `@top-*` boxes are load-bearing: they claim the top margin so Chromium doesn't print its own date and title there when "Headers and footers" is ticked. Safari and Firefox ignore margin boxes and print their own.
 
 **Margin notes go *after* their paragraph, and must not break the indent**
-Write `{% marginnote %}` directly after the paragraph it belongs to; `comments.js` looks for the phrase in the block before the note. The hidden `<aside>` stays between paragraphs, so the indent rule in `typography.css` has to see past it (`p + .margin-note[hidden] + p`). Any new element hidden between paragraphs needs the same treatment.
+Write `{% marginnote %}` directly after the paragraph it belongs to; `comments.js` looks for the phrase in the block before the note. The hidden note stays between paragraphs, so the indent rule in `typography.css` has to see past it (`p + .margin-note[hidden] + p`). Any new element hidden between paragraphs needs the same treatment.
 
 **A margin note must stay readable without the script**
-The shortcode renders a plain inline `<aside>`; the script only *hides* the ones it built a card for, via the `hidden` attribute, so a note that couldn't be anchored stays visible. `base.njk` also sets `html.comments-pending` in the head to stop a flash before the script runs — a 3s timer clears it if the script never loads. `print.css` re-shows hidden notes with `.margin-note[hidden] { display: block }`. If you change any of these, keep the guarantee: no JS, print and feed readers all show every note inline.
+The shortcode renders a plain inline `<div class="margin-note" role="note">` (not an `<aside>`: reader views strip those); the script only *hides* the ones it built a card for, via the `hidden` attribute, so a note that couldn't be anchored stays visible. `base.njk` also sets `html.comments-pending` in the head to stop a flash before the script runs — a 3s timer clears it if the script never loads. `print.css` re-shows hidden notes with `.margin-note[hidden] { display: block }`. If you change any of these, keep the guarantee: no JS, print and feed readers all show every note inline.
 
 ---
 

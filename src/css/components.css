@@ -52,9 +52,9 @@
 
 /* --------------------------------------------------------------------------
    Margin notes → document comments
-   Base: the <aside> is a plain inline card (no JS, print, feed readers).
+   Base: the .margin-note block is a plain inline card (no JS, print, feed readers).
    src/js/comments.js builds a card from each note it can anchor and hides
-   that <aside> (the hidden attribute) — in a rail on the desk
+   that block (the hidden attribute) — in a rail on the desk
    (html.comments-rail) or, without it, a bottom sheet.
    Cards live outside .doc-body, so the few doc-body rules a note can use
    (lists, inline code, links) are repeated for .comment in typography.css.

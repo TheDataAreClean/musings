@@ -7,6 +7,8 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 ## UNRELEASED
 
 - fix: apps that pull a post from its page instead of the feed (Reeder reading a blogroll, Safari Reader) show just the post, not the title twice, the nav, description and meta line. The title is now a heading, and the post's header lines sit in a `<header>` that reader views drop. Posts also carry their publish date for those apps.
+- fix: margin notes show up in those reader views too, instead of being dropped, and the page's address no longer appears as the last line of the post there (it still prints at the end of a printed page).
+- fix: a snap with only a photo no longer says "0 words · 1 min read" under its title or in the status bar.
 
 ---
 

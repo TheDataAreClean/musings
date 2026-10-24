@@ -49,7 +49,7 @@ main [id] {
 }
 
 /* Paragraph indent after first — classic document convention */
-/* A margin note the script moved into the rail leaves a hidden <aside>
+/* A margin note the script moved into the rail leaves a hidden .margin-note
    between the two paragraphs, so p + p no longer matches. Treat it as
    invisible. Visible notes (no JS, unanchored, print) still reset. */
 .doc-body p + p,

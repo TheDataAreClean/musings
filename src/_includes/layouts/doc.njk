@@ -38,8 +38,8 @@ ogType: article
   <p class="doc-meta">
     {% if date %}
       <time datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
-      · {{ words }} words
-      · {{ readtime }} min read
+      {% if words %}· {{ words }} words
+      · {{ readtime }} min read{% endif %}
     {% endif %}
     · <a href="{{ sectionUrl }}">{{ sectionLabel }}</a>
   </p>
@@ -83,12 +83,13 @@ ogType: article
 
   <div class="doc-layout">
 
-    <div class="doc-layout__content">
+    {# data-source is the "where it came from" line print.css adds at the end.
+       An attribute, not a hidden element: reader views that ignore [hidden]
+       (Mercury and the like) printed the URL as the post's last line. #}
+    <div class="doc-layout__content" data-source="{{ site.url | replace("https://", "") }}{{ page.url }}">
       <div class="doc-body">
         {% if vinfo %}{{ content | withVersionFootnote(versionFootnote) | safe }}{% else %}{{ content | safe }}{% endif %}
       </div>
-
-      <p class="print-source" hidden>{{ site.url | replace("https://", "") }}{{ page.url }}</p>
 
       {% if not hidePostNav %}
       <nav class="post-nav" aria-label="Post navigation">
