@@ -20,7 +20,7 @@ Do you think of one body of information or many individual pieces? This has been
 
 Technically speaking, data is the plural form of the Latin word datum, meaning “a single piece of information”. So I write sentences like “The data are ready for analysis” or “Many of these data were collected over years”.
 
-That is where the first part of my internet name comes from: “TheDataAre”.
+That is where the first part of my internet name comes from: _thedataare_.
 
 There is also this strip about the same topic from _[PhD Comics](https://phdcomics.com/comics.php?f=1816)_.
 
