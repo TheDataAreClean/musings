@@ -10,7 +10,13 @@ ogType: article
 {% if date %}{% set words = content | wordcount %}{% set readtime = content | readtime %}{% endif %}
 <article class="doc-page{% if not hidePostNav %} doc-page--with-nav{% endif %}"{% if date %} data-words="{{ words }}" data-readtime="{{ readtime }}"{% endif %}>
 
-  <p class="doc-title">{{ title }}</p>
+  {# The title, nav, description, meta and tags are the page's header, not
+     its content: reader views and feed apps that scrape the page (Readability
+     and the like) drop a <header> and a heading that matches the title, so
+     keep them in here and keep the title an <h1>. #}
+  <header class="doc-header">
+
+  <h1 class="doc-title">{{ title }}</h1>
 
   {% set navRss = true %}{% include "nav.njk" %}
 
@@ -43,6 +49,8 @@ ogType: article
   </p>
   {% endif %}
   {% endif %}
+
+  </header>
 
   {% if vinfo %}
   {# The version line and its footnote are the document's only version note;

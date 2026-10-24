@@ -62,6 +62,9 @@ See `APP.md`'s Passthrough copies section for why `media_folder` in `src/admin/c
 **og:image generation never *ships* Arial or Georgia**
 Satori needs a real font file and has no fallback. Never commit an Arial or Georgia `.ttf` (proprietary); `scripts/og-fonts/` carries the OFL substitutes Arimo and Gelasio (not Tinos, a Times clone). A local system copy may be read at render time, never committed. Draw any glyph the font lacks (`→`, `▾`) as inline SVG. Background in `APP.md` → OG images.
 
+**A post's header lines stay inside `<header class="doc-header">`**
+In `doc.njk` the title (an `<h1>`), nav, description, meta and tags sit in a `<header>`, which Readability-style extractors (Reeder, Safari Reader, blogroll apps that fetch the page) drop as page chrome. Anything new above the body that isn't the post's content goes in there; content such as the edit note stays outside. Spacing rules that cross the boundary use `.doc-header:has(+ …)` in `components.css`.
+
 **The comment rail lives in `<main>`, never inside `.doc-page`**
 `.doc-page` has `overflow-x: clip`, so anything positioned past the page edge is cut off. `src/js/comments.js` appends the rail to `<main>` (`position: relative` on `.app-canvas > main` in `doc-chrome.css`) at `left: calc(100% + var(--comment-gap))`. It also works in the canvas's own unzoomed coordinates (it divides by `canvas.style.zoom`), which is why it stays aligned under the zoom dropdown. Moving the rail inside the page, or dropping `position: relative` on `main`, clips or misplaces every comment.
 

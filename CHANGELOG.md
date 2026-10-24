@@ -4,6 +4,12 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## UNRELEASED
+
+- fix: apps that pull a post from its page instead of the feed (Reeder reading a blogroll, Safari Reader) show just the post, not the title twice, the nav, description and meta line. The title is now a heading, and the post's header lines sit in a `<header>` that reader views drop. Posts also carry their publish date for those apps.
+
+---
+
 ## 2026-10-17 (v4.2.0)
 
 - add: HEIC photos (the iPhone default) can be uploaded; they're converted to WebP like any other image. Until now a HEIC upload stopped the deploy.

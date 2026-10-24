@@ -529,13 +529,14 @@ a.post-tag:hover { text-decoration: none; }
   margin-bottom: var(--space-6);
 }
 
-.doc-meta:has(+ .version-line),
-.doc-tags:has(+ .version-line) {
+/* The meta and tags lines close the .doc-header (doc.njk) */
+.doc-header:has(+ .version-line) > .doc-meta:last-child,
+.doc-header:has(+ .version-line) > .doc-tags:last-child {
   margin-bottom: var(--space-4);
 }
 
 /* On changes pages it follows the description, which sits tight (space-2) */
-.doc-description + .version-line {
+.doc-header:has(> .doc-description:last-child) + .version-line {
   margin-top: var(--space-4);
 }
 
