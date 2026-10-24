@@ -243,15 +243,13 @@ module.exports = function (eleventyConfig) {
     if (!content) return content;
     return content
       .replace(/<figure>/g, '<figure style="margin: 2rem 0 3rem;">')
-      // Margin notes: feed readers drop the site CSS, so the avatar letter,
-      // author and date ran into one line ("AArpit16 Oct"). Render each note
-      // as a quoted aside with a one-line label instead.
+      // Margin notes: feed readers drop the site CSS, so the card header (avatar
+      // letter, author, date) would run into one line ("AArpit16 Oct"). Drop
+      // it and keep the note's own label, styled inline as a quote.
       .replace(
-        /<div class="margin-note" role="note"(?: data-anchor="([^"]*)")?><header class="margin-note__meta">[\s\S]*?(?:<time[^>]*>([^<]*)<\/time>)?<\/header>([\s\S]*?)<\/div><!-- \/margin-note -->/g,
-        (m, anchor, when, body) => {
-          const label = ["Note" + (anchor ? ` on “${anchor}”` : ""), when].filter(Boolean).join(" · ");
-          return `<blockquote style="margin:1em 0 1.5em;padding:0.5em 1em;border-left:3px solid #dddddd;color:#444444;font-size:0.9375em;"><p style="margin:0;color:#6b7280;font-size:0.875em;"><em>${label}</em></p>${body.trim().replace(/<p>/g, '<p style="margin:0.5em 0 0;">')}</blockquote>`;
-        }
+        /<blockquote class="margin-note" role="note"[^>]*><p class="margin-note__label">([\s\S]*?)<\/p><header class="margin-note__meta"[\s\S]*?<\/header>([\s\S]*?)<\/blockquote>/g,
+        (m, label, body) =>
+          `<blockquote style="margin:1em 0 1.5em;padding:0.5em 1em;border-left:3px solid #dddddd;color:#444444;font-size:0.9375em;"><p style="margin:0;color:#6b7280;font-size:0.875em;">${label}</p>${body.trim().replace(/<p>/g, '<p style="margin:0.5em 0 0;">')}</blockquote>`
       );
   });
 
@@ -391,9 +389,12 @@ module.exports = function (eleventyConfig) {
   // the note — without it, the whole previous block is the anchor. The card shows
   // the post's date; an optional second argument (any date string) overrides it.
   // To date a note that has no phrase, pass an empty first argument: "", "2026-03-01".
-  // A <div role="note">, not an <aside>: reader views (Readability, Reeder)
-  // strip every <aside>, which dropped the notes from pages they extract. The
-  // closing comment lets rssContent find the note's end past nested </div>s.
+  // Reader views (Readability, Reeder) strip every <aside> and ignore the site
+  // CSS, so the note is a <blockquote role="note"> that reads like the feed's
+  // version: a "Note on “phrase” · date" label (visually hidden on the site,
+  // where the card header shows instead), then the body. The card header is
+  // aria-hidden, which also makes reader views drop it.
+  const noteLabel = (anchor, when) => ["Note" + (anchor ? ` on “${anchor}”` : ""), when].filter(Boolean).join(" · ");
   const escAttr = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 
   eleventyConfig.addPairedShortcode("marginnote", function (content, anchor, written) {
@@ -403,7 +404,8 @@ module.exports = function (eleventyConfig) {
       ? `<time datetime="${isoDate(date)}">${readableDate(date)}</time>`
       : "";
     const attr = anchor ? ` data-anchor="${escAttr(anchor)}"` : "";
-    return `<div class="margin-note" role="note"${attr}><header class="margin-note__meta"><span class="margin-note__av" aria-hidden="true">${escAttr(commentAuthor.charAt(0))}</span><b>${escAttr(commentAuthor)}</b>${when}</header>${md.render(content)}</div><!-- /margin-note -->`;
+    const label = noteLabel(anchor && escAttr(anchor), date && !isNaN(date) ? readableDate(date) : "");
+    return `<blockquote class="margin-note" role="note"${attr}><p class="margin-note__label"><em>${label}</em></p><header class="margin-note__meta" aria-hidden="true"><span class="margin-note__av" aria-hidden="true">${escAttr(commentAuthor.charAt(0))}</span><b>${escAttr(commentAuthor)}</b>${when}</header>${md.render(content)}</blockquote>`;
   });
 
   eleventyConfig.addPairedShortcode("callout", function (content, type = "note") {

@@ -1,6 +1,6 @@
 // Margin notes → document comments.
 //
-// Each <div class="margin-note"> in the post (rendered by the `marginnote`
+// Each <blockquote class="margin-note"> in the post (rendered by the `marginnote`
 // shortcode) is anchored to a phrase or paragraph, then shown as a card:
 //   • rail  — on the grey desk beside the page, level with its anchor
 //   • sheet — one card at a time above the status bar, when the desk is too

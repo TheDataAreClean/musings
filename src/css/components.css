@@ -73,6 +73,30 @@
 
 .margin-note { margin: var(--space-4) 0; }
 
+/* The note is a <blockquote> (for reader views, see the shortcode in
+   .eleventy.js), but on the page it's a card, not a quote: undo the quote's
+   bar, padding and paragraph spacing from typography.css. */
+.doc-body blockquote.margin-note {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  border-left: 1px solid var(--color-app-border-soft);
+}
+
+.doc-body blockquote.margin-note p {
+  margin-bottom: 0;
+}
+
+/* "Note on “phrase” · date" — for reader views, feeds and screen readers;
+   the card header (aria-hidden) shows the same thing on the page */
+.margin-note__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .margin-note__meta {
   display: flex;
   align-items: center;
