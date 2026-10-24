@@ -6,15 +6,15 @@ tags:
   - internet
   - personal
 slug: name
-permalink: /notes/2026-10-24-name/
 date: 2026-10-24T21:38:00+05:30
 version: 1
 versionNote: ''
+permalink: /notes/2026-10-24-name/
 ---
 
-# **Part #1** - Plurality
+# Part #1 - Plurality
 
-When I say the word “**data”**, what comes to your mind?
+When I say the word “**data**”, what comes to your mind?
 
 Do you think of one body of information or many individual pieces? This has been a point of low-to-mild contention in the data world for years. I land on the plural side of the argument.
 
@@ -28,7 +28,7 @@ There is also this strip about the same topic from _[PhD Comics](https://phdcomi
 
 ***
 
-# **Part #2** - Insanity
+# Part #2 - Insanity
 
 “Does this job have analytics?”
 
