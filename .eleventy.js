@@ -393,7 +393,9 @@ module.exports = function (eleventyConfig) {
   // CSS, so the note is a <blockquote role="note"> that reads like the feed's
   // version: a "Note on “phrase” · date" label (visually hidden on the site,
   // where the card header shows instead), then the body. The card header is
-  // aria-hidden, which also makes reader views drop it.
+  // aria-hidden, which also makes reader views drop it, and its text comes
+  // from CSS (data-text), so apps that show the raw HTML with no stylesheet
+  // (h-entry readers) don't run "AArpit16 Oct" into the note either.
   const noteLabel = (anchor, when) => ["Note" + (anchor ? ` on “${anchor}”` : ""), when].filter(Boolean).join(" · ");
   const escAttr = (s) => String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 
@@ -401,11 +403,11 @@ module.exports = function (eleventyConfig) {
     const commentAuthor = this.ctx.site.author;
     const date = written ? new Date(written) : this.page && this.page.date ? new Date(this.page.date) : null;
     const when = date && !isNaN(date)
-      ? `<time datetime="${isoDate(date)}">${readableDate(date)}</time>`
+      ? `<time datetime="${isoDate(date)}" data-text="${readableDate(date)}"></time>`
       : "";
     const attr = anchor ? ` data-anchor="${escAttr(anchor)}"` : "";
     const label = noteLabel(anchor && escAttr(anchor), date && !isNaN(date) ? readableDate(date) : "");
-    return `<blockquote class="margin-note" role="note"${attr}><p class="margin-note__label"><em>${label}</em></p><header class="margin-note__meta" aria-hidden="true"><span class="margin-note__av" aria-hidden="true">${escAttr(commentAuthor.charAt(0))}</span><b>${escAttr(commentAuthor)}</b>${when}</header>${md.render(content)}</blockquote>`;
+    return `<blockquote class="margin-note" role="note"${attr}><p class="margin-note__label"><em>${label}</em></p><header class="margin-note__meta" aria-hidden="true"><span class="margin-note__av" data-text="${escAttr(commentAuthor.charAt(0))}"></span><b data-text="${escAttr(commentAuthor)}"></b>${when}</header>${md.render(content)}</blockquote>`;
   });
 
   eleventyConfig.addPairedShortcode("callout", function (content, type = "note") {

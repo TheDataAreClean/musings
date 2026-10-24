@@ -112,6 +112,9 @@
 
 .margin-note__meta b { text-transform: lowercase; }
 
+/* The header's text lives in data-text (see the shortcode in .eleventy.js) */
+.margin-note__meta [data-text]::before { content: attr(data-text); }
+
 .margin-note__av {
   flex: none;
   width: 16px;

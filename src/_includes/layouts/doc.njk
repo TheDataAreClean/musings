@@ -8,7 +8,10 @@ ogType: article
 {% set vinfo = versions[page.inputPath] or (versions["./" + versionOf] if versionOf else null) %}
 {% set shownTags = postTags or tags %}
 {% if date %}{% set words = content | wordcount %}{% set readtime = content | readtime %}{% endif %}
-<article class="doc-page{% if not hidePostNav %} doc-page--with-nav{% endif %}"{% if date %} data-words="{{ words }}" data-readtime="{{ readtime }}"{% endif %}>
+{# h-entry (microformats2) for IndieWeb readers and blogrolls: p-name,
+   p-summary, dt-published, p-author, p-category, u-url and e-content #}
+{% set hentry = date and not hideMeta %}
+<article class="doc-page{% if not hidePostNav %} doc-page--with-nav{% endif %}{% if hentry %} h-entry{% endif %}"{% if date %} data-words="{{ words }}" data-readtime="{{ readtime }}"{% endif %}>
 
   {# Reader views and apps that pull a post from its page (Reeder, Safari
      Reader, blogrolls) should show what the feed shows: the description, then
@@ -20,11 +23,11 @@ ogType: article
      description inside. #}
   <div class="doc-head">
 
-  <h1 class="doc-title">{{ title }}</h1>
+  <h1 class="doc-title{% if hentry %} p-name{% endif %}">{{ title }}</h1>
 
   <footer class="doc-head__nav">{% set navRss = true %}{% include "nav.njk" %}</footer>
 
-  {% if description %}<p class="doc-description">{{ description }}</p>{% endif %}
+  {% if description %}<p class="doc-description{% if hentry %} p-summary{% endif %}">{{ description }}</p>{% endif %}
 
   {% if versionOf %}{% set postSection = versionOf.split("/")[1] %}{% elif shownTags and ("snaps" in shownTags) %}{% set postSection = "snaps" %}{% elif shownTags and ("notes" in shownTags) %}{% set postSection = "notes" %}{% else %}{% set postSection = "ideas" %}{% endif %}
   {% if postSection == "snaps" %}
@@ -40,9 +43,11 @@ ogType: article
 
   {% if not hideMeta %}
   <footer class="doc-head__info">
+  {# Empty, so nothing shows; mf2 parsers read a <data>'s value #}
+  <data class="p-author h-card" value="{{ site.author }}"><data class="p-name" value="{{ site.author }}"></data><data class="u-url" value="{{ site.url }}/about/"></data></data><data class="u-url" value="{{ site.url }}{{ vinfo.latest.url if versionOf and vinfo else page.url }}"></data>
   <p class="doc-meta">
     {% if date %}
-      <time datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
+      <time class="dt-published" datetime="{{ date | isoDate }}">{{ date | readableDate }}</time>
       {% if words %}· {{ words }} words
       · {{ readtime }} min read{% endif %}
     {% endif %}
@@ -50,7 +55,7 @@ ogType: article
   </p>
   {% if shownTags | collectionTags | length %}
   <p class="doc-tags">
-    {% for tag in shownTags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | tagSlug }}/">{{ tag }}</a>{% endfor %}
+    {% for tag in shownTags | collectionTags %}<a class="post-tag p-category" href="/tags/{{ tag | tagSlug }}/">{{ tag }}</a>{% endfor %}
   </p>
   {% endif %}
   </footer>
@@ -93,7 +98,7 @@ ogType: article
        An attribute, not a hidden element: reader views that ignore [hidden]
        (Mercury and the like) printed the URL as the post's last line. #}
     <div class="doc-layout__content" data-source="{{ site.url | replace("https://", "") }}{{ page.url }}">
-      <div class="doc-body">
+      <div class="doc-body{% if hentry %} e-content{% endif %}">
         {% if vinfo %}{{ content | withVersionFootnote(versionFootnote) | safe }}{% else %}{{ content | safe }}{% endif %}
       </div>
 
