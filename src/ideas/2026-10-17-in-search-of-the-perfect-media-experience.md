@@ -9,6 +9,7 @@ tags:
 slug: media
 date: 2026-10-17T11:06:00+05:30
 version: 2
+versionDate: 2026-10-24T20:59:28+05:30
 versionNote: Updated the link to Abhinav's reading blog.
 permalink: /ideas/2026-10-17-media/
 ---
