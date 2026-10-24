@@ -1,21 +1,21 @@
 ---
-title: In search of the perfect media experience
-slug: media
-permalink: /ideas/2026-10-17-media/
-date: 2026-10-17T11:06:00+05:30
 draft: false
+title: In search of the perfect media experience
 description: One feed at a time.
 tags:
   - personal
   - technology
   - media
-version: 1
-versionNote: ''
+slug: media
+date: 2026-10-17T11:06:00+05:30
+version: 2
+versionNote: Updated the link to Abhinav's reading blog.
+permalink: /ideas/2026-10-17-media/
 ---
 
 ## The rabbit hole
 
-A recent conversation in the [_IndieWebClub Bangalore_](https://blr.indiewebclub.org/) (IWCB) WhatsApp group about RSS readers and reading habits sent me down a lovely rabbit hole. I found fun [new](https://miniflux.app/) apps, rediscovered a few [old](https://netnewswire.com/) ones and, best of all, got a glimpse into how folks at _IWCB_ read. Some of you have fascinating, occasionally hardcore reading habits. I am looking at you, [_Abhinav_](https://abhinavsarkar.net/).
+A recent conversation in the _[IndieWebClub Bangalore](https://blr.indiewebclub.org/)_ (IWCB) WhatsApp group about RSS readers and reading habits sent me down a lovely rabbit hole. I found fun [new](https://miniflux.app/) apps, rediscovered a few [old](https://netnewswire.com/) ones and, best of all, got a glimpse into how folks at _IWCB_ read. Some of you have fascinating, occasionally hardcore reading habits. I am looking at you, _[Abhinav](https://abhinavsarkar.net/notes/2023-reading-process/)_.
 
 As I was thinking about everyone’s reading chronicles, I went back to my own RSS reader and felt oddly lost. My setup, which had been working fine for a year or so, felt broken. I was curious about different apps, new ways to organise my feeds and different ways to read. Damn you, neurodivergent brain!
 
@@ -35,7 +35,7 @@ But the key thing for me is how I want to read. I do not want my RSS feed to fee
 
 ## My universe
 
-RSS is only one part of my media consumption universe. My MCU, if you will. Yes, I am calling it that now. The whole thing is my personal hellscape. As [_Bo Burnham_](https://en.wikipedia.org/wiki/Bo_Burnham) puts it, you can get “[anything and everything, all of the time](https://youtu.be/k1BneeJTDcU)”.
+RSS is only one part of my media consumption universe. My MCU, if you will. Yes, I am calling it that now. The whole thing is my personal hellscape. As _[Bo Burnham](https://en.wikipedia.org/wiki/Bo_Burnham)_ puts it, you can get “[anything and everything, all of the time](https://youtu.be/k1BneeJTDcU)”.
 
 There is YouTube, podcasts and news, as well as books and magazines. In reaction to my internal RSS crisis, I ended up unsubscribing from most other media too. Here I am, trying to rebuild my perfect universe again.
 
@@ -49,7 +49,7 @@ And this still leaves out the books and magazines I read nearly every evening. I
 
 ## One medium at a time
 
-Until recently, I was using [_Reeder_](https://reeder.app/) to bring all these sources into one experience. It did all the things I cared about. No counts, no pressure, just dipping into a river. Lately, though, switching between text, audio and video in one feed has started to feel disorienting. These different kinds of media probably need to stay separate and do their own jobs.
+Until recently, I was using _[Reeder](https://reeder.app/)_ to bring all these sources into one experience. It did all the things I cared about. No counts, no pressure, just dipping into a river. Lately, though, switching between text, audio and video in one feed has started to feel disorienting. These different kinds of media probably need to stay separate and do their own jobs.
 
 Videos will stay on YouTube; I cannot avoid that. I am also looking for the right podcast app, but that is a separate exploration and a post of its own. Suggestions are welcome!
 
@@ -57,7 +57,7 @@ News will stay news. No one can fix that industry.
 
 ## A current I might follow
 
-An RSS reader I have had my eye on for a while is [_Current_](https://www.currentreader.app/), which ticks almost all my boxes. It is available on all the devices, has no unread counts, and lets me group feeds into focused streams called “Currents” (you guessed it). The idea of each stream as its own river feels uniquely aligned to what I want.
+An RSS reader I have had my eye on for a while is _[Current](https://www.currentreader.app/)_, which ticks almost all my boxes. It is available on all the devices, has no unread counts, and lets me group feeds into focused streams called “Currents” (you guessed it). The idea of each stream as its own river feels uniquely aligned to what I want.
 
 More than anything, I respect that it has a clear point of view about what an RSS reader should be. The fact that it aligns with my own point of view surely helps its case. I want to try it partly because of that, and whether it ends up becoming the right reader for me is another question.
 
