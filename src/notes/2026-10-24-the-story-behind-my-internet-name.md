@@ -6,6 +6,7 @@ tags:
   - internet
   - personal
 slug: name
+permalink: /notes/2026-10-24-name/
 date: 2026-10-24T21:38:00+05:30
 version: 1
 versionNote: ''
@@ -23,7 +24,7 @@ That is where the first part of my internet name comes from: “TheDataAre”.
 
 There is also this strip about the same topic from _[PhD Comics](https://phdcomics.com/comics.php?f=1816)_.
 
-![](/images/uploads/20261024-213638.png)
+![](/images/uploads/2026-10-24-name-e9d3bd36.webp)
 
 ***
 
