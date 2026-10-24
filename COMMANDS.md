@@ -18,6 +18,8 @@ All runnable commands. Source: `package.json`.
 | Generate per-post og:image files | `npm run ogimages` |
 | Regenerate every og:image (after changing the generator, fonts or tokens) | `rm -rf images/og && npm run ogimages` |
 | Save earlier versions of revised posts | `npm run versions` |
+| Check how posts read in reader apps (runs after every build) | `npm run check:readers` |
+| …and list the expected gaps too | `npm run check:readers -- --verbose` |
 | Check vulnerabilities | `npm audit` |
 | List available updates | `npm outdated` |
 
@@ -48,4 +50,5 @@ Full checklist and bump policy: [release skill](.claude/skills/release/SKILL.md)
 - Build output → `_site/` (not committed)
 - `npm run clean` deletes `_site/` only — safe to run before a fresh build
 - `npm ci` is used in CI (`deploy.yml`) — prefer `npm install` locally
+- `npm run build` runs `postbuild` last: `check-readers.js`, which fails the build (and so the deploy) if a post would read wrong in Reeder, Safari Reader or an IndieWeb reader. See `APP.md` → Reader views
 - `npm run build` automatically runs `prebuild` first (backfill-dates + convert-webp + backfill-permalink + snapshot-versions + generate-og-images) — no need to call them separately in CI
