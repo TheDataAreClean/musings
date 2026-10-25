@@ -6,6 +6,10 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ## UNRELEASED
 
+---
+
+## 2026-10-25 (v4.3.1)
+
 - add: the CMS body editor has an insert menu for margin note, callout, page break, footnote marker and text, image with caption, and quote with source, so none of them have to be typed by hand.
 - docs: Sveltia CMS is loaded at a pinned version instead of the latest release.
 - change: the links at the bottom of a post are swapped, with "← All posts" on the left and "More notes →" (or ideas, snaps) on the right.
