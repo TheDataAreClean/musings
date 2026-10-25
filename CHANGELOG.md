@@ -4,6 +4,13 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## UNRELEASED
+
+- add: the CMS body editor has an insert menu for margin note, callout, page break, footnote marker and text, image with caption, and quote with source, so none of them have to be typed by hand.
+- docs: Sveltia CMS is loaded at a pinned version instead of the latest release.
+
+---
+
 ## 2026-10-24 (v4.3.0)
 
 - add: posts carry microformats (h-entry) and schema.org data, so IndieWeb readers, blogrolls and reader views get the title, summary, date, author and tags from the post itself rather than guessing.
