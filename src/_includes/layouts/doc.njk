@@ -79,7 +79,7 @@ ogType: article
   {% if oldDescription != description %}{% set _ = was.push(["the description", "was", oldDescription]) %}{% endif %}
   {% if oldTags != newTags %}{% set _ = was.push(["the tags", "were", oldTags]) %}{% endif %}
   <p class="version-line">These are the edits made on {{ newerV.date | readableDate }}{{ notes.mark() }}</p>
-  {% set versionFootnote %}<li id="fn-version" class="footnote-item footnote-item--version"><p>{{ notes.editNote(newerV) }} Red is removed, green is added.{% if was | length %} {{ was | beforeSentence | safe }}{% endif %} <a href="{{ vinfo.latest.url }}">Latest version</a> · <a href="{{ olderV.url }}">Previous version</a>{{ backref | safe }}{% endset %}
+  {% set versionFootnote %}<li id="fn-version" class="footnote-item footnote-item--version"><p>{{ notes.editNote(newerV) }} <span class="diff-key diff-key--del">Red is removed</span>, <span class="diff-key diff-key--ins">green is added</span>.{% if was | length %} {{ was | beforeSentence | safe }}{% endif %} <a href="{{ vinfo.latest.url }}">Latest version</a> · <a href="{{ olderV.url }}">Previous version</a>{{ backref | safe }}{% endset %}
   {% elif versionOf %}
   {% set thisV = vinfo.byVersion[version] %}{% set nextV = thisV.nextVersion %}
   {# Latest, middle and original footnotes run in one order: note (or
