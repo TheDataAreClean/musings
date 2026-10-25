@@ -4,6 +4,13 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## UNRELEASED
+
+- add: the CMS body editor has an insert menu for margin note, callout, page break, footnote marker and text, image with caption, and quote with source, so none of them have to be typed by hand.
+- docs: Sveltia CMS is loaded at a pinned version instead of the latest release.
+
+---
+
 ## 2026-10-17 (v4.2.0)
 
 - add: HEIC photos (the iPhone default) can be uploaded; they're converted to WebP like any other image. Until now a HEIC upload stopped the deploy.
