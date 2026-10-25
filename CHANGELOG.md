@@ -11,6 +11,16 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## 2026-10-24 (v4.3.0)
+
+- add: posts carry microformats (h-entry) and schema.org data, so IndieWeb readers, blogrolls and reader views get the title, summary, date, author and tags from the post itself rather than guessing.
+- chore: every build now checks how each post reads in reader apps (Readability, Mercury, article-extractor, h-entry) and stops the deploy if the nav, meta line or page address leaks in, or a margin note goes missing.
+- fix: apps that pull a post from its page instead of the feed (Reeder reading a blogroll, Safari Reader) show just the post, not the title twice, the nav, description and meta line. The title is now a heading, and the nav, meta line, tags and the "More …/All posts" links sit in footers, which reader views drop. Posts also carry their publish date for those apps.
+- fix: margin notes show up in those reader views too, set apart as a quote with a "Note on “phrase” · date" label like in the feed, instead of being dropped, and the page's address no longer appears as the last line of the post there (it still prints at the end of a printed page).
+- fix: a snap with only a photo no longer says "0 words · 1 min read" under its title or in the status bar.
+
+---
+
 ## 2026-10-17 (v4.2.0)
 
 - add: HEIC photos (the iPhone default) can be uploaded; they're converted to WebP like any other image. Until now a HEIC upload stopped the deploy.

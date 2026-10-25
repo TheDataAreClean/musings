@@ -52,9 +52,9 @@
 
 /* --------------------------------------------------------------------------
    Margin notes → document comments
-   Base: the <aside> is a plain inline card (no JS, print, feed readers).
+   Base: the .margin-note block is a plain inline card (no JS, print, feed readers).
    src/js/comments.js builds a card from each note it can anchor and hides
-   that <aside> (the hidden attribute) — in a rail on the desk
+   that block (the hidden attribute) — in a rail on the desk
    (html.comments-rail) or, without it, a bottom sheet.
    Cards live outside .doc-body, so the few doc-body rules a note can use
    (lists, inline code, links) are repeated for .comment in typography.css.
@@ -73,6 +73,30 @@
 
 .margin-note { margin: var(--space-4) 0; }
 
+/* The note is a <blockquote> (for reader views, see the shortcode in
+   .eleventy.js), but on the page it's a card, not a quote: undo the quote's
+   bar, padding and paragraph spacing from typography.css. */
+.doc-body blockquote.margin-note {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  border-left: 1px solid var(--color-app-border-soft);
+}
+
+.doc-body blockquote.margin-note p {
+  margin-bottom: 0;
+}
+
+/* "Note on “phrase” · date" — for reader views, feeds and screen readers;
+   the card header (aria-hidden) shows the same thing on the page */
+.margin-note__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .margin-note__meta {
   display: flex;
   align-items: center;
@@ -87,6 +111,9 @@
 }
 
 .margin-note__meta b { text-transform: lowercase; }
+
+/* The header's text lives in data-text (see the shortcode in .eleventy.js) */
+.margin-note__meta [data-text]::before { content: attr(data-text); }
 
 .margin-note__av {
   flex: none;
@@ -483,6 +510,14 @@ a.post-tag:hover { text-decoration: none; }
 
 /* Pin the post nav to the bottom of the page on short posts; on long posts
    it simply follows the content. Flex chain: page → layout → content. */
+/* Footers around the nav, meta and post nav are there for reader views
+   (doc.njk); they take no box, so the page lays out as if they weren't there */
+.doc-head__nav,
+.doc-head__info,
+.doc-foot {
+  display: contents;
+}
+
 .doc-page--with-nav {
   display: flex;
   flex-direction: column;
@@ -529,13 +564,14 @@ a.post-tag:hover { text-decoration: none; }
   margin-bottom: var(--space-6);
 }
 
-.doc-meta:has(+ .version-line),
-.doc-tags:has(+ .version-line) {
+/* The meta and tags lines close the .doc-head (doc.njk) */
+.doc-head:has(+ .version-line) .doc-meta:last-child,
+.doc-head:has(+ .version-line) .doc-tags:last-child {
   margin-bottom: var(--space-4);
 }
 
 /* On changes pages it follows the description, which sits tight (space-2) */
-.doc-description + .version-line {
+.doc-head:has(> .doc-description:last-child) + .version-line {
   margin-top: var(--space-4);
 }
 

@@ -6,7 +6,7 @@ Operating manual for Claude. Architecture lives in [APP.md](APP.md). Commands li
 
 ## Before you push
 
-- Run `npm run build` on a clean tree — `prebuild` can rewrite content files (dates, permalinks, image paths), so review `git status` after — must exit zero errors, zero warnings
+- Run `npm run build` on a clean tree — `prebuild` can rewrite content files (dates, permalinks, image paths), so review `git status` after — must exit zero errors, zero warnings, with `postbuild`'s reader-view check (`check-readers.js`) passing
 - Check browser console — no JS errors, no 404s
 - Test the golden path: home page loads → post opens → font/zoom dropdowns work → anchor links land below chrome
 
@@ -62,6 +62,9 @@ See `APP.md`'s Passthrough copies section for why `media_folder` in `src/admin/c
 **og:image generation never *ships* Arial or Georgia**
 Satori needs a real font file and has no fallback. Never commit an Arial or Georgia `.ttf` (proprietary); `scripts/og-fonts/` carries the OFL substitutes Arimo and Gelasio (not Tinos, a Times clone). A local system copy may be read at render time, never committed. Draw any glyph the font lacks (`→`, `▾`) as inline SVG. Background in `APP.md` → OG images.
 
+**Page chrome inside a post sits in `<footer>`s, for reader views**
+Reeder, Safari Reader and blogroll apps that pull a post from its page (Readability, Mercury) drop a heading that repeats the title and every `<footer>`, on every pass. So in `doc.njk` the title is an `<h1>`, and the site nav, the meta/tags lines and the post nav each sit in a `<footer>` with `display: contents` (no box, layout unchanged). Anything new that isn't the post's content goes in one too. The wrapper is `<div class="doc-head">`: not a `<header>` (it can't hold a footer) and no "header" in its class, which Readability's first pass strips. Spacing rules that cross it use `.doc-head:has(+ …)` in `components.css`. `check-readers.js` (postbuild) fails the build if any of this regresses; fix the markup, never the check. Posts are also an `h-entry` (microformats2: `p-name`, `p-summary`, `dt-published`, `p-author`, `p-category`, `u-url`, `e-content`) and carry a `BlogPosting` JSON-LD block in `base.njk`; keep those classes when editing `doc.njk`. A margin note's card header gets its text from CSS (`data-text`), so raw-HTML readers don't show "AArpit16 Oct".
+
 **The comment rail lives in `<main>`, never inside `.doc-page`**
 `.doc-page` has `overflow-x: clip`, so anything positioned past the page edge is cut off. `src/js/comments.js` appends the rail to `<main>` (`position: relative` on `.app-canvas > main` in `doc-chrome.css`) at `left: calc(100% + var(--comment-gap))`. It also works in the canvas's own unzoomed coordinates (it divides by `canvas.style.zoom`), which is why it stays aligned under the zoom dropdown. Moving the rail inside the page, or dropping `position: relative` on `main`, clips or misplaces every comment.
 
@@ -78,10 +81,10 @@ It's a `calc()` of other custom properties, so `getComputedStyle(...).getPropert
 The print footer in `print.css` sets its font and colour on `@page` with literal values (`8pt Arial…`, `dimgray` for `--color-muted`) because margin boxes don't inherit `:root` variables. The three empty `@top-*` boxes are load-bearing: they claim the top margin so Chromium doesn't print its own date and title there when "Headers and footers" is ticked. Safari and Firefox ignore margin boxes and print their own.
 
 **Margin notes go *after* their paragraph, and must not break the indent**
-Write `{% marginnote %}` directly after the paragraph it belongs to; `comments.js` looks for the phrase in the block before the note. The hidden `<aside>` stays between paragraphs, so the indent rule in `typography.css` has to see past it (`p + .margin-note[hidden] + p`). Any new element hidden between paragraphs needs the same treatment.
+Write `{% marginnote %}` directly after the paragraph it belongs to; `comments.js` looks for the phrase in the block before the note. The hidden note stays between paragraphs, so the indent rule in `typography.css` has to see past it (`p + .margin-note[hidden] + p`). Any new element hidden between paragraphs needs the same treatment.
 
 **A margin note must stay readable without the script**
-The shortcode renders a plain inline `<aside>`; the script only *hides* the ones it built a card for, via the `hidden` attribute, so a note that couldn't be anchored stays visible. `base.njk` also sets `html.comments-pending` in the head to stop a flash before the script runs — a 3s timer clears it if the script never loads. `print.css` re-shows hidden notes with `.margin-note[hidden] { display: block }`. If you change any of these, keep the guarantee: no JS, print and feed readers all show every note inline.
+The shortcode renders a plain inline `<blockquote class="margin-note" role="note">` with a visually hidden "Note on “phrase” · date" label and an `aria-hidden` card header, so reader views (which strip `<aside>` and ignore the site CSS) show it like the feed does; the script only *hides* the ones it built a card for, via the `hidden` attribute, so a note that couldn't be anchored stays visible. `base.njk` also sets `html.comments-pending` in the head to stop a flash before the script runs — a 3s timer clears it if the script never loads. `print.css` re-shows hidden notes with `.margin-note[hidden] { display: block }`. If you change any of these, keep the guarantee: no JS, print and feed readers all show every note inline.
 
 ---
 

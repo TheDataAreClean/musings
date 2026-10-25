@@ -207,7 +207,7 @@ Defined in `.eleventy.js`:
 | Shortcode | Type | Output |
 |---|---|---|
 | `{% callout "note" %}…{% endcallout %}` | Paired | Callout block (type: `note` or `warning`) |
-| `{% marginnote %}…{% endmarginnote %}` | Paired | `<aside class="margin-note">` — a document comment, anchored to the paragraph before it |
+| `{% marginnote %}…{% endmarginnote %}` | Paired | `<blockquote class="margin-note" role="note">` — a document comment, anchored to the paragraph before it |
 | `{% marginnote "phrase" %}…{% endmarginnote %}` | Paired | Same, anchored to that phrase (highlighted) in the paragraph before it |
 | `{% marginnote "phrase", "2026-03-01" %}…{% endmarginnote %}` | Paired | Same, with the card dated that day instead of the post's date (use `""` for the phrase to anchor the whole paragraph) |
 | `{% pagebreak %}` | Non-paired | `<div class="page-break">`: a grey desk gap between pages. On its own line between paragraphs |
@@ -220,15 +220,15 @@ Defined in `.eleventy.js`:
 
 **Paragraph indent.** In `typography.css`, a paragraph's first line is indented 1.5em only when the element right before it is another paragraph (`.doc-body p + p`), with the gap above tightened to match. After a heading, list, quote, code block, rule, figure or table it starts flush. A margin note the script has hidden counts as invisible (`p + .margin-note[hidden] + p`), so a note never breaks the indent on screen; in print the note shows inline and the next paragraph starts flush.
 
-**Margin notes are document comments.** The shortcode renders a plain `<aside class="margin-note">` (author from `site.json`, date from the post unless a date is passed) and `src/js/comments.js` upgrades it:
+**Margin notes are document comments.** The shortcode renders a plain `<blockquote class="margin-note" role="note">` (not an `<aside>`, which reader views like Readability strip). It opens with a visually hidden `.margin-note__label`, "Note on “phrase” · date", for reader views, feeds and screen readers, then the `aria-hidden` card header (author from `site.json`, date from the post unless a date is passed) and `src/js/comments.js` upgrades it:
 
 - Place the shortcode directly *after* the paragraph it belongs to. The phrase is searched for only in the block right before the note (the block after it, if the note starts the post; curly and straight quotes match). If it isn't found there, the script warns in the console and anchors to the whole block. A whole-block anchor takes the nearest block no other note already holds, so two notes never share one. Notes with no anchor at all stay visible inline.
 - **Wide screens** (room on the desk for `--comment-w` + `--comment-gap` right of the page): cards are built into a rail inside `<main>`, each level with its anchor, pushed down when they collide. Hover or focus links anchor and card with a connector line. `<main>` is `position: relative` for this. The rail is measured in the canvas's own coordinates, so it stays aligned under the zoom control.
 - **Narrow screens**: one card at a time in a bottom sheet above the status bar (`.comment-sheet`, fixed, outside `.app-canvas`), with prev/next/close and Escape to close. Each note has a numbered badge — a real, focusable `<button>` — after its phrase, or inside its paragraph (on a row of its own before a list, table or rule). A phrase opens the sheet on click; a whole-paragraph note opens from its badge only, and links keep their own click. The mode is chosen on load, resize, zoom change and font change.
 - **No flash of the inline note:** on pages that contain a note, `base.njk` puts `html.comments-pending` in the head, which hides `.margin-note` in CSS until the script has run (the script clears it first thing; a 3s timer does too if the script never loads).
 - **Accessibility**: in the rail an anchor is focusable text with `aria-describedby` pointing at its card; in the sheet a phrase is a `role="button"` and every note has a real badge `<button>`. The badge is placed outside any link the phrase sits in, and its tap area is enlarged to ~32px.
-- **No JS, print, feed readers**: the original `<aside>` shows inline as a boxed card. The script sets `hidden` on each aside it built a card for, numbers it (`data-c`) and moves it after the block it anchors to; `print.css` shows those again after their text, numbered to match the badge on the highlighted phrase, and hides the rail and sheet. Without JS the note stays where the author put it, after its block. In the feed, the `rssContent` filter rewrites each note as a `<blockquote>` with an inline-styled "Note on “phrase” · date" label, since feed readers drop the site CSS.
-- Comment cards are built from the aside's HTML, so the aside must contain everything (header + body). Cards live outside `.doc-body`, so lists, inline code and links inside a note are styled by extra `.comment` selectors in `typography.css`. `base.njk` loads the script (with `defer`) only on pages whose rendered content contains a margin note. `--chrome-h` is a `calc()` and can't be read as a number from JS, so the sheet's scroll-into-view measures the sticky toolbar and ruler instead.
+- **No JS, print, feed readers**: the original note shows inline as a boxed card. The script sets `hidden` on each note it built a card for, numbers it (`data-c`) and moves it after the block it anchors to; `print.css` shows those again after their text, numbered to match the badge on the highlighted phrase, and hides the rail and sheet. Without JS the note stays where the author put it, after its block. In the feed, the `rssContent` filter rewrites each note as a `<blockquote>` with an inline-styled "Note on “phrase” · date" label, since feed readers drop the site CSS.
+- Comment cards are built from the note's HTML, so the note must contain everything (header + body). Cards live outside `.doc-body`, so lists, inline code and links inside a note are styled by extra `.comment` selectors in `typography.css`. `base.njk` loads the script (with `defer`) only on pages whose rendered content contains a margin note. `--chrome-h` is a `calc()` and can't be read as a number from JS, so the sheet's scroll-into-view measures the sticky toolbar and ruler instead.
 
 Section break: `---` in body renders as `* * *`. Page break: the `pagebreak` shortcode above.
 
@@ -309,6 +309,8 @@ Session persistence: `sessionStorage` only, and only within one visit. On load, 
 4. `snapshot-versions.js` — saves earlier versions of revised posts to `src/versions/` (see Post versions). Must run after step 3, since snapshot URLs follow the post's `permalink`.
 5. `generate-og-images.js` — renders each post's `og:image` (see below). Must run after step 3, since it needs the final `permalink`.
 
+After the build, `postbuild` runs `check-readers.js` (see Reader views); a failure stops `npm run build`, so CI neither commits generated files nor deploys.
+
 `src/CNAME` is passthrough-copied to `_site/CNAME` — required for the custom domain to survive deploys.
 
 ### Passthrough copies
@@ -344,6 +346,17 @@ Each entry's `<title>` is the bare post title; the blog name comes from the feed
 
 Post pages' `og:title` is likewise the bare title — the blog name lives in `og:site_name`. Only the browser-tab `<title>` keeps the `| {site.title}` suffix.
 
+### Reader views
+
+Some apps don't show the feed entry: a blogroll feed that only links to a post makes Reeder pull the post from its page, and Safari Reader and "load full article" settings do the same. Posts are marked up so those apps show what the feed shows, and nothing of the page around it:
+
+- **Chrome is in `<footer>`s.** Readability and Mercury drop every `<footer>` on every pass, and a heading that repeats the title. In `doc.njk` the title is an `<h1>`; the site nav, the meta and tags lines, and the "More … / All posts" links each sit in a `<footer>` with `display: contents`, so the page lays out as if they weren't there. The wrapper is `<div class="doc-head">`, not a `<header>` (a header can't contain a footer) and without "header" in its class (Readability's first pass strips that, description and all). The print source line is a `data-source` attribute printed by `print.css`, not a hidden element, since Mercury ignores `[hidden]`.
+- **Margin notes** are `<blockquote role="note">`: Readability strips `<aside>`. Each opens with a visually hidden "Note on “phrase” · date" label, the same label the feed uses, and the card header is `aria-hidden` with its text in CSS (`data-text`), so no engine runs it into "AArpit16 Oct".
+- **Structured data.** Each post is an `h-entry` (`p-name`, `p-summary`, `dt-published`, `p-author h-card`, `p-category`, `u-url`, `e-content`) for IndieWeb readers and blogrolls, and `base.njk` adds a `BlogPosting` JSON-LD block and `article:published_time`, which Readability reads for the title, byline, summary and date.
+- **The check.** `scripts/check-readers.js` runs after every build. It extracts every post in `_site/{ideas,notes,snaps}` with Readability (Safari/Firefox Reader and most apps), Mercury (`@postlight/parser`), article-extractor and a microformats parser, and fails on any leaked nav, meta line, post nav or page URL, a repeated title, a dropped or unlabelled margin note, a run-together note header, an empty extraction of a post with prose, or a missing h-entry or JSON-LD field. Expected gaps are reported, not failed: a photo-only snap (or one whose only text is a link) has nothing to extract, and article-extractor skips short posts. `npm run check:readers -- --verbose` lists them.
+
+What reader views never show, by design of the engines: the description (they show it as the summary, if at all), the edit line, tags and the feed's sign-off. A photo-only snap comes out empty everywhere except h-entry readers; a line of text fixes it.
+
 ### OG images
 
 `scripts/generate-og-images.js` renders an `og:image` at build time for every page type — a 1200×630 screenshot of the site's own doc-chrome (titlebar showing the site domain, and "Edited [date] ▾" on a revised post; title, description, tags), not a generic redesigned social card. It's a real render (Satori → SVG → `@resvg/resvg-js` → PNG), not a screenshot tool — no headless browser dependency.
@@ -366,13 +379,18 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 | Package | Purpose |
 |---|---|
 | `@11ty/eleventy` | SSG |
+| `@extractus/article-extractor` | Reader-view check (`check-readers.js`) |
+| `@mozilla/readability` | Reader-view check: the engine behind Safari/Firefox Reader and most apps |
+| `@postlight/parser` | Reader-view check: Mercury. Unmaintained, and `npm audit` flags its `cheerio`/`postman-request` tree; it only parses our own built HTML, offline |
 | `@resvg/resvg-js` | Rasterizes the SVG `satori` produces into the final og:image PNG |
 | `diff` | Word-level diff for post-version changes pages (`htmlDiff` filter) |
 | `gray-matter` | Front-matter parsing in `generate-og-images.js`, `snapshot-versions.js` and `_data/versions.js` |
 | `heic-decode` | Decodes HEIC uploads for `convert-webp.js` (sharp can't) |
+| `jsdom` | DOM for the reader-view check |
 | `markdown-it` | Markdown parser (configured in `.eleventy.js`) |
 | `markdown-it-anchor` | Heading anchors |
 | `markdown-it-attrs` | Custom attributes |
 | `markdown-it-footnote` | Footnotes |
+| `microformats-parser` | Reader-view check: parses the h-entry |
 | `satori` | Lays out each post's og:image (title/description/tags) as SVG |
 | `sharp` | Image conversion — JPEG/PNG (and decoded HEIC) → WebP in `convert-webp.js` |
