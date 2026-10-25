@@ -91,6 +91,8 @@ When adding a **new CSS custom property**: add it to the token table in [APP.md]
 
 When adding a **new shortcode**: document it in [APP.md](APP.md) under Shortcodes.
 
+When adding a **new shortcode or body convention** an author types by hand: also add an editor component to `src/admin/editor-components.js`, with a `pattern` that matches exactly what its `toBlock` writes.
+
 When adding a **new npm script**: add it to [COMMANDS.md](COMMANDS.md).
 
 When changing **permalink or slug logic**: update [APP.md](APP.md) — these are URL-stability decisions.
