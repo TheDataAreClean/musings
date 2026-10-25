@@ -6,6 +6,7 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ## UNRELEASED
 
+- fix: About no longer shows the "← All posts" / "More ideas →" links at the bottom.
 ---
 
 ## 2026-10-25 (v4.3.1)
