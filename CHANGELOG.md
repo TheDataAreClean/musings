@@ -8,6 +8,7 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 - add: the CMS body editor has an insert menu for margin note, callout, page break, footnote marker and text, image with caption, and quote with source, so none of them have to be typed by hand.
 - docs: Sveltia CMS is loaded at a pinned version instead of the latest release.
+- fix: on a post's "what changed" page, the footnote's "Red is removed, green is added" is now shown in the same red strikethrough and green underline as the edits, so it reads as a key.
 
 ---
 
