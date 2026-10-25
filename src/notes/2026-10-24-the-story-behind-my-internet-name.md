@@ -8,6 +8,7 @@ tags:
 slug: name
 date: 2026-10-24T21:38:00+05:30
 version: 2
+versionDate: 2026-10-25T09:49:10+05:30
 versionNote: Some edits. I need to sleep over my writing a little more.
 permalink: /notes/2026-10-24-name/
 ---
