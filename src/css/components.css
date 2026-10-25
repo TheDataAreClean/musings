@@ -579,13 +579,17 @@ a.post-tag:hover { text-decoration: none; }
    text starts, and "*" plus an en space is about as wide as "1. " */
 .footnote-item--version { list-style-type: "*\2002"; }
 
-.doc-body ins {
+/* The changes footnote's key ("Red is removed, green is added") wears the
+   same marks as the edits it describes */
+.doc-body ins,
+.diff-key--ins {
   color: var(--color-ins);
   background: var(--color-ins-bg);
   text-decoration: underline;
 }
 
-.doc-body del {
+.doc-body del,
+.diff-key--del {
   color: var(--color-del);
   background: var(--color-del-bg);
   text-decoration: line-through;
