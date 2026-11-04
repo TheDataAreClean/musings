@@ -6,6 +6,7 @@ tags:
   - personal
   - creativity
 slug: exploration
+permalink: /notes/2026-11-04-exploration/
 date: 2026-11-04T21:22:00+05:30
 version: 1
 versionNote: ''
