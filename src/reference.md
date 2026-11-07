@@ -16,7 +16,7 @@ In the CMS, the insert menu in the body editor writes the shortcodes and convent
 
 Running prose can include **bold text** for emphasis, _italic text_ for titles and stress, and ~~strikethrough~~ for corrections or retractions. These can combine: **_bold italic_** works, as does _~~struck italic~~_.
 
-Inline `code` renders in a monospace font with a faint background. It is for short technical terms, variable names, filenames — things that need to be distinguished from prose.
+Inline `code` renders in a monospace font with a faint background. It is for short technical terms, variable names, filenames: things that need to be distinguished from prose.
 
 Links come in two kinds. [External links](https://www.example.com/) point away from this site. [Internal links](/about/) navigate within it. Both use the standard browser link colour.
 
@@ -34,7 +34,7 @@ A third-level heading, introduced by `###`. Used for subsections within a sectio
 
 #### Fourth-level heading
 
-A fourth-level heading, `####`. Use sparingly — if you need four levels of hierarchy in a single document, the document may need restructuring.
+A fourth-level heading, `####`. Use sparingly. If you need four levels of hierarchy in a single document, the document may need restructuring.
 
 ***
 
@@ -44,7 +44,7 @@ A paragraph that follows another paragraph starts with an indent, as in a printe
 
 A margin note placed between two paragraphs does not break the indent on screen.
 
-A single line break inside a paragraph is ignored, so write one paragraph per block. Inside a blockquote a single line break is kept, which is what makes lyrics and verse work.
+A single line break inside a paragraph is ignored, so write one paragraph per block. Inside a blockquote a single line break is kept, for lyrics and verse.
 
 ***
 
@@ -73,7 +73,7 @@ A list where items are full sentences should end each sentence with a full stop.
 
 ## Blockquote
 
-A blockquote is for quotation — text that originates elsewhere. It sits behind a thin bar on the left, with no quotation marks. The source, if needed, follows as a regular paragraph.
+A blockquote is for quotation: text that originates elsewhere. It sits behind a thin bar on the left, with no quotation marks. The source, if needed, follows as a regular paragraph.
 
 > The test of a first-rate intelligence is the ability to hold two opposed ideas in mind at the same time and still retain the ability to function.
 
@@ -86,7 +86,7 @@ Line breaks inside a quote are kept, so verse can be set line by line:
 
 William Shakespeare, Sonnet 18, 1609.
 
-The insert menu's quote with source writes exactly this: a quote, then the source as a plain line under it.
+The insert menu's quote with source writes a quote followed by the source on its own line.
 
 ***
 
@@ -145,11 +145,11 @@ An image, constrained to the document width:
 
 ![sample.svg](/images/uploads/2026-03-01-formatting-reference-e17169b9.svg)
 
-Images are block-level. They sit on their own line with vertical spacing above and below. They do not float. Captions are not built in — a following paragraph in _italic_ can serve as one.
+Images are block-level. They sit on their own line with vertical spacing above and below. They do not float. Captions are not built in. A following paragraph in _italic_ can serve as one.
 
 _An SVG placeholder standing in for a real photograph. This italic line is the caption._
 
-The insert menu's image with caption writes this pair: the image, then an italic line under it. Uploaded JPEG, PNG and HEIC files are converted to WebP when the site is built.
+The insert menu's image with caption writes the image and an italic line under it. Uploaded JPEG, PNG and HEIC files are converted to WebP when the site is built.
 
 ***
 
@@ -160,7 +160,7 @@ A note callout. Write it as {% raw %}`{% callout "note" %}`{% endraw %} and clos
 {% endcallout %}
 
 {% callout "warning" %}
-A warning callout, written the same way with "warning". Use this for things the reader should be careful about — exceptions, caveats, known failure modes. It has a faint orange background.
+A warning callout, written the same way with "warning". Use this for things the reader should be careful about: exceptions, caveats, known failure modes. It has a faint orange background.
 {% endcallout %}
 
 ***
@@ -175,7 +175,7 @@ Write it directly after the paragraph it belongs to: {% raw %}`{% marginnote "th
 This one names its phrase, so only those words are highlighted.
 {% endmarginnote %}
 
-The paragraph that hosts a margin note should be self-contained — readable without the note. The note adds, it does not complete. This is the difference between a margin note and a footnote: margin notes are optional; footnotes are referenced.[^1]
+The paragraph that hosts a margin note should be self-contained, readable without the note. The note adds, it does not complete. This is the difference between a margin note and a footnote: margin notes are optional; footnotes are referenced.[^1]
 
 {% marginnote %}
 This one names no phrase, so it is attached to the whole paragraph.
@@ -185,9 +185,9 @@ This one names no phrase, so it is attached to the whole paragraph.
 
 ## Edited posts
 
-A post can be revised in public. When it has more than one version, an edit note appears under the tags: a one-line quote such as "This post was edited on 15 Oct, 2026" ending in a [*] mark. The mark links to a footnote that says what changed, with links to a page showing what changed (red for removed text, green for added) and to the earlier versions. The titlebar's "Edited" menu lists every version. Earlier versions live at the post's address plus /v1/, and never appear in listings, tag pages or the feed.
+A revised post keeps its earlier versions. Under its tags it shows a one-line quote such as "This post was edited on 15 Oct, 2026" ending in a [*] mark. The mark links to a footnote with the note about the edit, a link to a page showing the changes (red for removed text, green for added) and a link to the earlier versions. The titlebar's "Edited" menu lists every version. Earlier versions live at the post's address plus /v1/, and never appear in listings, tag pages or the feed.
 
-This is set in the CMS with the Version and What changed fields, not in the body, so there is nothing to type here.
+The version is set in the CMS with the Version and What changed fields, not in the body.
 
 ***
 
@@ -201,7 +201,7 @@ The `markdown-it-attrs` plugin lets you attach HTML attributes to any block elem
 ## My Heading { data-foo="bar" }
 ```
 
-Note: because this site processes Nunjucks before markdown, ID attrs must be written with a space before the hash — `{ #id }` rather than the collapsed form. Class and data attributes (`{.class}`, `{data-x="y"}`) have no such restriction.
+Note: because this site processes Nunjucks before markdown, ID attrs must be written with a space before the hash: `{ #id }` rather than the collapsed form. Class and data attributes (`{.class}`, `{data-x="y"}`) have no such restriction.
 
 ***
 
@@ -209,8 +209,8 @@ Note: because this site processes Nunjucks before markdown, ID attrs must be wri
 
 Footnotes are numbered automatically and linked bidirectionally.[^2] The reference appears inline as a superscript; the note appears at the bottom of the document with a return link.
 
-They are for genuine supplementary material — citations, extended asides, qualifications that would slow the prose if embedded in it. If you find yourself writing footnotes longer than the paragraphs they annotate, reconsider whether the footnote belongs in the body or in a separate section.
+They are for genuine supplementary material: citations, extended asides, qualifications that would slow the prose if embedded in it. If you find yourself writing footnotes longer than the paragraphs they annotate, reconsider whether the footnote belongs in the body or in a separate section.
 
 [^1]: The footnote itself, demonstrating its own form. The text above references this note; this note does not assume you read the text above in order to make sense. That is the test.
 
-[^2]: A second footnote, which the insert menu writes as a footnote marker in the text and a footnote text at the end. The numbering is automatic — add or remove footnotes anywhere in the document and the numbers update.
+[^2]: A second footnote, which the insert menu writes as a footnote marker in the text and a footnote text at the end. The numbering is automatic. Add or remove footnotes anywhere in the document and the numbers update.
