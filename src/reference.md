@@ -187,6 +187,17 @@ This one names no phrase, so it is attached to the whole paragraph.
 
 A revised post keeps its earlier versions. Under its tags it shows a one-line quote such as "This post was edited on 15 Oct, 2026" ending in a [*] mark. The mark links to a footnote with the note about the edit, a link to a page showing the changes (red for removed text, green for added) and a link to the earlier versions. The titlebar's "Edited" menu lists every version. Earlier versions live at the post's address plus /v1/, and never appear in listings, tag pages or the feed.
 
+Here is one, set the way a real post sets it. The note and links below are examples, since this page has no earlier versions.
+
+<p class="version-line">This post was edited on 15 Oct, 2026<sup class="footnote-ref"><a href="#fn-example-edit" id="fnref-example-edit">[*]</a></sup></p>
+
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn-example-edit" class="footnote-item footnote-item--version"><p>Fixed two typos and added the second example. <a href="#fnref-example-edit">What changed</a> · <a href="#fnref-example-edit">Earlier versions</a> <a href="#fnref-example-edit" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+
 The version is set in the CMS with the Version and What changed fields, not in the body.
 
 ***
