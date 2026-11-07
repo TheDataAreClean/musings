@@ -6,10 +6,10 @@ tags:
   - nature
   - humour
 slug: ponder
-permalink: /ideas/2026-11-07-ponder/
 date: 2026-11-07T21:46:00+05:30
 version: 1
 versionNote: ''
+permalink: /ideas/2026-11-07-ponder/
 ---
 
 ## Anatomically
@@ -66,7 +66,7 @@ versionNote: ''
 - **Yes.** Fish have [Pisces](https://en.wikipedia.org/wiki/Pisces_\(astrology\)) in Western astrology; horses have a sign in the [Chinese zodiac](https://en.wikipedia.org/wiki/Horse_\(zodiac\)). Their horoscopes will have to compare calendars first.
 - **Maybe.** The Chinese zodiac includes a [Water Horse](https://en.wikipedia.org/wiki/Horse_\(zodiac\)#Years_and_the_Five_Elements). The stars have not quite said yes, but they have put the horse in water.
 
-\---
+***
 
 > _Is a fish a horse? Ponder._ 
 > – Prompt from [IndieWebClub Bangalore](https://blr.indiewebclub.org/) meetup #37.
