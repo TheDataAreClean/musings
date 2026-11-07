@@ -14,6 +14,9 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    # A normal run takes under a minute. GitHub's Pages step has hung for
+    # 30+ minutes before, which blocks every queued deploy behind it.
+    timeout-minutes: 10
     permissions:
       contents: write
       pages: write
@@ -53,3 +56,4 @@ jobs:
           path: ./_site
       - uses: actions/deploy-pages@v5
         id: deployment
+        timeout-minutes: 5
