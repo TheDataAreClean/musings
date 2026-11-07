@@ -6,6 +6,7 @@ tags:
   - nature
   - humour
 slug: ponder
+permalink: /ideas/2026-11-07-ponder/
 date: 2026-11-07T21:46:00+05:30
 version: 1
 versionNote: ''
