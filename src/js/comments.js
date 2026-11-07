@@ -244,16 +244,25 @@
     });
   }
 
-  // Is there room on the desk, right of the page, for the rail?
-  function roomForRail() {
-    var need = (railW + gap + RAIL_MARGIN) * scale();
-    return html.clientWidth - main.getBoundingClientRect().right >= need;
+  // Is there room on the desk for the rail? Returns 'centered' (the page sits
+  // in the middle and the rail fits on its right), 'shifted' (it only fits if
+  // the page slides left, which html.comments-shift does) or '' (use the sheet).
+  // Computed from the viewport width alone, so shifting can't flip the answer.
+  function railFit() {
+    var need = railW + gap + RAIL_MARGIN;                    // canvas px
+    var avail = html.clientWidth / scale();
+    var page = Math.min(token('--page-width'), avail);
+    if ((avail - page) / 2 >= need) return 'centered';
+    var padL = parseFloat(getComputedStyle(canvas).paddingLeft) || 0;
+    return avail >= padL + page + need ? 'shifted' : '';
   }
 
   function relayout() {
     railW = token('--comment-w');
     gap = token('--comment-gap');
-    railMode = roomForRail();
+    var fit = railFit();
+    railMode = !!fit;
+    html.classList.toggle('comments-shift', fit === 'shifted');
     html.classList.toggle('comments-rail', railMode);
     rail.hidden = !railMode;
     if (railMode !== applied) { // entering a mode: start clean
