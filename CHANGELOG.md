@@ -6,6 +6,10 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ## UNRELEASED
 
+---
+
+## 2026-11-07 (v4.4.0)
+
 - docs: `/reference/` brought up to date: paragraph indent, quotes that keep line breaks, edited posts and versions, the CMS insert menu, how to write callouts and margin notes (with dates), and a fixed internal-link example and image caption note.
 - add: `/style/` now shows quote, code, table, section break, footnotes, the edit note and post marks, and each component links to its syntax on `/reference/`.
 - add: /random takes you to a random post from ideas, notes or snaps, and the end of every RSS entry links to it.
