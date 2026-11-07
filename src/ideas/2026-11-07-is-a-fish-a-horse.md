@@ -57,8 +57,8 @@ permalink: /ideas/2026-11-07-ponder/
 ## Mythologically
 
 - **No.** The actual [seahorse](https://en.wikipedia.org/wiki/Seahorse) is small, fishy and not known to pull divine chariots. Its cultural potential remains unverified.
-- **Yes.** Poseidon’s chariot was sometimes drawn by [hippocampi](https://en.wikipedia.org/wiki/Hippocampus_\(mythology\)#Greek_and_Roman), creatures with the front of a horse and the tail of a fish. Greek mythology took one look at the IWCB prompt and said, “Sure, why not?”
-- **Maybe.** In Hindu mythology, Vishnu appears as [Matsya](https://en.wikipedia.org/wiki/Matsya), a fish, and [Hayagriva](https://en.wikipedia.org/wiki/Hayagriva), a horse-headed form. Vishnu seems to have kept both options open.
+- **Yes.** Poseidon’s chariot was sometimes drawn by [hippocampi](https://en.wikipedia.org/wiki/Hippocampus_\(mythology\)#Greek_and_Roman), creatures with the front of a horse and the tail of a fish. Greek mythology took one look at the [IWCB](https://blr.indiewebclub.org/) prompt and said, “Sure, why not?”
+- **Maybe.** In Hindu mythology, Vishnu appears as [Matsya](https://en.wikipedia.org/wiki/Matsya), a fish, and [Hayagriva](https://en.wikipedia.org/wiki/Hayagriva), a horse-headed form. He seems to be keeping his options open.
 
 ## Astrologically
 
