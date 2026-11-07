@@ -6,6 +6,7 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ## UNRELEASED
 
+- add: /random takes you to a random post from ideas, notes or snaps.
 - fix: About no longer shows the "← All posts" / "More ideas →" links at the bottom.
 ---
 

@@ -1,0 +1,23 @@
+---
+permalink: /random/
+layout: false
+eleventyExcludeFromCollections: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Random post · {{ site.title }}</title>
+  <script>
+    // Same list as File → New. replace() keeps /random/ out of the back button.
+    fetch('/posts.json').then(function (r) { return r.json(); }).then(function (all) {
+      location.replace(all[Math.floor(Math.random() * all.length)] || '/');
+    }, function () { location.replace('/'); });
+  </script>
+</head>
+<body>
+  <noscript><p><a href="/">All posts</a></p></noscript>
+</body>
+</html>
