@@ -198,6 +198,19 @@ Here is one, set the way a real post sets it. The note and links below are examp
 </ol>
 </section>
 
+The "What changed" link opens a page that shows the newer text with the edits marked. Text that was removed is struck through in red, and text that was added is underlined in green. This is an example of how an edited sentence reads there:
+
+<p>The post was <del>first</del> <ins>later</ins> revised to say <del>nothing</del> <ins>something</ins> more useful.</p>
+
+Its footnote carries the key:
+
+<section class="footnotes">
+<ol class="footnotes-list">
+<li class="footnote-item footnote-item--version"><p>Fixed two typos and added the second example. <span class="diff-key diff-key--del">Red is removed</span>, <span class="diff-key diff-key--ins">green is added</span>. <a href="#edited-posts">Latest version</a> · <a href="#edited-posts">Previous version</a></p>
+</li>
+</ol>
+</section>
+
 The version is set in the CMS with the Version and What changed fields, not in the body.
 
 ***
