@@ -21,7 +21,7 @@ hidePostNav: true
 </div>
 {%- endmacro %}
 
-<p>This page is a reference for how the site looks. Every value below is read from <code>src/css/tokens.css</code> at build time, so it cannot drift from the real thing. The formatting of the writing itself is on the <a href="/reference/">reference</a> page.</p>
+<p>This page shows how the site looks. Every value below is read from <code>src/css/tokens.css</code> at build time, so it cannot drift from the real thing. How to write each element is on the <a href="/reference/">reference</a> page, which each component below links to.</p>
 
 <hr>
 
@@ -105,6 +105,64 @@ hidePostNav: true
 
 {{ h(2, "components", "Components") }}
 
+{{ h(3, "quote", "Quote") }}
+
+<blockquote>
+<p>A quote sits behind a thin bar, with no quotation marks.</p>
+</blockquote>
+
+<p>The edit note under an edited post is the same quote. <a href="/reference/#blockquote">Syntax</a></p>
+
+{{ h(3, "code", "Code") }}
+
+<p>Inline <code>code</code> is set in <code>--font-mono</code> on <code>--color-code-bg</code>. A block scrolls sideways and does not wrap.</p>
+
+<pre><code>npm run dev
+# Server at http://localhost:8081</code></pre>
+
+<p><a href="/reference/#code-block">Syntax</a></p>
+
+{{ h(3, "table", "Table") }}
+
+<table>
+<thead><tr><th>Token</th><th>Used for</th></tr></thead>
+<tbody>
+<tr><td><code>--color-border-soft</code></td><td>Table rules</td></tr>
+<tr><td><code>--color-code-bg</code></td><td>Code background</td></tr>
+</tbody>
+</table>
+
+<p><a href="/reference/#table">Syntax</a></p>
+
+{{ h(3, "section-break", "Section break") }}
+
+<p>A rule is drawn as three asterisks, not a line.</p>
+
+<hr>
+
+<p>Text after the rule. <a href="/reference/#inline-text">Syntax</a></p>
+
+{{ h(3, "footnotes", "Footnotes") }}
+
+<p>A footnote is a superscript number<sup class="footnote-ref"><a href="#fn-style-demo" id="fnref-style-demo">[1]</a></sup> that links to a note at the end of the page, which links back.</p>
+
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn-style-demo" class="footnote-item"><p>A footnote, set smaller than the text. <a href="#fnref-style-demo" class="footnote-backref">↩︎</a></p></li>
+</ol>
+</section>
+
+<p><a href="/reference/#footnotes">Syntax</a></p>
+
+{{ h(3, "edit-note", "Edit note") }}
+
+<p>An edited post says so in a one-line quote ending in <code>[*]</code>, which links to a footnote holding what changed and links to earlier versions. The titlebar's version menu lists the same versions. <a href="/reference/#edited-posts">More</a></p>
+
+{{ h(3, "post-sigils", "Post marks") }}
+
+<p>Lists mark the kind of post: <code>→</code> idea, <code>·</code> note, <code>○</code> snap.</p>
+
 {{ h(3, "comment-margin-note", "Comment (margin note)") }}
 
 <p>A comment is attached to the words it is about, so only those words are highlighted. Hover the highlight, or the card on the desk, and each lights up the other. Leave the phrase out and the whole paragraph is the anchor.</p>
@@ -119,7 +177,7 @@ On a wide screen this sits on the desk beside the page, level with the words it 
 The note. Markdown works in here.
 {% endmarginnote %}{% endraw %}</code></pre>
 
-<p>Put it directly after the paragraph it belongs to. If the phrase is not found in that paragraph, the note falls back to the whole paragraph.</p>
+<p>Put it directly after the paragraph it belongs to. If the phrase is not found in that paragraph, the note falls back to the whole paragraph. Without JavaScript, in print and in feed readers the note is shown inline as a box. <a href="/reference/#margin-note">Syntax</a></p>
 
 {{ h(3, "callouts", "Callouts") }}
 
@@ -131,6 +189,8 @@ A note callout: an aside or clarification, on a faint yellow.
 A warning callout: a caveat or a known failure mode, on a faint orange.
 {% endcallout %}
 
+<p><a href="/reference/#callout">Syntax</a></p>
+
 {{ h(3, "highlight-links-and-tags", "Highlight, links and tags") }}
 
 <p>A <mark>highlighted phrase</mark>, an <a href="https://www.example.com/">external link</a>, and a tag: <a class="post-tag" href="#components">design</a></p>
@@ -141,4 +201,4 @@ A warning callout: a caveat or a known failure mode, on a faint orange.
 
 {% pagebreak %}
 
-<p>Text after the break.</p>
+<p>Text after the break. <a href="/reference/#page-break">Syntax</a></p>

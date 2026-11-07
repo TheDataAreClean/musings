@@ -6,6 +6,8 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ## UNRELEASED
 
+- docs: `/reference/` brought up to date: paragraph indent, quotes that keep line breaks, edited posts and versions, the CMS insert menu, how to write callouts and margin notes (with dates), and a fixed internal-link example and image caption note.
+- add: `/style/` now shows quote, code, table, section break, footnotes, the edit note and post marks, and each component links to its syntax on `/reference/`.
 - fix: About no longer shows the "← All posts" / "More ideas →" links at the bottom.
 ---
 
