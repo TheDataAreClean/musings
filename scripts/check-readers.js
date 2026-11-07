@@ -12,7 +12,9 @@
 //   • a post with prose extracts to nothing (Readability, Mercury, h-entry)
 //   • the h-entry or the BlogPosting JSON-LD is missing a field
 // article-extractor skips posts under its length threshold by design, so an
-// empty result there is a note, not a failure. A photo-only snap, or one whose
+// empty result there is a note, not a failure. So is Mercury handing back the
+// whole <body> for a post with no prose block, while Readability and the
+// h-entry still extract it cleanly. A photo-only snap, or one whose
 // only text is a link, has nothing for any engine to hold onto; a note too.
 //
 // Run on its own with `npm run check:readers` (needs a built _site).
@@ -100,6 +102,14 @@ async function check({ url, file }) {
 
   for (const [engine, content] of Object.entries(outputs)) {
     const text = textOf(content);
+    // Mercury scores blocks of prose and discounts link-heavy ones, so a post of
+    // nothing but linked bullets gives it no body to pick and it hands back the
+    // whole <body>. That is the engine's limit, not a leak in our markup, so
+    // excuse it only while Readability and the h-entry both extract cleanly.
+    if (engine === "mercury" && /^\s*<body\b/.test(content || "") && readability?.content && entry?.properties.content?.[0]?.html) {
+      note.push("mercury: returned the whole page (no prose block to pick; list or link-only post)");
+      continue;
+    }
     if (!text && /<img\b/.test(content || "")) continue; // a photo, no words: nothing to misread
     if (!text) {
       if (!hasText) note.push(`${engine}: nothing to extract (little or no text outside links)`);
