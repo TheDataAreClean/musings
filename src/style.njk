@@ -134,34 +134,17 @@ hidePostNav: true
 
 <p><a href="/reference/#table">Syntax</a></p>
 
-{{ h(3, "section-break", "Section break") }}
+{{ h(3, "callouts", "Callouts") }}
 
-<p>A rule is drawn as three asterisks, not a line.</p>
+{% callout "note" %}
+A note callout: an aside or clarification, on a faint yellow.
+{% endcallout %}
 
-<hr>
+{% callout "warning" %}
+A warning callout: a caveat or a known failure mode, on a faint orange.
+{% endcallout %}
 
-<p>Text after the rule. <a href="/reference/#inline-text">Syntax</a></p>
-
-{{ h(3, "footnotes", "Footnotes") }}
-
-<p>A footnote is a superscript number<sup class="footnote-ref"><a href="#fn-style-demo" id="fnref-style-demo">[1]</a></sup> that links to a note at the end of the page, which links back.</p>
-
-<hr class="footnotes-sep">
-<section class="footnotes">
-<ol class="footnotes-list">
-<li id="fn-style-demo" class="footnote-item"><p>A footnote, set smaller than the text. <a href="#fnref-style-demo" class="footnote-backref">↩︎</a></p></li>
-</ol>
-</section>
-
-<p><a href="/reference/#footnotes">Syntax</a></p>
-
-{{ h(3, "edit-note", "Edit note") }}
-
-<p>An edited post says so in a one-line quote ending in <code>[*]</code>, which links to a footnote holding what changed and links to earlier versions. The titlebar's version menu lists the same versions. <a href="/reference/#edited-posts">More</a></p>
-
-{{ h(3, "post-sigils", "Post marks") }}
-
-<p>Lists mark the kind of post: <code>→</code> idea, <code>·</code> note, <code>○</code> snap.</p>
+<p><a href="/reference/#callout">Syntax</a></p>
 
 {{ h(3, "comment-margin-note", "Comment (margin note)") }}
 
@@ -179,21 +162,38 @@ The note. Markdown works in here.
 
 <p>Put it directly after the paragraph it belongs to. If the phrase is not found in that paragraph, the note falls back to the whole paragraph. Without JavaScript, in print and in feed readers the note is shown inline as a box. <a href="/reference/#margin-note">Syntax</a></p>
 
-{{ h(3, "callouts", "Callouts") }}
+{{ h(3, "footnotes", "Footnotes") }}
 
-{% callout "note" %}
-A note callout: an aside or clarification, on a faint yellow.
-{% endcallout %}
+<p>A footnote is a superscript number<sup class="footnote-ref"><a href="#fn-style-demo" id="fnref-style-demo">[1]</a></sup> that links to a note at the end of the page, which links back.</p>
 
-{% callout "warning" %}
-A warning callout: a caveat or a known failure mode, on a faint orange.
-{% endcallout %}
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn-style-demo" class="footnote-item"><p>A footnote, set smaller than the text. <a href="#fnref-style-demo" class="footnote-backref">↩︎</a></p></li>
+</ol>
+</section>
 
-<p><a href="/reference/#callout">Syntax</a></p>
+<p><a href="/reference/#footnotes">Syntax</a></p>
+
+{{ h(3, "edit-note", "Edit note") }}
+
+<p>An edited post says so in a one-line quote ending in <code>[*]</code>, which links to a footnote holding what changed and links to earlier versions. The titlebar's version menu lists the same versions. On a changes page, <del>removed text</del> is red and struck through and <ins>added text</ins> is green and underlined (<code>--color-del</code> and <code>--color-ins</code>). <a href="/reference/#edited-posts">Syntax</a></p>
 
 {{ h(3, "highlight-links-and-tags", "Highlight, links and tags") }}
 
 <p>A <mark>highlighted phrase</mark>, an <a href="https://www.example.com/">external link</a>, and a tag: <a class="post-tag" href="#components">design</a></p>
+
+{{ h(3, "post-sigils", "Post marks") }}
+
+<p>Lists mark the kind of post: <code>→</code> idea, <code>·</code> note, <code>○</code> snap.</p>
+
+{{ h(3, "section-break", "Section break") }}
+
+<p>A rule is drawn as three asterisks, not a line.</p>
+
+<hr>
+
+<p>Text after the rule. <a href="/reference/#inline-text">Syntax</a></p>
 
 {{ h(3, "page-break", "Page break") }}
 

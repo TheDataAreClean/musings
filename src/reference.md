@@ -185,9 +185,7 @@ This one names no phrase, so it is attached to the whole paragraph.
 
 ## Edited posts
 
-A revised post keeps its earlier versions. Under its tags it shows a one-line quote such as "This post was edited on 15 Oct, 2026" ending in a [*] mark. The mark links to a footnote with the note about the edit, a link to a page showing the changes (red for removed text, green for added) and a link to the earlier versions. The titlebar's "Edited" menu lists every version. Earlier versions live at the post's address plus /v1/, and never appear in listings, tag pages or the feed.
-
-Here is one, set the way a real post sets it. The note and links below are examples, since this page has no earlier versions.
+A revised post keeps its earlier versions, which live at the post's address plus /v1/ and never appear in listings, tag pages or the feed. The titlebar's "Edited" menu lists every version. Under the tags, an edit note links to a footnote that holds the note about the edit:
 
 <p class="version-line">This post was edited on 15 Oct, 2026<sup class="footnote-ref"><a href="#fn-example-edit" id="fnref-example-edit">[*]</a></sup></p>
 
@@ -198,11 +196,11 @@ Here is one, set the way a real post sets it. The note and links below are examp
 </ol>
 </section>
 
-The "What changed" link opens a page that shows the newer text with the edits marked. Text that was removed is struck through in red, and text that was added is underlined in green. This is an example of how an edited sentence reads there:
+The note and links above are examples, since this page has no earlier versions.
+
+"What changed" opens a page with the newer text and the edits marked. Removed text is struck through in red and added text is underlined in green, and the footnote there carries the key:
 
 <p>The post was <del>first</del> <ins>later</ins> revised to say <del>nothing</del> <ins>something</ins> more useful.</p>
-
-Its footnote carries the key:
 
 <section class="footnotes">
 <ol class="footnotes-list">
