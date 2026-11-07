@@ -198,6 +198,12 @@
 
 /* Rail — cards on the desk, level with their anchors */
 
+/* Too narrow to centre the page with the rail beside it: slide the page left
+   by reserving the rail's width on the right (RAIL_MARGIN in comments.js = 12px). */
+.comments-shift .app-canvas {
+  padding-right: calc(var(--comment-w) + var(--comment-gap) + 12px);
+}
+
 .comment-rail {
   position: absolute;
   top: 0;
