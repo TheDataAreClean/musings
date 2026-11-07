@@ -8,6 +8,12 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## 2026-11-07 (v4.4.1)
+
+- chore: a deploy that hangs on GitHub Pages now stops after 5 minutes instead of blocking the ones queued behind it.
+
+---
+
 ## 2026-11-07 (v4.4.0)
 
 - docs: `/reference/` brought up to date: paragraph indent, quotes that keep line breaks, edited posts and versions, the CMS insert menu, how to write callouts and margin notes (with dates), and a fixed internal-link example and image caption note.
