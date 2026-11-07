@@ -1,12 +1,12 @@
 ---
-draft: true
-title: Is a fish a horse?
+draft: false
+title: Is a horse a fish?
 description: I pondered.
 tags:
   - nature
   - humour
 slug: ponder
-date: 2026-11-07T21:46:00+05:30
+date: 2026-11-07T23:45:00+05:30
 version: 1
 versionNote: ''
 permalink: /ideas/2026-11-07-ponder/
@@ -68,5 +68,5 @@ permalink: /ideas/2026-11-07-ponder/
 
 ***
 
-> _Is a fish a horse? Ponder._ 
+> _Is a horse a fish? Ponder._ 
 > – Prompt from [IndieWebClub Bangalore](https://blr.indiewebclub.org/) meetup #37.
