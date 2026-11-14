@@ -6,6 +6,7 @@ tags:
   - tech
   - personal
 slug: arc
+permalink: /ideas/2026-11-14-arc/
 date: 2026-11-14T05:32:00+05:30
 version: 1
 versionNote: ''
