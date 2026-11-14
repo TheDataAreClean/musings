@@ -6,10 +6,10 @@ tags:
   - tech
   - personal
 slug: arc
-permalink: /ideas/2026-11-14-arc/
 date: 2026-11-14T05:32:00+05:30
 version: 1
 versionNote: ''
+permalink: /ideas/2026-11-14-arc/
 ---
 
 A few weeks ago, The Browser Company [announced that it is shutting down Arc](https://resources.arc.net/hc/en-us/articles/44412972248471-Arc-Sunset-Key-Dates-and-What-to-Expect).
@@ -20,7 +20,7 @@ Even though my usage of Arc paused the moment the Dia announcement dropped, the 
 
 One good thing did come out of it, though. It helped move the rest of the browser industry forward. Over the last couple of years, it opened up the new possibilities of what a browser could be and challenged users to demand more of their browsers.
 
-\---
+***
 
 The browser is the most important application anyone can have on their computer. Irrespective of the work you do, you probably use one constantly. Browsers have become so capable over time that almost any task imaginable can now happen inside of a tab. Along with your regular browsing and organising your links better than ever before, you can now [design](https://www.figma.com/), and even [code](https://vscode.dev/) in your browsers. Some are even cosplaying as full-on [operating systems](https://www.google.com/chromebook/). Might not be the most efficient way to do something, but you still can do it!
 
@@ -32,7 +32,7 @@ What made Arc such a joy to use was how it made the web feel like a place I coul
 
 Arc’s influence is visible in other browsers today too. Despite its near-total market dominance, Chrome added features that actually make it more useful, [sometimes even against the wishes of its Search team](https://www.theverge.com/24247369/the-browser-company-ceo-josh-miller-arc-google-chrome-ai-search-web-decoder-interview). More browsers now support tab groups and vertical tabs. Even Safari added [vertical tabs](https://www.macrumors.com/2026/11/03/ios-27-3-safari/). Safari, who would have thunk!
 
-\---
+***
 
 As Arc’s development slowed down, I found myself doing some intense soul-searching to find the new perfect browser for me. Around that time, nearly everyone had the same idea for what the future of browsers could be — AI. Perplexity had [Comet](https://www.perplexity.ai/comet), The Browser Company pivoted to [Dia](https://www.diabrowser.com/), and OpenAI, too, decided to care about browsers for a couple of weeks with [Atlas](https://openai.com/index/introducing-chatgpt-atlas/?featured_on=pythonbytes). But none of them felt quite the same. After all these detours, I even went back to short stints with Vivaldi, Firefox and Chrome. Maybe lightning could strike twice?
 
@@ -40,7 +40,7 @@ All this searching and trying dozens of browsers, sometimes switching between mu
 
 I use my phone’s browser very differently from the one on my desktop. On my phone, it is purely a browsing and reading machine. Things like syncing, bookmarks and tab groups do not matter at all. If I want to save something, it goes to my [existing workflow](https://musings.thedataareclean.com/ideas/2026-09-05-mymind/). My mobile browser is just a utility that comes along with me. On desktop, it is a completely different story. The browser has to feel like a home I have decorated myself. I want to keep coming back to it, find things I have stored, use them, rearrange them and explore them through a system that only makes sense to me.
 
-\---
+***
 
 I have had better luck finding a browser for my phone. [Quiche](https://quiche.industries/browser) has been my primary mobile browser for nearly two years now, and it has been nothing short of great. It has a clean design and snappy performance, but the best feature probably is that it does not make you think about itself. Recently, though, I upgraded to [Lens](https://lens.maximos.work/), a lightweight browser that builds on many of the good ideas of Arc Search and adds some powerful developer tools on top of it. My favourite being the ability to instantly find out which fonts any webpage is using.
 
