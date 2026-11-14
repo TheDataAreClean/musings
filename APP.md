@@ -342,7 +342,7 @@ Access: `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
 
 `/feed.xml` — combined Atom feed (ideas + notes + snaps), 15 most recent posts. Uses `atomDate` (UTC ISO 8601). `feed.njk` must have `layout: false`.
 
-Each entry's `<title>` is the bare post title; the blog name comes from the feed's own `<title>`. Entry content is: description (if present) → rule → edit line (revised posts) → body (a revised post's `[*]` footnote joins its footnotes; see Post versions) → tags → rule → a fixed sign-off ("Congratulations! You have reached the end. You should read more at {site} and subscribe to my RSS.", both linked from `site.url`). Styles are inline because feed readers ignore site CSS.
+Each entry's `<title>` is the bare post title; the blog name comes from the feed's own `<title>`. Entry content is: description (if present) → rule → edit line (revised posts) → body (a revised post's `[*]` footnote joins its footnotes; see Post versions) → tags → rule → a fixed sign-off ("You have reached the end. More at {site}. Try a random post, or subscribe via RSS.", each linked from `site.url`). Styles are inline because feed readers ignore site CSS.
 
 Post pages' `og:title` is likewise the bare title — the blog name lives in `og:site_name`. Only the browser-tab `<title>` keeps the `| {site.title}` suffix.
 
