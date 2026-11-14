@@ -8,6 +8,12 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## 2026-11-14 (v4.4.2)
+
+- fix: the sign-off at the end of every RSS entry now reads "You have reached the end. More at musings.thedataareclean.com. Try a random post, or subscribe via RSS."
+
+---
+
 ## 2026-11-07 (v4.4.1)
 
 - chore: a deploy that hangs on GitHub Pages now stops after 5 minutes instead of blocking the ones queued behind it.
