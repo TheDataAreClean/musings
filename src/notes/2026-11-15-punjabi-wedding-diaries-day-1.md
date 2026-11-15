@@ -6,15 +6,14 @@ tags:
   - family
   - delhi
 slug: pwd-1
-permalink: /notes/2026-11-15-pwd-1/
 date: 2026-11-15T09:30:00+05:30
 version: 1
 versionNote: ''
+permalink: /notes/2026-11-15-pwd-1/
 ---
 
-**Day**: One
-
-**Date**: 14 November, 2026
+> **Day**: One
+> **Date**: 14 November, 2026
 
 ***
 
