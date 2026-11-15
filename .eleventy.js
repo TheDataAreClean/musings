@@ -270,6 +270,12 @@ module.exports = function (eleventyConfig) {
       : (html) => html;
     return absolute(content)
       .replace(/<figure>/g, '<figure style="margin: 2rem 0 3rem;">')
+      // Many feed readers drop <figcaption>, so write the caption as a styled
+      // paragraph they all show
+      .replace(
+        /<figcaption>([\s\S]*?)<\/figcaption>/g,
+        '<p style="margin:0.5em 0 0;color:#6b7280;font-size:0.875em;">$1</p>'
+      )
       // Margin notes: feed readers drop the site CSS, so the card header (avatar
       // letter, author, date) would run into one line ("AArpit16 Oct"). Drop
       // it and keep the note's own label, styled inline as a quote.
