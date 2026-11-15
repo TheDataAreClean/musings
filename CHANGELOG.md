@@ -6,6 +6,10 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ## UNRELEASED
 
+---
+
+## 2026-11-15 (v4.5.1)
+
 - fix: a bullet that ends in an image now shows the image under its text with its caption, instead of an uncaptioned image after the text.
 
 ---
