@@ -244,7 +244,7 @@ Section break: `---` in body renders as `* * *`. Page break: the `pagebreak` sho
 | `readableDate` | date | "30 Apr, 2026" in IST (September is "Sept") — every date a reader sees: lists, posts, version notes, chrome, margin notes, feed. `<time datetime>` stays ISO (`isoDate`) |
 | `isoDate` | date | `YYYY-MM-DD` in IST |
 | `atomDate` | date | UTC ISO 8601 for Atom feed |
-| `rssContent` | HTML string, base | Feed-only rewrite: root-relative `src`/`href` made absolute with `site.url`, inline figure spacing, margin notes as labelled blockquotes |
+| `rssContent` | HTML string, base | Feed-only rewrite: root-relative `src`/`href` made absolute with `site.url`, inline figure spacing, captions as styled paragraphs, margin notes as labelled blockquotes |
 | `ogImageSlug` / `ogImageExists` | URL / slug | og:image path and existence check (from `generate-og-images.js`) |
 | `tagSlug` | tag | URL segment for a tag (lowercase, spaces → hyphens). Use it for every `/tags/` link and the tag page permalink; `generate-og-images.js` uses the same function |
 | `limit` | array, n | First n items (feed) |
