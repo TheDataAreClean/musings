@@ -8,6 +8,13 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## 2026-11-15 (v4.5.0)
+
+- add: an image written inside a bullet's line of text now stays in the line, sized to the text, instead of breaking the line in two. A bullet that is only an image, or an image on its own line, still shows full width.
+- fix: images and links in the RSS feed now use full web addresses, so they show in feed readers that cannot resolve a site-relative path.
+
+---
+
 ## 2026-11-14 (v4.4.2)
 
 - fix: the sign-off at the end of every RSS entry now reads "You have reached the end. More at musings.thedataareclean.com. Try a random post, or subscribe via RSS."

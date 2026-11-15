@@ -238,10 +238,15 @@ module.exports = function (eleventyConfig) {
     return new Date(date).toISOString();
   });
 
-  // Feed readers ignore main.css, so bake in the post-photo spacing inline
-  eleventyConfig.addFilter("rssContent", function (content) {
+  // Feed readers ignore main.css, so bake in the post-photo spacing inline.
+  // base (site.url) turns root-relative image and link URLs into absolute ones,
+  // since a feed reader has no page to resolve "/images/..." against.
+  eleventyConfig.addFilter("rssContent", function (content, base) {
     if (!content) return content;
-    return content
+    const absolute = base
+      ? (html) => html.replace(/\b(src|href)="\/(?!\/)/g, `$1="${base}/`)
+      : (html) => html;
+    return absolute(content)
       .replace(/<figure>/g, '<figure style="margin: 2rem 0 3rem;">')
       // Margin notes: feed readers drop the site CSS, so the card header (avatar
       // letter, author, date) would run into one line ("AArpit16 Oct"). Drop
