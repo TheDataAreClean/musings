@@ -104,6 +104,28 @@ function markdownItFigures(md) {
     for (let i = 1; i < state.tokens.length - 1; i++) {
       const tok = state.tokens[i];
       if (tok.type !== "inline") continue;
+
+      // A bullet that ends in an image ("text.![](a.webp "caption")") becomes its
+      // text, then the image as a figure under it, so the caption shows. Tight and
+      // loose list items both have list_item_open two tokens before the inline.
+      if (
+        tok.children && tok.children.length > 1 &&
+        tok.children[tok.children.length - 1].type === "image" &&
+        state.tokens[i - 1].type === "paragraph_open" &&
+        state.tokens[i + 1].type === "paragraph_close" &&
+        state.tokens[i - 2] && state.tokens[i - 2].type === "list_item_open"
+      ) {
+        const img = tok.children.pop();
+        const last = tok.children[tok.children.length - 1];
+        if (last.type === "text") last.content = last.content.replace(/\s+$/, "");
+        const alt = img.children ? img.children.map((t) => t.content).join("") : "";
+        const title = img.attrGet("title") || "";
+        let html = `<figure>\n${pictureTag(img.attrGet("src") || "", alt, title)}\n`;
+        if (title) html += `<figcaption>${title}</figcaption>\n`;
+        html += `</figure>`;
+        state.tokens.splice(i + 2, 0, Object.assign(new state.Token("html_block", "", 0), { content: html }));
+        continue;
+      }
       if (!tok.children || tok.children.length !== 1) continue;
       if (tok.children[0].type !== "image") continue;
       if (state.tokens[i - 1].type !== "paragraph_open") continue;

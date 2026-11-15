@@ -8,6 +8,12 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## 2026-11-15 (v4.5.1)
+
+- fix: a bullet that ends in an image now shows the image under its text with its caption, instead of an uncaptioned image after the text.
+
+---
+
 ## 2026-11-15 (v4.5.0)
 
 - add: an image written inside a bullet's line of text now stays in the line, sized to the text, instead of breaking the line in two. A bullet that is only an image, or an image on its own line, still shows full width.
