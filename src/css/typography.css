@@ -224,6 +224,17 @@ main [id] {
   margin: 0;
 }
 
+/* An image typed into a bullet's text line (an icon, an emoji-sized mark) stays
+   in the line instead of breaking it. A bullet that is only an image, or an
+   image on its own line, is a figure and is untouched. */
+.doc-body li p img {
+  display: inline-block;
+  margin: 0 var(--space-1);
+  vertical-align: middle;
+  max-height: 1.5em;
+  width: auto;
+}
+
 .doc-body figcaption {
   font-family: var(--font-doc);
   font-size: var(--text-xs);
