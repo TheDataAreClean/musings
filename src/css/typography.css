@@ -235,6 +235,16 @@ main [id] {
   width: auto;
 }
 
+/* A figure inside a bullet sits close to its text: the post-photo margin is
+   too loose between list items. */
+.doc-body li figure {
+  margin: var(--space-2) 0;
+}
+
+.doc-body li p:has(+ figure) {
+  margin-bottom: 0;
+}
+
 .doc-body figcaption {
   font-family: var(--font-doc);
   font-size: var(--text-xs);

@@ -269,6 +269,10 @@ module.exports = function (eleventyConfig) {
       ? (html) => html.replace(/\b(src|href)="\/(?!\/)/g, `$1="${base}/`)
       : (html) => html;
     return absolute(content)
+      // A figure inside a bullet sits close to its text, as on the site
+      .replace(/<li\b[\s\S]*?<\/li>/g, (li) =>
+        li.replace(/<figure>/g, '<figure style="margin: 0.5rem 0;">')
+      )
       .replace(/<figure>/g, '<figure style="margin: 2rem 0 3rem;">')
       // Many feed readers drop <figcaption>, so write the caption as a styled
       // paragraph they all show
