@@ -218,6 +218,8 @@ Defined in `.eleventy.js`:
 
 **Anchor targets.** `main [id]` (`typography.css`) gives every id in the page `scroll-margin-top: calc(var(--chrome-h) + var(--space-6))`, so headings, footnotes and the footnote back-links (`#fnref1`, `#fnref-version`) all land below the sticky chrome.
 
+**Images in bullets.** A small image typed into a bullet's text line stays inline (`.doc-body li p img`, `typography.css`). An image that ends a bullet, or is the whole bullet, is a `<figure>` like any other, but `.doc-body li figure` cuts its margin from `--space-8` to `--space-2`, and `.doc-body li p:has(+ figure)` drops the gap under the text line above it, so the photo sits close to its bullet. `rssContent` does the same inline for figures inside an `<li>`. Figures outside lists keep the full post-photo spacing. Existing spacing tokens only, no new ones.
+
 **Paragraph indent.** In `typography.css`, a paragraph's first line is indented 1.5em only when the element right before it is another paragraph (`.doc-body p + p`), with the gap above tightened to match. After a heading, list, quote, code block, rule, figure or table it starts flush. A margin note the script has hidden counts as invisible (`p + .margin-note[hidden] + p`), so a note never breaks the indent on screen; in print the note shows inline and the next paragraph starts flush.
 
 **Margin notes are document comments.** The shortcode renders a plain `<blockquote class="margin-note" role="note">` (not an `<aside>`, which reader views like Readability strip). It opens with a visually hidden `.margin-note__label`, "Note on “phrase” · date", for reader views, feeds and screen readers, then the `aria-hidden` card header (author from `site.json`, date from the post unless a date is passed) and `src/js/comments.js` upgrades it:
@@ -244,7 +246,7 @@ Section break: `---` in body renders as `* * *`. Page break: the `pagebreak` sho
 | `readableDate` | date | "30 Apr, 2026" in IST (September is "Sept") — every date a reader sees: lists, posts, version notes, chrome, margin notes, feed. `<time datetime>` stays ISO (`isoDate`) |
 | `isoDate` | date | `YYYY-MM-DD` in IST |
 | `atomDate` | date | UTC ISO 8601 for Atom feed |
-| `rssContent` | HTML string, base | Feed-only rewrite: root-relative `src`/`href` made absolute with `site.url`, inline figure spacing, captions as styled paragraphs, margin notes as labelled blockquotes |
+| `rssContent` | HTML string, base | Feed-only rewrite: root-relative `src`/`href` made absolute with `site.url`, inline figure spacing (tighter inside a bullet), captions as styled paragraphs, margin notes as labelled blockquotes |
 | `ogImageSlug` / `ogImageExists` | URL / slug | og:image path and existence check (from `generate-og-images.js`) |
 | `tagSlug` | tag | URL segment for a tag (lowercase, spaces → hyphens). Use it for every `/tags/` link and the tag page permalink; `generate-og-images.js` uses the same function |
 | `limit` | array, n | First n items (feed) |
