@@ -6,6 +6,10 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ## UNRELEASED
 
+---
+
+## 2026-11-17 (v4.5.3)
+
 - fix: images inside bullet points sit closer to their text and to the next bullet, on the page, in print and in the feed.
 
 ---
