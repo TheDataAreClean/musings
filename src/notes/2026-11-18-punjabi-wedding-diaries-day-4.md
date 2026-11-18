@@ -6,10 +6,10 @@ tags:
   - family
   - delhi
 slug: pwd-4
-permalink: /notes/2026-11-18-pwd-4/
 date: 2026-11-18T08:43:00+05:30
 version: 1
 versionNote: ''
+permalink: /notes/2026-11-18-pwd-4/
 ---
 
 > **Day**: Four
@@ -25,9 +25,9 @@ versionNote: ''
 
 # Afternoon
 
-* Took my industrially curious nephew for a walk after lunch.![](/images/uploads/2026-11-18-pwd-4-a22556c0.webp "“What is this?”, “Where are they going?”, “Where are the animals?” ")
+* Took my industrially curious nephew for a walk after lunch.![](/images/uploads/2026-11-18-pwd-4-a22556c0.webp "“What is this?”, “Where are they going?”, “Where are the animals?”")
 * My cough is getting progressively worse in the pollution. The lump and scratching in my throat feel very unpleasant.
-* Delhi has brought back evening coffees for me, hopefully just temporarily. I need all the caffeine I can get to survive all the overstimulation.
+* Delhi has brought back evening coffees for me, hopefully just temporarily. I need all the caffeine I can get to survive the overstimulation.
 
 # Evening
 
