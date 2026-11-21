@@ -6,10 +6,10 @@ tags:
   - family
   - delhi
 slug: pwd-7
-permalink: /notes/2026-11-21-pwd-7/
 date: 2026-11-21T14:25:00+05:30
 version: 1
 versionNote: ''
+permalink: /notes/2026-11-21-pwd-7/
 ---
 
 > **Day**: Seven
@@ -32,5 +32,5 @@ versionNote: ''
 # Evening
 
 - The list of last-minute things people have forgotten at home keeps growing: suits, belts, shoes, cash for payments, baby bottles.
-- Three years ago, Shaoni and I had our reception at the same venue. Ome of the things I remember vividly from that day are the huge chandeliers.![](/images/uploads/2026-11-21-pwd-7-dc788dd4.webp "They are still here today.")
+- Three years ago, Shaoni and I had our reception at the same venue. One of the things I remember vividly from that day are the huge chandeliers.![](/images/uploads/2026-11-21-pwd-7-dc788dd4.webp "They are still here today.")
 - I debated whether the post-midnight rituals count as day seven or day eight updates. I am in no hurry to wrap up these wedding diaries, though.
