@@ -10,6 +10,19 @@ backend:
 media_folder: images/uploads
 public_folder: /images/uploads
 
+# Resize and convert photos in the browser before upload. Without this a post
+# with several full-size photos goes up as one huge GitHub request and fails
+# with "Failed to fetch".
+media_libraries:
+  default:
+    config:
+      transformations:
+        raster_image:
+          format: webp
+          quality: 80
+          width: 2000
+          height: 2000
+
 slug:
   encoding: ascii
   clean_accents: true
