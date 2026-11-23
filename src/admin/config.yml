@@ -10,6 +10,21 @@ backend:
 media_folder: images/uploads
 public_folder: /images/uploads
 
+# Convert JPEG/PNG to WebP in the browser, before the upload. The save then
+# commits a finished .webp, so the deploy bot has nothing to convert and
+# doesn't push a follow-up commit to main (that commit raced the next CMS
+# save: "The repository has been updated by someone else while saving").
+# HEIC can't be decoded by browsers; it still goes through convert-webp.js.
+media_libraries:
+  default:
+    config:
+      transformations:
+        raster_image:
+          format: webp
+          quality: 82
+          width: 2400
+          height: 2400
+
 slug:
   encoding: ascii
   clean_accents: true
