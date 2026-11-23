@@ -27,33 +27,48 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          # Full history (snapshot-versions.js reads it), but old file
+          # contents are only downloaded when a script asks for them. A plain
+          # full clone pulls every original photo ever committed (~400 MB).
           fetch-depth: 0
+          filter: blob:none
       - uses: actions/setup-node@v5
         with:
-          node-version: '24'
+          node-version-file: '.nvmrc'
           cache: 'npm'
+      # Resized images from Eleventy Image (see .eleventy.js). Each file is
+      # named by a hash of its source and settings, so restoring last run's
+      # copies only skips work; a new or changed image is made fresh.
+      - uses: actions/cache@v4
+        with:
+          path: _site/img
+          key: eleventy-img-${{ hashFiles('images/uploads/**', '.eleventy.js') }}
+          restore-keys: eleventy-img-
       - run: npm ci
       - run: npm run build
-      # prebuild (part of `npm run build`) converts uploads to WebP and
-      # backfills dates/permalinks. `src/images` is a symlink to `../images`
-      # (see CLAUDE.md), so writes made through that path land at the real
-      # repo path `images/...`, outside `src/`. Stage the whole working tree
-      # (not just `-- src/`) so no generated path — present or future — is
-      # silently left unstaged, which would make `git pull --rebase` below
-      # fail on "unstaged changes" and lose the push.
-      - name: Commit generated content changes
+      # The artifact name carries the attempt number: re-running a failed
+      # deploy otherwise finds attempt 1's artifact too and fails with
+      # "Multiple artifacts named github-pages".
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./_site
+          name: github-pages-${{ github.run_attempt }}
+      - uses: actions/deploy-pages@v5
+        id: deployment
+        timeout-minutes: 5
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
+      # Only a version bump changes files during the build now (a snapshot in
+      # src/versions/ and versionDate on the post). Committed after the deploy,
+      # so a push that loses a race with a CMS save never blocks publishing.
+      # Stage the whole tree (not just src/): see CLAUDE.md.
+      - name: Commit version snapshots
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if [ -n "$(git status --porcelain)" ]; then
             git add -A
-            git commit -m "Chore: auto-convert images and backfill content [skip ci]"
+            git commit -m "Chore: save post version snapshots [skip ci]"
             git pull --rebase origin main
             git push
           fi
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: ./_site
-      - uses: actions/deploy-pages@v5
-        id: deployment
-        timeout-minutes: 5

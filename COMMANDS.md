@@ -12,12 +12,12 @@ All runnable commands. Source: `package.json`.
 | Dev server | `npm run dev` |
 | Build | `npm run build` |
 | Clean build output | `npm run clean` |
-| Convert uploads to WebP | `npm run webp` |
-| Backfill post datetimes from git | `npm run backfill` |
-| Backfill slug → permalink in front matter | `node scripts/backfill-permalink.js` |
-| Generate per-post og:image files | `npm run ogimages` |
-| Regenerate every og:image (after changing the generator, fonts or tokens) | `rm -rf images/og && npm run ogimages` |
+| Run the unit tests | `npm test` |
+| Convert HEIC uploads to WebP | `npm run heic` |
+| Generate every og:image | `npm run ogimages` |
 | Save earlier versions of revised posts | `npm run versions` |
+| Check the built site: feed, links, drafts, old URLs (runs after every build) | `npm run check:site` |
+| …and record today's URLs as the ones that must keep working | `node scripts/check-site.js --update-urls` |
 | Check how posts read in reader apps (runs after every build) | `npm run check:readers` |
 | …and list the expected gaps too | `npm run check:readers -- --verbose` |
 | Check vulnerabilities | `npm audit` |
@@ -49,6 +49,7 @@ Full checklist and bump policy: [release skill](.claude/skills/release/SKILL.md)
 - Dev server runs at **http://localhost:8081** with live reload
 - Build output → `_site/` (not committed)
 - `npm run clean` deletes `_site/` only — safe to run before a fresh build
-- `npm ci` is used in CI (`deploy.yml`) — prefer `npm install` locally
-- `npm run build` runs `postbuild` last: `check-readers.js`, which fails the build (and so the deploy) if a post would read wrong in Reeder, Safari Reader or an IndieWeb reader. See `APP.md` → Reader views
-- `npm run build` automatically runs `prebuild` first (backfill-dates + convert-webp + backfill-permalink + snapshot-versions + generate-og-images) — no need to call them separately in CI
+- Node 24 (`.nvmrc`; `nvm use` picks it up)
+- `npm ci` is used in CI (`deploy.yml`, `check.yml`); prefer `npm install` locally
+- `npm run build` runs `prebuild` first (convert-heic + snapshot-versions + generate-og-images) and `postbuild` last (`check-site.js`, then `check-readers.js`); either check failing fails the build, and so the deploy. See `APP.md` → Deployment and Reader views
+- The first build resizes every image (about 30s); later ones reuse `_site/img/`. `npm run clean` clears that too

@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
-  <rect width="800" height="500" fill="#e8e8e8"/>
-  <rect x="1" y="1" width="798" height="498" fill="none" stroke="#bbb" stroke-width="1"/>
-  <line x1="0" y1="0" x2="800" y2="500" stroke="#ccc" stroke-width="1"/>
-  <line x1="800" y1="0" x2="0" y2="500" stroke="#ccc" stroke-width="1"/>
-  <text x="400" y="245" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#999">800 × 500</text>
-</svg>

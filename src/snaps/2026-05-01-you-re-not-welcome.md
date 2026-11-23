@@ -6,7 +6,6 @@ tags:
   - luru
   - street
 slug: not-welcome
-permalink: /snaps/2026-05-01-not-welcome/
 draft: false
 ---
 

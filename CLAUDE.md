@@ -6,7 +6,7 @@ Operating manual for Claude. Architecture lives in [APP.md](APP.md). Commands li
 
 ## Before you push
 
-- Run `npm run build` on a clean tree — `prebuild` can rewrite content files (dates, permalinks, image paths), so review `git status` after — must exit zero errors, zero warnings, with `postbuild`'s reader-view check (`check-readers.js`) passing
+- Run `npm test` and `npm run build` on a clean tree. `prebuild` only writes files for a version bump or a HEIC upload, so `git status` should be clean after. The build must exit with zero errors and both `postbuild` checks (`check-site.js`, `check-readers.js`) passing
 - Check browser console — no JS errors, no 404s
 - Test the golden path: home page loads → post opens → font/zoom dropdowns work → anchor links land below chrome
 
@@ -15,16 +15,16 @@ Operating manual for Claude. Architecture lives in [APP.md](APP.md). Commands li
 ## Common traps
 
 **`{#` is a Nunjucks comment delimiter**
-Never write `{#` anywhere in a `.md` file — not in prose, not in code blocks, not in backticks. The parser silently consumes everything from `{#` to the next `#}`, truncating the page with no build error. Use `{ #id }` (with a space) for `markdown-it-attrs` ID attributes.
+Never write `{#` anywhere in a `.md` file — not in prose, not in code blocks, not in backticks. The parser silently consumes everything from `{#` to the next `#}`, truncating the page. `check-site.js` now fails the build on it. Use `{ #id }` (with a space) for `markdown-it-attrs` ID attributes.
 
 **`feed.njk` must have `layout: false`**
-Without it, XML output gets wrapped in the base HTML layout. Always confirm the front matter.
+Without it, XML output gets wrapped in the base HTML layout. `check-site.js` checks the front matter and that the feed parses as XML.
 
 **Page breaks are the `{% pagebreak %}` shortcode**
 It renders `<div class="page-break" role="separator">`; write it on its own line between paragraphs. The `hr` rules in `typography.css` stay scoped to `hr:not(.page-break)` so a hand-written `<hr class="page-break">` still works, but don't use that in content.
 
-**`--chrome-h` must equal the sum of its parts**
-`--chrome-h` = `--titlebar-h + --menubar-h + --toolbar-h + --ruler-h` = 34 + 26 + 32 + 22 = **114px** (92px on mobile, where `--ruler-h` is 0). `scroll-margin-top` on headings depends on this. It does not auto-compute — update it manually when any chrome bar height changes.
+**`--chrome-h` is the sum of the four bars**
+`--chrome-h` is `calc(--titlebar-h + --menubar-h + --toolbar-h + --ruler-h)` in `tokens.css` = 34 + 26 + 32 + 22 = **114px** (92px on mobile, where `--ruler-h` is 0). It follows the bars on its own; when a bar changes, update the figures in APP.md's token table. `scroll-margin-top` on headings depends on it.
 
 **Page-break bleed breaks with a second grid column**
 `.page-break` uses `width: calc(100% + var(--page-pad-h) * 2)` — only works when `.doc-layout` has `grid-template-columns: 1fr`.
@@ -36,22 +36,31 @@ Sticky chrome (titlebar, menubar, toolbar, ruler, statusbar) lives outside `.app
 Font, text size, zoom and ¶ marks reset on a new tab or a fresh arrival by design. Do not upgrade to `localStorage` unless explicitly asked.
 
 **CSS and JS URLs carry a per-build `?v=` stamp**
-`base.njk` links `/css/main.css?v={{ assetVersion }}` and `/js/comments.js?v=…`, and an `eleventy.after` hook in `.eleventy.js` stamps the `@import`s inside `_site/css/main.css`. GitHub Pages caches assets for 10 minutes, so without it a deploy can pair new HTML with an old script. Any new `<script src>` or stylesheet link needs the same `?v={{ assetVersion }}`.
+`base.njk` links `/css/main.css?v={{ assetVersion }}`, `/js/chrome.js?v=…` and `/js/comments.js?v=…`; an `eleventy.after` hook in `.eleventy.js` inlines `main.css`'s `@import`s into the built file, so there are no inner URLs to stamp. GitHub Pages (and Cloudflare in front of it) cache assets, so without the stamp a deploy can pair new HTML with an old script. Any new `<script src>` or stylesheet link needs the same `?v={{ assetVersion }}`. A new CSS file must be `@import`ed in `main.css` with a plain relative name, or the inlining skips it.
 
 **Passthrough copies must be registered**
 Any new asset directory or file needs a corresponding `addPassthroughCopy` in `.eleventy.js`. Missing entries silently 404 in production.
 
-**The CI "Commit generated content changes" step must stage the whole working tree**
-Prebuild scripts write through the `src/images` symlink, so their output lands at `images/...`, outside `src/`. Keep `git status --porcelain` / `git add -A` unscoped in `deploy.yml`: a step scoped to `-- src/` once left a converted upload unstaged, and the auto-commit and deploy failed silently.
+**The deploy commits back to `main` only for version bumps and HEIC uploads**
+Permalinks are computed (`scripts/content.js` → each section's `.11tydata.js`), uploads keep the CMS's file name, and nothing else in `prebuild` writes to the repo. Keep it that way: every bot commit races the next CMS save ("The repository has been updated by someone else while saving"). Never add a `permalink:` line to a post, and don't reintroduce upload renaming. The commit step stays unscoped (`git add -A`), since `convert-heic.js` writes through the `src/images` symlink to `images/...`.
 
 **New posts default to `draft: false` in Sveltia CMS**
 There is no separate draft pipeline — `draft` only hides a post from listings, tag pages and the feed; the URL still resolves once the file is on `main` (see `APP.md` → Drafts). Any new listing must drop drafts too (`filterDrafts` or the `published` filter): Eleventy's own `collections[tag]` includes them. The `draft` field in `src/admin/config.yml` defaults to `false`, so a new post publishes immediately on save unless you tick Draft first.
+
+**Post URLs always go through `postUrl`**
+`postUrl` in `scripts/content.js` is the one rule for a post's URL (slug with the filename's date, else the file stem): the directory data, `versions.js`, the snapshot pages and og:images all call it. `test/urls.txt` lists the URLs that must keep working; `check-site.js` warns on main and fails pull requests when one disappears. Refresh it with `node scripts/check-site.js --update-urls` only when a URL change is intended.
+
+**Sections are listed once, in `site.json`**
+`sections` (name, title, description, sigil) drives the scripts (`SECTIONS` in `scripts/content.js`), the collections, `postSigil` and `src/sections.njk`. Don't hard-code `ideas`/`notes`/`snaps` lists anywhere new.
+
+**Images are resized at build time by Eleventy Image**
+Every `<img>` in a built page becomes WebP at 640/1200/2000px with `srcset`, `width`/`height` and lazy loading (`_site/img/`). Write plain `![alt](/images/uploads/x.webp "caption")`; never hand-write `<picture>` or `srcset`. The feed keeps the original upload URL. The first image in a post is `loading="eager"` (`first_image_eager` in `.eleventy.js`).
 
 **Tag URLs always go through `tagSlug`**
 Every `/tags/` link, the tag page permalink and the og:image path use the `tagSlug` filter (shared with `generate-og-images.js`). Building a tag URL any other way breaks for a tag with a capital letter or a space.
 
 **Post versions: snapshots live in `src/versions/` and must never be hand-edited or regenerated**
-Once `snapshot-versions.js` writes `src/versions/{section}/{stem}/v{n}.md`, that file *is* version n; it is only ever created, never rewritten (apart from its `permalink`, and image paths `convert-webp.js` renames). Snapshots carry `postTags`, not `tags`, so they stay out of tag collections, listings and the feed; keep it that way. Renaming a post file orphans its snapshots (the folder is keyed by file stem), so move `src/versions/{section}/{stem}/` with it. See `APP.md` → Post versions.
+Once `snapshot-versions.js` writes `src/versions/{section}/{stem}/v{n}.md`, that file *is* version n; it is only ever created, never rewritten (apart from image paths `convert-heic.js` changes from `.heic` to `.webp`). Its URL isn't stored: `src/versions/versions.11tydata.js` puts it under the post's current URL. Snapshots carry `postTags`, not `tags`, so they stay out of tag collections, listings and the feed; keep it that way. Renaming a post file orphans its snapshots (the folder is keyed by file stem), so move `src/versions/{section}/{stem}/` with it. See `APP.md` → Post versions.
 
 **The edit note is built once, for the page and the feed**
 `src/_includes/version-notes.njk` holds the edit note's macros (the `[*]` mark, the latest version's line and footnote, the note-or-"Edited on" fallback); `doc.njk` and `feed.njk` both import it, so change wording there, not in either template. The feed passes `site.url` as `base` for absolute links and gets an inline `*` marker, since feed readers drop the site CSS. `withVersionFootnote` builds its markup from markdown-it-footnote's own renderer rules; don't hard-code `<section class="footnotes">` strings. The `#fn-version`/`#fnref-version` ids must stay unique: a post's own footnotes are numbered, so they can't clash.
@@ -71,8 +80,11 @@ Reeder, Safari Reader and blogroll apps that pull a post from its page (Readabil
 **`eleventyComputed` strings autoescape**
 A computed value like `title: "{{ x.data.title }}"` is rendered by Nunjucks, which escapes it, and the template escapes it again: `&` shows as `&amp;`. Add `| safe` inside computed strings (see `changes.njk`, `tags/index.njk`).
 
-**Storage goes through `store` in `base.njk`**
-`sessionStorage` throws when the browser blocks site data, and one uncaught throw stops every chrome control. Use `store.get` / `store.set`, never `sessionStorage` directly.
+**Storage goes through `store` in `chrome.js`**
+`sessionStorage` throws when the browser blocks site data, and one uncaught throw stops every chrome control. Use `store.get` / `store.set`, never `sessionStorage` directly. The one exception is the head script in `base.njk`, which runs before `chrome.js` and wraps everything in its own `try`.
+
+**Browser zoom shortcuts belong to the browser**
+Cmd/Ctrl +, - and 0 are not intercepted; the site's own zoom is the toolbar dropdown and the Help menu. Don't add the key handler back: people who need larger text rely on the browser's zoom.
 
 **`--chrome-h` can't be read from JS**
 It's a `calc()` of other custom properties, so `getComputedStyle(...).getPropertyValue('--chrome-h')` returns the literal string `calc(34px + …)` and `parseFloat` gives `NaN` (which `|| 0` then hides as zero). `comments.js` measures the bottom of `.app-toolbar` and `.app-ruler` instead. Any new script that needs the sticky-chrome offset should do the same.
@@ -98,11 +110,13 @@ When adding a **new shortcode or body convention** an author types by hand: also
 
 When adding a **new npm script**: add it to [COMMANDS.md](COMMANDS.md).
 
-When changing **permalink or slug logic**: update [APP.md](APP.md) — these are URL-stability decisions.
+When changing **permalink or slug logic**: update [APP.md](APP.md) — these are URL-stability decisions. `postUrl` in `scripts/content.js` is the only place it lives.
 
 When shipping **any change a reader can see** (feature or fix): add an entry to [CHANGELOG.md](CHANGELOG.md) under UNRELEASED.
 
-When changing **any chrome element height**: recalculate `--chrome-h` and update the token.
+When changing **any chrome element height**: update the `--chrome-h` figures in APP.md's token table (the token itself is a `calc()`).
+
+When changing **markdown rules, `htmlDiff`, `rssContent` or an editor component**: add or update a case in `test/site.test.js`.
 
 ---
 

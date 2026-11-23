@@ -10,8 +10,8 @@
 const fs = require("fs");
 const path = require("path");
 const matter = require("gray-matter");
+const { ROOT, postUrl } = require("../../scripts/content.js");
 
-const ROOT = path.join(__dirname, "../..");
 const VERSIONS_DIR = path.join(ROOT, "src/versions");
 
 module.exports = function () {
@@ -25,7 +25,7 @@ module.exports = function () {
       const livePath = path.join(ROOT, "src", section, `${stem}.md`);
       if (!fs.existsSync(livePath)) continue;
       const live = matter(fs.readFileSync(livePath, "utf8")).data;
-      const url = live.permalink || `/${section}/${stem}/`;
+      const url = postUrl(section, `${stem}.md`, live);
       const latest = Number(live.version) || 1;
 
       const all = fs
@@ -33,7 +33,7 @@ module.exports = function () {
         .filter((f) => /^v\d+\.md$/.test(f))
         .map((f) => matter(fs.readFileSync(path.join(sectionDir, stem, f), "utf8")).data)
         .filter((d) => d.version < latest)
-        .map((d) => ({ version: d.version, date: d.versionDate, note: d.versionNote || "", url: d.permalink }));
+        .map((d) => ({ version: d.version, date: d.versionDate, note: d.versionNote || "", url: `${url}v${d.version}/` }));
       if (!all.length) continue;
 
       all.push({ version: latest, date: live.versionDate || live.date, note: live.versionNote || "", url, latest: true });

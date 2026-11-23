@@ -5,11 +5,37 @@
   "description": "This is where I take down my thoughts and ideas.",
   "url": "https://musings.thedataareclean.com",
   "lang": "en",
-
+  "sections": [
+    {
+      "name": "ideas",
+      "title": "Ideas",
+      "description": "Things felt deeply.",
+      "sigil": "→"
+    },
+    {
+      "name": "notes",
+      "title": "Notes",
+      "description": "Observations worth noting.",
+      "sigil": "·"
+    },
+    {
+      "name": "snaps",
+      "title": "Snaps",
+      "description": "Moments that stuck.",
+      "sigil": "○"
+    }
+  ],
   "chrome": {
     "saveState": "All changes saved",
-    "menu": ["File", "Edit", "View", "Insert", "Format", "Tools", "Help"],
-    "fontName": "Arial",
+    "menu": [
+      "File",
+      "Edit",
+      "View",
+      "Insert",
+      "Format",
+      "Tools",
+      "Help"
+    ],
     "fontSize": "12",
     "styleLabel": "Normal text",
     "zoom": "100%",

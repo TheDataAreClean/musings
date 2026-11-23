@@ -9,7 +9,6 @@ slug: ponder
 date: 2026-11-07T23:45:00+05:30
 version: 1
 versionNote: ''
-permalink: /ideas/2026-11-07-ponder/
 ---
 
 ## Anatomically

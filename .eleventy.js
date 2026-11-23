@@ -4,20 +4,15 @@ const markdownItAnchor = require("markdown-it-anchor");
 const markdownItAttrs = require("markdown-it-attrs");
 const { tagSlug, ogImageSlug, ogImageExists, readableDate } = require("./scripts/generate-og-images.js");
 const { diffArrays } = require("diff");
+const { eleventyImageTransformPlugin } = require("@11ty/eleventy-img");
+const { SECTIONS } = require("./scripts/content.js");
+const site = require("./src/_data/site.json");
 
 const IST_ISO = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" });
 
 function isoDate(date) {
   if (!date) return "";
   return IST_ISO.format(new Date(date));
-}
-
-// Returns a WebP path for convertible uploads (jpg/jpeg/png/heic), otherwise null
-function webpSrc(src) {
-  if (!src.startsWith("/images/uploads/")) return null;
-  const ext = (src.match(/\.[^.]+$/)?.[0] || "").toLowerCase();
-  if (![".jpg", ".jpeg", ".png", ".heic"].includes(ext)) return null;
-  return src.slice(0, -ext.length) + ".webp";
 }
 
 // Word-level diff of two rendered post bodies, for /v{n}/changes/ pages.
@@ -87,18 +82,26 @@ function htmlDiff(oldHtml, newHtml) {
     .join("");
 }
 
-// Wraps an img tag in a <picture> with a WebP source when available
-function pictureTag(src, alt, title) {
-  const webp = webpSrc(src);
+// A plain <img>. Eleventy Image (configured below) turns it into a resized,
+// lazy-loaded <picture> in the built page; the feed gets it as written.
+// eager marks the post's first image, which is usually in view on arrival.
+function imgTag(src, alt, title, eager) {
   let img = `<img src="${src}" alt="${alt}"`;
   if (title) img += ` title="${title}"`;
-  img += `>`;
-  if (!webp) return img;
-  return `<picture>\n<source srcset="${webp}" type="image/webp">\n${img}\n</picture>`;
+  if (eager) img += ` loading="eager"`;
+  return img + `>`;
 }
 
-// Wraps lone images in <figure>; uses title attribute as <figcaption>; serves WebP via <picture>
+// Wraps lone images in <figure>; uses title attribute as <figcaption>
 function markdownItFigures(md) {
+  // The first image in the document loads straight away; the rest lazily
+  md.core.ruler.push("first_image_eager", (state) => {
+    for (const tok of state.tokens) {
+      const img = tok.type === "inline" && (tok.children || []).find((c) => c.type === "image");
+      if (img) { img.meta = { ...img.meta, eager: true }; return; }
+    }
+  });
+
   // Lone images → <figure> with optional <figcaption>
   md.core.ruler.push("implicit_figures", (state) => {
     for (let i = 1; i < state.tokens.length - 1; i++) {
@@ -120,7 +123,7 @@ function markdownItFigures(md) {
         if (last.type === "text") last.content = last.content.replace(/\s+$/, "");
         const alt = img.children ? img.children.map((t) => t.content).join("") : "";
         const title = img.attrGet("title") || "";
-        let html = `<figure>\n${pictureTag(img.attrGet("src") || "", alt, title)}\n`;
+        let html = `<figure>\n${imgTag(img.attrGet("src") || "", alt, title, img.meta && img.meta.eager)}\n`;
         if (title) html += `<figcaption>${title}</figcaption>\n`;
         html += `</figure>`;
         state.tokens.splice(i + 2, 0, Object.assign(new state.Token("html_block", "", 0), { content: html }));
@@ -136,7 +139,7 @@ function markdownItFigures(md) {
       const alt = img.children ? img.children.map((t) => t.content).join("") : "";
       const title = img.attrGet("title") || "";
 
-      let html = `<figure>\n${pictureTag(src, alt, title)}\n`;
+      let html = `<figure>\n${imgTag(src, alt, title, img.meta && img.meta.eager)}\n`;
       if (title) html += `<figcaption>${title}</figcaption>\n`;
       html += `</figure>`;
 
@@ -146,13 +149,13 @@ function markdownItFigures(md) {
     }
   });
 
-  // Inline images (not lone in a paragraph) → <picture>
+  // Inline images (not lone in a paragraph)
   md.renderer.rules.image = (tokens, idx, options, env, self) => {
     const token = tokens[idx];
     const src = token.attrGet("src") || "";
     const alt = self.renderInlineAsText(token.children, options, env);
     const title = token.attrGet("title") || "";
-    return pictureTag(src, alt, title);
+    return imgTag(src, alt, title, token.meta && token.meta.eager);
   };
 }
 
@@ -216,6 +219,29 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/manifest.json");
   eleventyConfig.addPassthroughCopy("src/robots.txt");
 
+  // Images: every <img> in a built page becomes a <picture> with WebP copies
+  // at a few widths, width/height set (no layout jump as it loads) and lazy
+  // loading (the first image in a post is marked eager in markdownItFigures).
+  // The originals stay in images/uploads and the feed links them as written.
+  // Generated files go to _site/img/, named by a hash of the source, so an
+  // existing one is reused; deploy.yml caches that folder between runs.
+  eleventyConfig.addPlugin(eleventyImageTransformPlugin, {
+    extensions: "html",
+    formats: ["svg", "webp"],
+    widths: [640, 1200, 2000],
+    svgShortCircuit: true,
+    urlPath: "/img/",
+    outputDir: "./_site/img/",
+    htmlOptions: {
+      imgAttributes: {
+        loading: "lazy",
+        decoding: "async",
+        // The page's text column is 602px (794 - 2 × 96); full width on phones
+        sizes: "(max-width: 768px) 100vw, 602px",
+      },
+    },
+  });
+
   // Filters
   function stripHtml(content) {
     return content ? content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "";
@@ -230,7 +256,7 @@ module.exports = function (eleventyConfig) {
     return Math.max(1, Math.ceil(words / 200));
   });
 
-  const COLLECTION_TAGS = ["ideas", "notes", "snaps"];
+  const COLLECTION_TAGS = SECTIONS;
 
   eleventyConfig.addFilter("collectionTags", function (tags) {
     return (tags || []).filter((t) => !COLLECTION_TAGS.includes(t));
@@ -244,11 +270,10 @@ module.exports = function (eleventyConfig) {
   // Tag URL segment — use for every /tags/ link and the tag page permalink
   eleventyConfig.addFilter("tagSlug", tagSlug);
 
+  // A post's mark in lists (→ ideas, · notes, ○ snaps), from site.json
   eleventyConfig.addFilter("postSigil", function (tags) {
-    if (!tags) return "·";
-    if (tags.includes("ideas")) return "→";
-    if (tags.includes("snaps")) return "○";
-    return "·";
+    const s = site.sections.find((s) => (tags || []).includes(s.name));
+    return s ? s.sigil : "·";
   });
 
   eleventyConfig.addFilter("readableDate", readableDate);
@@ -269,6 +294,7 @@ module.exports = function (eleventyConfig) {
       ? (html) => html.replace(/\b(src|href)="\/(?!\/)/g, `$1="${base}/`)
       : (html) => html;
     return absolute(content)
+      .replace(/ loading="eager"/g, "")
       // A figure inside a bullet sits close to its text, as on the site
       .replace(/<li\b[\s\S]*?<\/li>/g, (li) =>
         li.replace(/<figure>/g, '<figure style="margin: 0.5rem 0;">')
@@ -342,12 +368,16 @@ module.exports = function (eleventyConfig) {
   // browser cache (GitHub Pages caches assets for 10 minutes).
   const assetVersion = Date.now().toString(36);
   eleventyConfig.addGlobalData("assetVersion", assetVersion);
+  // main.css is a list of @imports; in the built site they're inlined, so the
+  // browser fetches one stylesheet instead of seven one after another. The
+  // separate files are still copied, unused, so nothing else changes.
   eleventyConfig.on("eleventy.after", ({ dir }) => {
     const fs = require("fs");
     const main = `${dir.output}/css/main.css`;
     if (!fs.existsSync(main)) return; // dev server serves passthrough from memory
     const css = fs.readFileSync(main, "utf8");
-    fs.writeFileSync(main, css.replace(/@import "([^"?]+\.css)";/g, `@import "$1?v=${assetVersion}";`));
+    fs.writeFileSync(main, css.replace(/@import "([^"?]+\.css)";/g, (m, file) =>
+      `/* ${file} */\n` + fs.readFileSync(`src/css/${file}`, "utf8")));
   });
 
   eleventyConfig.addFilter("limit", function (arr, n) {
@@ -376,17 +406,13 @@ module.exports = function (eleventyConfig) {
     });
   }
 
-  eleventyConfig.addCollection("ideas", function (collectionApi) {
-    return sortPosts(filterDrafts(collectionApi.getFilteredByGlob("src/ideas/**/*.md")));
-  });
-
-  eleventyConfig.addCollection("notes", function (collectionApi) {
-    return sortPosts(filterDrafts(collectionApi.getFilteredByGlob("src/notes/**/*.md")));
-  });
-
-  eleventyConfig.addCollection("snaps", function (collectionApi) {
-    return sortPosts(filterDrafts(collectionApi.getFilteredByGlob("src/snaps/**/*.md")));
-  });
+  // One collection per section (ideas, notes, snaps), sorted, drafts dropped.
+  // Replaces Eleventy's own tag collections of the same names.
+  for (const section of SECTIONS) {
+    eleventyConfig.addCollection(section, function (collectionApi) {
+      return sortPosts(filterDrafts(collectionApi.getFilteredByGlob(`src/${section}/**/*.md`)));
+    });
+  }
 
   // Tag pages (src/tags/index.njk) page over this list and render
   // `collections[tag] | published`, so a draft never shows on a tag page and
@@ -402,11 +428,7 @@ module.exports = function (eleventyConfig) {
   });
 
   eleventyConfig.addCollection("feed", function (collectionApi) {
-    return sortPosts(filterDrafts([
-      ...collectionApi.getFilteredByGlob("src/ideas/**/*.md"),
-      ...collectionApi.getFilteredByGlob("src/notes/**/*.md"),
-      ...collectionApi.getFilteredByGlob("src/snaps/**/*.md"),
-    ]));
+    return sortPosts(filterDrafts(SECTIONS.flatMap((s) => collectionApi.getFilteredByGlob(`src/${s}/**/*.md`))));
   });
 
   // Frozen earlier versions of posts — not in listings, tags or the feed

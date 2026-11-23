@@ -9,7 +9,6 @@ tags:
   - creativity
 version: 2
 versionNote: Added some more colour, and a new ending. Some typos fixed along the way.
-permalink: /ideas/2026-10-16-singing/
 versionDate: 2026-10-16T22:55:28+05:30
 ---
 

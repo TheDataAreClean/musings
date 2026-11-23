@@ -6,7 +6,6 @@ tags:
   - cat
   - luru
 slug: work-dog
-permalink: /snaps/2026-04-30-work-dog/
 draft: false
 ---
 

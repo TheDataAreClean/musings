@@ -1,28 +1,29 @@
 {
   "name": "musings",
-  "version": "4.5.3",
+  "version": "4.6.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "eleventy --serve --watch --port=8081",
-    "prebuild": "node scripts/backfill-dates.js && node scripts/convert-webp.js && node scripts/backfill-permalink.js && node scripts/snapshot-versions.js && node scripts/generate-og-images.js",
+    "prebuild": "node scripts/convert-heic.js && node scripts/snapshot-versions.js && node scripts/generate-og-images.js",
     "build": "eleventy",
-    "postbuild": "node scripts/check-readers.js",
+    "postbuild": "node scripts/check-site.js && node scripts/check-readers.js",
     "clean": "rm -rf _site",
-    "webp": "node scripts/convert-webp.js",
-    "backfill": "node scripts/backfill-dates.js",
+    "test": "node --test \"test/**/*.test.js\"",
+    "heic": "node scripts/convert-heic.js",
     "ogimages": "node scripts/generate-og-images.js",
     "versions": "node scripts/snapshot-versions.js",
+    "check:site": "node scripts/check-site.js",
     "check:readers": "node scripts/check-readers.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@11ty/eleventy": "^3.1.5",
+    "@11ty/eleventy": "^3.1.8",
+    "@11ty/eleventy-img": "^7.1.1",
     "@extractus/article-extractor": "^9.0.1",
     "@mozilla/readability": "^0.6.0",
-    "@postlight/parser": "^2.2.3",
     "@resvg/resvg-js": "^2.6.2",
     "diff": "^8.0.4",
     "gray-matter": "^4.0.3",
@@ -33,7 +34,10 @@
     "markdown-it-attrs": "^4.3.1",
     "markdown-it-footnote": "^4.0.0",
     "microformats-parser": "^2.0.6",
-    "satori": "^0.33.4",
-    "sharp": "^0.34.5"
+    "satori": "^0.33.5",
+    "sharp": "^0.35.5"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

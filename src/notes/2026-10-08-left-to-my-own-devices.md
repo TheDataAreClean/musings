@@ -8,7 +8,6 @@ tags:
   - personal
   - writing
   - blogging
-permalink: /notes/2026-10-08-devices/
 ---
 
 Writing on my laptop has not been working out for me recently. That device is also my portal to the universe, and hence all the distractions that exist within it.

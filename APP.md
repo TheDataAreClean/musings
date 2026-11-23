@@ -2,7 +2,7 @@
 
 Architecture and technical reference. Claude's operating manual lives in [CLAUDE.md](CLAUDE.md).
 
-**Contents:** [Architecture](#architecture-at-a-glance) · [Stack](#stack) · [Content collections](#content-collections) · [Post versions](#post-versions) · [Eleventy config](#eleventy-config-eleventyjs) · [Templates](#template-hierarchy) · [CSS](#css-architecture) · [Shortcodes](#shortcodes) · [Markdown](#markdown-extensions) · [Inline JS](#inline-js-basenjk-script-block) · [Infrastructure](#infrastructure) · [Dependencies](#dependencies)
+**Contents:** [Architecture](#architecture-at-a-glance) · [Stack](#stack) · [Content collections](#content-collections) · [Post versions](#post-versions) · [Eleventy config](#eleventy-config-eleventyjs) · [Templates](#template-hierarchy) · [CSS](#css-architecture) · [Shortcodes](#shortcodes) · [Markdown](#markdown-extensions) · [Chrome JS](#chrome-js-srcjschromejs) · [Infrastructure](#infrastructure) · [Dependencies](#dependencies)
 
 ---
 
@@ -10,7 +10,7 @@ Architecture and technical reference. Claude's operating manual lives in [CLAUDE
 
 Static site generator (Eleventy 3.x) → HTML + CSS + JS → GitHub Pages.
 
-No bundler. Eleventy templates produce static HTML; all CSS and JS are served as-is. Five Node `prebuild` scripts run before each build (dates, WebP, permalinks, version snapshots, og:images — see Deployment).
+No bundler. Eleventy templates produce static HTML; JS is served as-is and `main.css` is inlined into one file. Three Node `prebuild` scripts run before each build (HEIC conversion, version snapshots, og:images), and two checks after it (see Deployment). Eleventy Image resizes every image in the built pages.
 
 **Author/deploy flow:**
 1. Author writes `.md` in `src/` (directly, or via Sveltia CMS at `/admin/`)
@@ -26,8 +26,8 @@ No bundler. Eleventy templates produce static HTML; all CSS and JS are served as
 |---|---|
 | Generator | Eleventy 3.x |
 | Templates | Nunjucks + Markdown |
-| Styling | Vanilla CSS (~1,800 lines across 7 files, `main.css` imports the rest) |
-| JavaScript | Inline script in `base.njk` + `src/js/comments.js` (margin notes) — no bundler |
+| Styling | Vanilla CSS (~1,800 lines across 7 files; `main.css` imports the rest, and the build inlines them) |
+| JavaScript | `src/js/chrome.js` (the chrome), a short restore script in `base.njk`'s head, `src/js/comments.js` (margin notes); no bundler |
 | Fonts | Georgia (document default); Arial (chrome, always; user-switchable for the document) |
 | Hosting | GitHub Pages + custom domain |
 | CMS | Sveltia CMS (Git-based, via Cloudflare Worker OAuth) |
@@ -41,20 +41,22 @@ No bundler. Eleventy templates produce static HTML; all CSS and JS are served as
 | `ideas` | `src/ideas/` | `→` | Long-form essays |
 | `notes` | `src/notes/` | `·` | Short observations |
 | `snaps` | `src/snaps/` | `○` | Photography |
+
+The sections are listed once, in `site.json`'s `sections` (name, title, description, sigil). `scripts/content.js` reads that list for every script and `.eleventy.js`; `src/sections.njk` builds `/ideas/`, `/notes/` and `/snaps/` from it. A new section needs an entry there, a folder with a `{name}.11tydata.js` like the others, and a CMS collection.
 | `feed` | — | — | Merged collection for home page + Atom feed |
 
 **Sort order** (all collections): dated posts desc → `updated` desc as tie-break → undated last.
 
-**Permalink computation:** `scripts/backfill-permalink.js` runs as part of `prebuild`. When `slug` is set in front matter, it writes `permalink: /{type}/{date}-{slug}/` directly into the file. Without `slug`, the filename drives the URL. Do not set `permalink` manually — the script manages it.
+**Permalinks:** computed, never stored. Each section's directory data (`src/{section}/{section}.11tydata.js`) sets `eleventyComputed.permalink` with `postUrl` from `scripts/content.js`: with a `slug`, `/{section}/{date}-{slug}/` (date from the filename); without one, `/{section}/{file stem}/`. The og:image and snapshot scripts call the same function. Don't write `permalink` in a post. `test/urls.txt` lists every built URL; the build warns (and the pull request check fails) when one disappears.
 
 **Front matter per type:**
 
-Fields: `title`, `description`, `date`, `tags`, `slug`, `permalink` (script-managed), `draft`, and optional `updated` (tie-break in the sort above). Order doesn't matter; Sveltia CMS writes `title, slug, date, draft, description, tags`. All three sections take the same fields:
+Fields: `title`, `description`, `date`, `tags`, `slug`, `draft`, and optional `updated` (tie-break in the sort above). Order doesn't matter; Sveltia CMS writes `title, slug, date, draft, description, tags`. All three sections take the same fields:
 
 ```yaml
 title: The title                 # snaps: the place or subject
 description: One sentence — shown as subtitle and used for OG meta.
-date: 2026-03-26                 # a bare date gets its time from git (backfill-dates.js)
+date: 2026-03-26T09:00:00+05:30  # always with a time; the CMS writes one, and check-site.js fails a bare date
 tags:
   - design
 slug: optional-custom-url-slug   # omit to use the filename
@@ -70,7 +72,7 @@ versionNote: One line on what changed.
 versionDate: 2026-10-20T…         # script-managed, do not set by hand
 ```
 
-Layout is inherited from directory data files (`src/ideas/ideas.json`, `src/notes/notes.json`, `src/snaps/snaps.json`, and `src/versions/versions.json` for snapshots) — do not repeat it in front matter. `tags` beyond the collection tag (`ideas`/`notes`/`snaps`, also inherited) are freeform, e.g. `personal`, `tech`, `design`.
+Layout, the section tag, `section` and the permalink come from directory data files (`src/ideas/ideas.11tydata.js`, `src/notes/notes.11tydata.js`, `src/snaps/snaps.11tydata.js`, and `src/versions/versions.11tydata.js` for snapshots): don't repeat them in front matter. `tags` beyond the section tag are freeform, e.g. `personal`, `tech`, `design`.
 
 ---
 
@@ -80,9 +82,9 @@ A post can be revised in public: readers land on the latest version at the post'
 
 **Authoring.** In the CMS, bump **Version** and fill **What changed** in the same save as the first edit of the new version. Saves publish immediately, so edits saved before the bump become part of the old version.
 
-**Snapshots.** `scripts/snapshot-versions.js` (prebuild, and before each dev-server rebuild) looks at every post with `version: N` (N ≥ 2). For each earlier version without a snapshot it finds, in the file's git history (`git log --follow`), the newest commit where the post was still at that version (no `version:` counts as 1), and writes it to `src/versions/{section}/{post-file-stem}/v{n}.md`. The deploy's auto-commit step saves it; from then on it's never regenerated and no longer depends on history. Snapshot front matter: `title`, `description`, `date`, `postTags` (not `tags`, so snapshots stay out of tag collections), `version`, `versionDate`, `versionNote`, `versionOf` (the live post's path) and `permalink`. The script also keeps each snapshot's `permalink` in step with its post's URL, and stamps `versionDate` on the live post when the bump is first committed (now, if it isn't committed yet).
+**Snapshots.** `scripts/snapshot-versions.js` (prebuild, and before each dev-server rebuild) looks at every post with `version: N` (N ≥ 2). For each earlier version without a snapshot it finds, in the file's git history (`git log --follow`), the newest commit where the post was still at that version (no `version:` counts as 1), and writes it to `src/versions/{section}/{post-file-stem}/v{n}.md`. The deploy's commit step saves it (after the deploy); from then on it's never regenerated and no longer depends on history. Snapshot front matter: `title`, `description`, `date`, `postTags` (not `tags`, so snapshots stay out of tag collections), `version`, `versionDate`, `versionNote` and `versionOf` (the live post's path). No permalink: `src/versions/versions.11tydata.js` puts each snapshot under its post's current URL, so a slug change moves them. The script also stamps `versionDate` on the live post when the bump is first committed (now, if it isn't committed yet). A version bump is the only content change the deploy commits back to `main`, apart from a HEIC upload.
 
-**URLs.** `{post-url}` is always the latest version. `{post-url}v{n}/` is an earlier version (`src/versions/`, layout from `src/versions/versions.json`). `{post-url}v{n}/changes/` is what changed from version n to the next version that exists (`src/changes.njk`, paginated over the `versions` collection). Numbers can be skipped (1 → 3): the script warns that v2 can't be saved and everything compares 1 with 3. The changes page shows the newer title and description, and notes the old title, description or tags in its version footnote when they changed. Earlier versions and changes pages set `rel=canonical` and `og:image` to the latest version.
+**URLs.** `{post-url}` is always the latest version. `{post-url}v{n}/` is an earlier version (`src/versions/`, layout and URL from `src/versions/versions.11tydata.js`). `{post-url}v{n}/changes/` is what changed from version n to the next version that exists (`src/changes.njk`, paginated over the `versions` collection). Numbers can be skipped (1 → 3): the script warns that v2 can't be saved and everything compares 1 with 3. The changes page shows the newer title and description, and notes the old title, description or tags in its version footnote when they changed. Earlier versions and changes pages set `rel=canonical` and `og:image` to the latest version.
 
 **Data.** `src/_data/versions.js` builds `versions[inputPath]` → `{ latest, all, newestFirst, byVersion }` for every post with snapshots (`all` oldest first, so `all[0]` is the original); each version is `{ version, date, note, url, changesUrl, original, nextVersion }`, where `nextVersion` is the next version that exists. Post lists render their date through `src/_includes/post-date.njk`, which reads the same data. Templates look versions up by number through `byVersion`, never by position, since numbers can skip. `doc.njk`, `base.njk` and `feed.njk` look it up by `page.inputPath`, or by `"./" + versionOf` on snapshot and changes pages.
 
@@ -111,14 +113,15 @@ A missing note reads "Edited on [date].". The "Before, …" sentence lists only 
 ## Eleventy config (`.eleventy.js`)
 
 - `markdownTemplateEngine: "njk"` — Nunjucks runs on all `.md` files before Markdown
-- `sortPosts` shared function handles all four collection sorts; `filterDrafts` drops drafts, except under `npm run dev`
+- One collection per section (looped over `SECTIONS`) plus `feed`; `sortPosts` sorts them all; `filterDrafts` drops drafts, except under `npm run dev`
+- Eleventy Image (`eleventyImageTransformPlugin`) rewrites every `<img>` in built HTML: WebP at 640/1200/2000px wide (never upscaled), `srcset`/`sizes`, `width`/`height`, `loading="lazy"` and `decoding="async"`, into `_site/img/`. SVG passes through. The `first_image_eager` markdown rule marks a post's first image `loading="eager"`; `rssContent` strips that, and the feed keeps the original upload URLs
 - `quote_breaks` core rule keeps single line breaks inside quotes (see Shortcodes → Quotes)
 - Under `npm run dev`, `snapshot-versions.js` runs before each rebuild (it's a prebuild step otherwise)
-- `assetVersion` global → the per-build `?v=` stamp on CSS/JS links; an `eleventy.after` hook stamps the `@import`s in `main.css`
+- `assetVersion` global → the per-build `?v=` stamp on CSS/JS links; an `eleventy.after` hook inlines `main.css`'s `@import`s into the built file (one request instead of seven)
 - `buildTime` global → feed fallback timestamp
 - Filters and shortcodes: see the tables below
 
-Global data in `src/_data/`: `site.json` (title, author, URL, chrome labels), `tokens.js` (parses `tokens.css` for `/style/`), `versions.js` (post version history, see Post versions).
+Global data in `src/_data/`: `site.json` (title, author, URL, sections, chrome labels), `tokens.js` (parses `tokens.css` for `/style/`), `versions.js` (post version history, see Post versions).
 
 ---
 
@@ -127,7 +130,7 @@ Global data in `src/_data/`: `site.json` (title, author, URL, chrome labels), `t
 Layouts (`src/_includes/layouts/`):
 
 ```
-base.njk      Shell — chrome HTML, inline <script>, affects every page
+base.njk      Shell: chrome HTML, head restore script, loads js/chrome.js; affects every page
 doc.njk       Single post layout (wraps base.njk)
 home.njk      Home/feed listing (wraps base.njk)
 ```
@@ -135,7 +138,7 @@ home.njk      Home/feed listing (wraps base.njk)
 Generated pages in `src/`:
 
 ```
-{ideas,notes,snaps}/index.njk   Section lists → /ideas/, /notes/, /snaps/
+sections.njk                    Section lists → /ideas/, /notes/, /snaps/ (paginates site.sections)
 tags/index.njk                  One page per tag → /tags/{tag | tagSlug}/ (paginates collections.tagList)
 feed.njk                        Atom XML → /feed.xml — must have layout: false
 posts.njk                       JSON list of post URLs → /posts.json (File → New)
@@ -143,7 +146,7 @@ posts.njk                       JSON list of post URLs → /posts.json (File →
 changes.njk                     A post version's "what changed" page → {post}/v{n}/changes/ (Post versions)
 ```
 
-Includes: `nav.njk` (site nav), `post-date.njk` (a list item's date, "(updated)" on revised posts), `version-notes.njk` (the edit note line and `[*]` footnote, used by `doc.njk` and `feed.njk`).
+Includes: `nav.njk` (site nav), `post-list.njk` (the post list on home, section and tag pages; set `listPosts`, `listSigils`, `listTags`, `listEmpty` before including), `post-date.njk` (a list item's date, "(updated)" on revised posts), `version-notes.njk` (the edit note line and `[*]` footnote, used by `doc.njk` and `feed.njk`).
 
 `doc.njk` element order: title → nav → description (if present) → meta and tags (omitted if `hideMeta: true`) → edit note line (revised posts, see Post versions) → body → post-nav (omitted if `hidePostNav: true`)
 
@@ -153,13 +156,13 @@ Includes: `nav.njk` (site nav), `post-date.njk` (a list item's date, "(updated)"
 
 `src/_data/tokens.js` parses the first `:root` block of `tokens.css` at build time and feeds `/style/` (fonts, type scale, colour groups, spacing, page and chrome dimensions), so the page cannot drift from the real values. The parser expects the existing conventions: a `/* Group title — note */` comment line starts a group, and each token is `--name: value; /* note */` on one line. Add a new token there and it appears on `/style/` automatically if its name starts with `--font-`, `--text-`, `--leading-`, `--space-`, `--color-`, or one of the dimension prefixes (`--page`, `--comment`, `--titlebar`, `--menubar`, `--toolbar`, `--ruler`, `--statusbar`, `--chrome`); any other prefix needs adding to `tokens.js`. A value that is a `calc()` sum of `px` tokens (`--chrome-h`) is shown resolved (114px) with the formula as a note.
 
-`home.njk` sigils by tag: `→` ideas, `○` snaps, `·` notes (fallback).
+Sigils (`postSigil`) come from `site.json`'s sections: `→` ideas, `○` snaps, `·` notes (also the fallback).
 
 ---
 
 ## CSS architecture
 
-Load order is the import order in `main.css`:
+Load order is the import order in `main.css`. The dev server serves the `@import`s as they are; the build inlines them into `_site/css/main.css`:
 
 ```
 tokens.css      All CSS custom properties — colours, fonts, spacing, dimensions
@@ -196,7 +199,7 @@ print.css       Print stylesheet — A4 page like the screen page, no chrome, fo
 | `--ruler-h` | 22px | 0 on mobile (ruler hidden) |
 | `--statusbar-h` | 22px | Bottom status bar; not part of `--chrome-h` |
 
-`--chrome-h` is used by `scroll-margin-top` on headings. Must be kept in sync with individual bar heights manually.
+`--chrome-h` is a `calc()` of the four bar heights in `tokens.css`, so it follows them on its own; only the 114px/92px figures in this table need updating when a bar changes. `scroll-margin-top` on headings uses it.
 
 ---
 
@@ -271,30 +274,28 @@ Section break: `---` in body renders as `* * *`. Page break: the `pagebreak` sho
 
 ---
 
-## Inline JS (`base.njk` script block)
+## Chrome JS (`src/js/chrome.js`)
 
-All code in an IIFE — no globals leaked.
+The chrome's working parts, loaded on every page at the end of `<body>` with `?v={{ assetVersion }}` (cached between pages). All code in an IIFE, no globals. A short script in `base.njk`'s `<head>` runs first: it clears a fresh arrival's saved settings and applies the visit's font, text size and ¶ marks before the page paints.
 
-| Feature | Behaviour |
-|---|---|
 | Font dropdown | Switches `--font-doc`; persists `musings-font` in `sessionStorage` |
-| Zoom dropdown | Sets `app-canvas` CSS zoom 50–200%; Cmd/Ctrl +/-/0 shortcuts; persists `musings-zoom` in `sessionStorage` |
+| Zoom dropdown | Sets `app-canvas` CSS zoom 50–200%; persists `musings-zoom` in `sessionStorage`. Cmd/Ctrl +/-/0 are left to the browser's own zoom, which scales the chrome too and which people who need larger text rely on |
 | Text size dropdown | 10–18, sets `--doc-scale` (size ÷ 12), which rescales `--text-base`/`--text-sm`/`--text-xs` and the font-size of `.doc-page` only, so body, meta line, tags, captions and post nav all follow; persists `musings-size` |
 | Outline dropdown | Lists `.doc-body` `h2`/`h3` (ids from markdown-it-anchor) and jumps via `location.hash`; reads "Normal text" and stays dead on pages without headings |
 | ¶ toggle | Adds `html.show-marks` — pilcrow after each paragraph, list item and heading, "Page break" label on breaks; never printed; persists `musings-marks` |
 | File menu | New (random post from `/posts.json`, built by `src/posts.njk` from `collections.feed` and fetched on click), Open… (`/`), Copy link (status bar confirms), Subscribe (`/feed.xml`), Print / PDF, Close tab. Shortcut hints are labels only (⌘ becomes Ctrl+ off Mac) |
-| Help menu | Zoom in/out/actual size (same as the keys), About |
+| Help menu | Page zoom: zoom in/out/actual size (the same steps as the dropdown), About |
 | Menu bar | Only File and Help open; once one is open, hovering another menu in the same bar switches (never into or out of the titlebar's version menu). Click outside or Escape closes |
 | Status bar | "Page x of y" counts `.page-break`s above mid-screen on scroll; words · read time from `data-words`/`data-readtime` on posts (same filters as the meta line); transient messages |
 | Stoplight dot | `window.close()` — browser-blocked for normal tabs, silent no-op |
 | Titlebar dimming | `setActive` on `blur`, `focus`, `visibilitychange` — all three needed |
 | Version history | On revised posts, a menu at the titlebar's right (`.app-titlebar__versions`), the only place the history is listed; the edit note footnote's "Earlier versions" link (`[data-open-versions]`) opens the titlebar menu instead of following its href. Hovering between menus only moves along the menu bar |
 
-`initDropdown` returns `{ setValue }` — used by zoom to sync label with keyboard shortcuts.
+`initDropdown` returns `{ setValue }`, used by zoom to sync the dropdown label with the Help menu.
 
-Session persistence: `sessionStorage` only, and only within one visit. On load, a fresh arrival (`navigation.type` is `navigate` and the referrer is not this site: typed URL, bookmark, external link) clears `musings-font`, `musings-size`, `musings-zoom` and `musings-marks`. Moving between pages, reload and back/forward keep them; a new tab starts fresh as before. All reads and writes go through a small `store` wrapper that swallows the error `sessionStorage` throws when the browser blocks site data, so the controls still work and simply don't persist.
+Session persistence: `sessionStorage` only, and only within one visit. On load, the head script treats a fresh arrival (`navigation.type` is `navigate` and the referrer is not this site: typed URL, bookmark, external link) as a clean start and clears `musings-font`, `musings-size`, `musings-zoom` and `musings-marks`. Moving between pages, reload and back/forward keep them; a new tab starts fresh as before. All reads and writes go through a small `store` wrapper that swallows the error `sessionStorage` throws when the browser blocks site data, so the controls still work and simply don't persist.
 
-**Other scripts.** Margin-note comments live in `src/js/comments.js`, not in this block: `base.njk` loads it (`defer`) and adds a small head script that sets `html.comments-pending`, only on pages whose content contains a margin note. See Shortcodes → Margin notes. The comment rail listens for the zoom above by watching `.app-canvas`'s `style` attribute, so the zoom code needs no hook for it.
+**Other scripts.** Margin-note comments live in `src/js/comments.js`: `base.njk` loads it (`defer`) and adds a small head script that sets `html.comments-pending`, only on pages whose content contains a margin note. See Shortcodes → Margin notes. The comment rail listens for the zoom above by watching `.app-canvas`'s `style` attribute, so the zoom code needs no hook for it.
 
 ---
 
@@ -302,22 +303,26 @@ Session persistence: `sessionStorage` only, and only within one visit. On load, 
 
 ### Deployment
 
-`deploy.yml` triggers on push to `main` and runs as a single `build-and-deploy` job on Node 24: `npm ci → npm run build` → commits any files the prebuild scripts generated (`[skip ci]`) → deploys `_site/` to GitHub Pages. Build and deploy share one job so a publish doesn't wait for a second runner to start. Node 24 is preinstalled on `ubuntu-latest`; a version the runner lacks, such as Node 20, gets downloaded on every run, costing 5–11s. Keep the `actions/*` steps on their Node 24 majors (checkout v5, setup-node v5, upload-pages-artifact v5, deploy-pages v5) or every run logs a Node 20 deprecation warning. A typical publish takes about 30–40s from push to live. The job has a 10-minute `timeout-minutes` and the `deploy-pages` step 5, because GitHub's Pages step occasionally hangs and every queued deploy waits behind it; a hung run now fails and the next one proceeds. Re-run a failed deploy from the Actions tab.
+`deploy.yml` triggers on push to `main` and runs as a single `build-and-deploy` job: checkout (full history, but `filter: blob:none`, so old file contents download only when a script asks; a plain full clone pulls about 400 MB of long-deleted original photos) → restore the Eleventy Image cache (`_site/img`, keyed on the uploads) → `npm ci` → `npm run build` → upload and deploy `_site/` to GitHub Pages → commit any files the build changed (`[skip ci]`). Node comes from `.nvmrc` (24). Build and deploy share one job so a publish doesn't wait for a second runner. Keep the `actions/*` steps on their Node 24 majors (checkout v5, setup-node v5, upload-pages-artifact v5, deploy-pages v5). The job has a 10-minute `timeout-minutes` and the `deploy-pages` step 5, because GitHub's Pages step occasionally hangs.
 
-`npm run build` runs `prebuild` automatically, which chains five scripts:
-1. `backfill-dates.js` — fills git creation time into date-only front matter
-2. `convert-webp.js` — converts JPEG/PNG/HEIC in `src/images/uploads/` to WebP (quality 82, auto-rotated), names it `{date}-{slug}-{hash}.webp` after the post that uses it (hash of the WebP's own bytes, so the same image uploaded twice shares one file), deletes the original and rewrites the references. Existing WebP files are renamed when their post's slug changes. References are rewritten in posts and in `src/versions/` snapshots. HEIC is decoded by `heic-decode` (libheif in WebAssembly), since sharp's prebuilt binaries can't read it; a large iPhone photo takes a few seconds. A file that can't be converted stops the build with its name. The CMS (`media_libraries` in `src/admin/config.yml`) already converts JPEG/PNG to WebP in the browser, so most uploads arrive converted. Any conversion CI does still make is committed back to `main` by `deploy.yml`; that commit races a CMS save made in the same minute and shows as "The repository has been updated by someone else while saving" (reload the CMS and save again).
-3. `backfill-permalink.js` — writes `permalink` to front matter for any post with a `slug` field
-4. `snapshot-versions.js` — saves earlier versions of revised posts to `src/versions/` (see Post versions). Must run after step 3, since snapshot URLs follow the post's `permalink`.
-5. `generate-og-images.js` — renders each post's `og:image` (see below). Must run after step 3, since it needs the final `permalink`.
+**Re-running a failed deploy** works from the Actions tab: the Pages artifact is named per attempt (`github-pages-{run_attempt}`), so a second attempt doesn't trip over the first one's ("Multiple artifacts named github-pages"). "Run workflow" works too.
 
-After the build, `postbuild` runs `check-readers.js` (see Reader views); a failure stops `npm run build`, so CI neither commits generated files nor deploys.
+**What the bot commits.** Only two things change files during a build: a version bump (a snapshot in `src/versions/` and `versionDate` on the post) and a HEIC upload (converted to WebP). Permalinks are computed and uploads keep the name the CMS gave them, so an ordinary save, with or without images, produces no bot commit and can't race the next CMS save. The commit runs after the deploy, so a push that loses a race never blocks publishing.
+
+**Pull requests** run `check.yml`: `npm ci`, `npm test`, `npm run build` (with `URLS_STRICT=1`), no deploy and no commit. Dependabot (`.github/dependabot.yml`) opens one grouped PR a month for npm and one for Actions; satori minors are ignored, since a 0.x minor changes the og:image layout.
+
+`npm run build` runs `prebuild` automatically, which chains three scripts:
+1. `convert-heic.js` turns a HEIC upload into a WebP with the same name (decoded by `heic-decode`, libheif in WebAssembly, since sharp's prebuilt binaries can't read HEIC; capped at 2400px, quality 82) and points posts and snapshots at it. A file it can't convert stops the build with its name. JPEG and PNG never reach it: the CMS converts them to WebP in the browser (`media_libraries` in `src/admin/config.yml`), and Eleventy Image reads any that slip through.
+2. `snapshot-versions.js` saves earlier versions of revised posts to `src/versions/` (see Post versions).
+3. `generate-og-images.js` renders every page's `og:image` (see below).
+
+After the build, `postbuild` runs `check-site.js` (feed is valid XML with no margin-note card header, no `{#` in content, dates have a time, `site.url` and `feed.njk` rules, drafts out of every listing, every root-relative link and image resolves, `test/urls.txt` URLs still exist, unused uploads listed as warnings) and then `check-readers.js` (see Reader views). A failure stops `npm run build`, so CI deploys nothing. `npm test` runs the unit tests in `test/` (Node's built-in runner): the markdown rules, `htmlDiff`, `beforeSentence`, `rssContent` against the real `marginnote` shortcode, `postUrl`, and a round trip of every CMS insert-menu block.
 
 `src/CNAME` is passthrough-copied to `_site/CNAME` — required for the custom domain to survive deploys.
 
 ### Passthrough copies
 
-Directories: `src/css/`, `src/js/`, `src/images/`, `src/admin/`
+Directories: `src/css/`, `src/js/`, `src/images/`, `src/admin/` (Eleventy Image writes `_site/img/` itself)
 Files: `src/favicon.svg`, `src/favicon.ico`, `src/apple-touch-icon.png`, `src/favicon-512.png`, `src/manifest.json`, `src/robots.txt`, `src/CNAME`
 
 Any new asset type needs a corresponding `addPassthroughCopy` in `.eleventy.js`.
@@ -355,7 +360,7 @@ Some apps don't show the feed entry: a blogroll feed that only links to a post m
 - **Chrome is in `<footer>`s.** Readability and Mercury drop every `<footer>` on every pass, and a heading that repeats the title. In `doc.njk` the title is an `<h1>`; the site nav, the meta and tags lines, and the "More … / All posts" links each sit in a `<footer>` with `display: contents`, so the page lays out as if they weren't there. The wrapper is `<div class="doc-head">`, not a `<header>` (a header can't contain a footer) and without "header" in its class (Readability's first pass strips that, description and all). The print source line is a `data-source` attribute printed by `print.css`, not a hidden element, since Mercury ignores `[hidden]`.
 - **Margin notes** are `<blockquote role="note">`: Readability strips `<aside>`. Each opens with a visually hidden "Note on “phrase” · date" label, the same label the feed uses, and the card header is `aria-hidden` with its text in CSS (`data-text`), so no engine runs it into "AArpit16 Oct".
 - **Structured data.** Each post is an `h-entry` (`p-name`, `p-summary`, `dt-published`, `p-author h-card`, `p-category`, `u-url`, `e-content`) for IndieWeb readers and blogrolls, and `base.njk` adds a `BlogPosting` JSON-LD block and `article:published_time`, which Readability reads for the title, byline, summary and date.
-- **The check.** `scripts/check-readers.js` runs after every build. It extracts every post in `_site/{ideas,notes,snaps}` with Readability (Safari/Firefox Reader and most apps), Mercury (`@postlight/parser`), article-extractor and a microformats parser, and fails on any leaked nav, meta line, post nav or page URL, a repeated title, a dropped or unlabelled margin note, a run-together note header, an empty extraction of a post with prose, or a missing h-entry or JSON-LD field. Expected gaps are reported, not failed: a photo-only snap (or one whose only text is a link) has nothing to extract, and article-extractor skips short posts. `npm run check:readers -- --verbose` lists them.
+- **The check.** `scripts/check-readers.js` runs after every build. It extracts every post in `_site/{ideas,notes,snaps}` with Readability (Safari/Firefox Reader and most apps), article-extractor and a microformats parser (Mercury, `@postlight/parser`, was dropped in Nov 2026: unmaintained, with vulnerable dependencies; the `<footer>` markup above still serves it), and fails on any leaked nav, meta line, post nav or page URL, a repeated title, a dropped or unlabelled margin note, a run-together note header, an empty extraction of a post with prose, or a missing h-entry or JSON-LD field. Expected gaps are reported, not failed: a photo-only snap (or one whose only text is a link) has nothing to extract, and article-extractor skips short posts. `npm run check:readers -- --verbose` lists them.
 
 What reader views never show, by design of the engines: the description (they show it as the summary, if at all), the edit line, tags and the feed's sign-off. A photo-only snap comes out empty everywhere except h-entry readers; a line of text fixes it.
 
@@ -367,8 +372,8 @@ Covers: every post, the home page, the three section indices (`/ideas/`, `/notes
 
 - Output: `images/og/<slug>.png`, where `<slug>` comes from `ogImageSlug(page.url)` — mirrors the page's own URL hierarchy rather than flattening it (`/ideas/2026-08-15-grandmother/` → `ideas/2026-08-15-grandmother`, `/tags/family/` → `tags/family`, `/` → `home`), so posts/tags land in their own subfolder (`images/og/ideas/`, `images/og/tags/`, …) instead of one flat directory. A section index (`/ideas/`) sits as `images/og/ideas.png`, right beside its own `images/og/ideas/` subfolder of posts — a file and a directory of the same name coexist fine, no collision. `images/og/` is gitignored — regenerated every build, same as `_site/`.
 - `ogImageSlug` and `ogImageExists` are exported from `generate-og-images.js` and required directly by `.eleventy.js` (registered as filters) — `base.njk` gates its `<meta property="og:image">` block on `ogImageExists`, not on page type (`ogType`), so any page this script covers gets the tags automatically and a page it doesn't cover never emits a broken reference. `og:type` itself (`article` vs `website`) is still driven by `ogType` as before — the two are deliberately decoupled.
-- Skips regenerating a page's image if its PNG is already newer than that page's one source file (post `.md`, `index.njk`, `about.md`, `reference.md`, `style.njk`). Tag pages have no single source file (their content depends on every post carrying that tag) and always regenerate. The cache doesn't notice changes to the generator, fonts or tokens: after one, delete `images/og/` locally (CI always starts without it).
-- Descriptions are pulled from each page's own real content, not invented copy: per-post `description`, each section index's own on-page blurb (`Things felt deeply.` etc., front matter), About's own blurb, and tag pages' live post count.
+- Every card is rendered on every build (about 90, a few seconds); there's no cache to go stale. Colours come from `tokens.css` (through `src/_data/tokens.js`), the domain from `site.json`, and the titlebar's gradient is copied from `doc-chrome.css`.
+- Descriptions are pulled from each page's own real content, not invented copy: per-post `description`, each section's description in `site.json` (`Things felt deeply.` etc.), About's own blurb, and tag pages' live post count.
 - Font: reads `--font-doc` from `tokens.css` at generation time, so the card can't silently drift from whichever font the site actually defaults to. Uses the real Arial/Georgia `.ttf` when one is installed locally (pixel-perfect); falls back to the committed OFL substitutes, Arimo/Gelasio, when it isn't (always the case in CI). Satori has no OS font fallback, so it needs a real file; Arial and Georgia have no redistributable one. `resolveFont()` reads a local system copy if present (macOS: `/System/Library/Fonts/Supplemental/`) only to embed glyph outlines at render time; nothing from there is committed. Gelasio is Georgia's metric match; Tinos is a Times New Roman clone and looks wrong here. See `CLAUDE.md`'s trap entry.
 - Chrome (the titlebar) is drawn at its real fixed pixel size, never scaled — content (title/description/tags) is scaled uniformly by a zoom factor matching one of the site's own zoom-dropdown rungs (200%). This mirrors the real site: chrome lives outside `.app-canvas` and never zooms with content.
 
@@ -381,18 +386,18 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 | Package | Purpose |
 |---|---|
 | `@11ty/eleventy` | SSG |
+| `@11ty/eleventy-img` | Resizes every image in the built pages (WebP, several widths, width/height, lazy loading) |
 | `@extractus/article-extractor` | Reader-view check (`check-readers.js`) |
 | `@mozilla/readability` | Reader-view check: the engine behind Safari/Firefox Reader and most apps |
-| `@postlight/parser` | Reader-view check: Mercury. Unmaintained, and `npm audit` flags its `cheerio`/`postman-request` tree; it only parses our own built HTML, offline |
 | `@resvg/resvg-js` | Rasterizes the SVG `satori` produces into the final og:image PNG |
 | `diff` | Word-level diff for post-version changes pages (`htmlDiff` filter) |
-| `gray-matter` | Front-matter parsing in `generate-og-images.js`, `snapshot-versions.js` and `_data/versions.js` |
-| `heic-decode` | Decodes HEIC uploads for `convert-webp.js` (sharp can't) |
-| `jsdom` | DOM for the reader-view check |
+| `gray-matter` | Front-matter parsing in `scripts/` and `_data/versions.js` |
+| `heic-decode` | Decodes HEIC uploads for `convert-heic.js` (sharp can't) |
+| `jsdom` | DOM for the reader-view check, and the feed XML check in `check-site.js` |
 | `markdown-it` | Markdown parser (configured in `.eleventy.js`) |
 | `markdown-it-anchor` | Heading anchors |
 | `markdown-it-attrs` | Custom attributes |
 | `markdown-it-footnote` | Footnotes |
 | `microformats-parser` | Reader-view check: parses the h-entry |
-| `satori` | Lays out each post's og:image (title/description/tags) as SVG |
-| `sharp` | Image conversion — JPEG/PNG (and decoded HEIC) → WebP in `convert-webp.js` |
+| `satori` | Lays out each post's og:image (title/description/tags) as SVG. Held at 0.33: later 0.x minors change the layout |
+| `sharp` | Encodes decoded HEIC as WebP in `convert-heic.js` (Eleventy Image uses it too) |

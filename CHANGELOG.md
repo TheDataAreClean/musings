@@ -8,6 +8,19 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## 2026-11-23 (v4.6.0)
+
+- change: photos load much faster, especially on phones. Each image is now served at the size the screen needs (a photo that was 4.3 MB is about 400 KB on a phone), reserves its space before it loads, and loads only as you scroll to it.
+- fix: Cmd/Ctrl +, - and 0 zoom the whole window again, as in any other site. The page zoom is still in the toolbar and the Help menu.
+- fix: a chosen font or text size no longer flashes back to the default for a moment when you open the next page.
+- fix: saving a post with photos in the CMS no longer triggers a follow-up commit from the deploy, which caused "The repository has been updated by someone else while saving" on the next save.
+- chore: one stylesheet and one cached script instead of seven stylesheets and a script repeated in every page.
+- chore: post URLs are computed instead of written into each post; uploads keep the name the CMS gives them; unused uploads removed.
+- chore: pull requests are built and checked before merge; the build now also checks the feed, every internal link and image, drafts, and that old URLs still work; unit tests for the markdown, diff, feed and CMS insert menu.
+- chore: re-running a failed deploy works; CI downloads about 400 MB less per deploy; dependencies patched; Dependabot added.
+
+---
+
 ## 2026-11-17 (v4.5.3)
 
 - fix: images inside bullet points sit closer to their text and to the next bullet, on the page, in print and in the feed.

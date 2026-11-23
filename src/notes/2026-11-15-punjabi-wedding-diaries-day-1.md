@@ -9,7 +9,6 @@ slug: pwd-1
 date: 2026-11-15T09:30:00+05:30
 version: 1
 versionNote: ''
-permalink: /notes/2026-11-15-pwd-1/
 ---
 
 > **Day**: One

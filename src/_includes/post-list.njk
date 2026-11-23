@@ -1,0 +1,17 @@
+{# A list of posts: home, section and tag pages. Set before including:
+   listPosts (the posts), listSigils (show each post's section mark),
+   listTags (show its tags), listEmpty (text when there are none). #}
+{% if listPosts.length %}
+<div class="post-list">
+  {% for post in listPosts %}
+  <div class="post-list__item">
+    <p class="post-list__title">{% if listSigils %}
+      <span class="post-sigil">{{ post.data.tags | postSigil }}</span>{% endif %}<a href="{{ post.url }}">{{ post.data.title }}</a>
+    </p>
+    <p class="post-list__line2">{% if listTags %}{% for tag in post.data.tags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | tagSlug }}/">{{ tag }}</a>{% endfor %}{% endif %}{% include "post-date.njk" %}</p>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p>{{ listEmpty or "No posts yet." }}</p>
+{% endif %}

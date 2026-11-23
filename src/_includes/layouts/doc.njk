@@ -29,17 +29,11 @@ ogType: article
 
   {% if description %}<p class="doc-description{% if hentry %} p-summary{% endif %}">{{ description }}</p>{% endif %}
 
-  {% if versionOf %}{% set postSection = versionOf.split("/")[1] %}{% elif shownTags and ("snaps" in shownTags) %}{% set postSection = "snaps" %}{% elif shownTags and ("notes" in shownTags) %}{% set postSection = "notes" %}{% else %}{% set postSection = "ideas" %}{% endif %}
-  {% if postSection == "snaps" %}
-    {% set sectionLabel = "snaps" %}
-    {% set sectionUrl = "/snaps/" %}
-  {% elif postSection == "notes" %}
-    {% set sectionLabel = "notes" %}
-    {% set sectionUrl = "/notes/" %}
-  {% else %}
-    {% set sectionLabel = "ideas" %}
-    {% set sectionUrl = "/ideas/" %}
-  {% endif %}
+  {# section comes from the folder's directory data; a snapshot or changes
+     page takes its post's #}
+  {% set postSection = versionOf.split("/")[1] if versionOf else (section or "ideas") %}
+  {% set sectionLabel = postSection %}
+  {% set sectionUrl = "/" + postSection + "/" %}
 
   {% if not hideMeta %}
   <footer class="doc-head__info">

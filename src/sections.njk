@@ -1,0 +1,25 @@
+---
+layout: layouts/base.njk
+pagination:
+  data: site.sections
+  size: 1
+  alias: section
+permalink: "/{{ section.name }}/"
+eleventyComputed:
+  title: "{{ section.title | safe }}"
+  description: "{{ section.description | safe }}"
+eleventyExcludeFromCollections: true
+---
+{# The /ideas/, /notes/ and /snaps/ pages, one per section in site.json #}
+<div class="doc-page">
+
+  <p class="doc-title">{{ section.title }}</p>
+
+  {% set navRss = true %}{% include "nav.njk" %}
+
+  <p class="doc-description">{{ section.description }}</p>
+
+  {% set listPosts = collections[section.name] %}{% set listSigils = false %}{% set listTags = true %}{% set listEmpty = "No " + section.name + " yet." %}
+  {% include "post-list.njk" %}
+
+</div>

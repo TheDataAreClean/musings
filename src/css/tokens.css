@@ -83,7 +83,6 @@
   :root {
     --page-pad-h: var(--space-4);   /* 16px — flush to viewport edges */
     --page-pad-v: var(--space-6);   /* 24px — reduce top/bottom page margin */
-    --toolbar-h:  32px;             /* single row on mobile — same as desktop */
     --ruler-h:    0px;              /* ruler hidden on mobile — keeps --chrome-h correct */
   }
 }

@@ -7,7 +7,6 @@ description: and my perfect schedule does not stand a chance.
 tags:
   - home
   - adulthood
-permalink: /ideas/2026-10-03-house-chokehold/
 ---
 
 I had a plan for how I wanted to start October. My house had some inputs on said plan.
