@@ -16,19 +16,19 @@ versionNote: ''
 
 ***
 
-# Morning
+## Morning
 
 - T-minus one day to the main event. The tents are up, and the professional photographers are here. The wedding officially begins today.
 - Picked up Shaoni’s parents from the station. Sneaked in another mini-date on the way back!![](/images/uploads/2026-11-20-pwd-6-4ebab173.webp)
 - Today’s random snack while doing wedding chores: McDonald’s. I am a sucker for the Pizza McPuff.
 
-# Afternoon
+## Afternoon
 
 * Spent most of the afternoon playing with (read: distracting) my extremely high-energy nephew. Apparently, keeping a three-year-old entertained is also a wedding duty.![](/images/uploads/2026-11-20-pwd-6-9596ed15.webp)
 * Three stages of pooja music before any Punjabi wedding. First bhajan, then folk music, and finally full-on Bollywood.
 * A quick nap, a coffee and recharged camera batteries. Next up, Mehendi.
 
-# Evening
+## Evening
 
 * Wedding jitters are getting to people. Everyone is panicking and nobody seems to have a plan. Getting a little exhausting.
 * Danced my heart out for the first time in years. All one needs is the nostalgia of the music they grew up with, no matter how good or bad.
