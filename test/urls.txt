@@ -44,6 +44,7 @@
 /notes/2026-11-21-pwd-7/
 /notes/2026-11-22-pwd-8/
 /notes/2026-11-23-pwd-9/
+/notes/2026-11-24-pwd-10/
 /random/
 /reference/
 /snaps/
