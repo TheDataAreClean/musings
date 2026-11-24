@@ -1,0 +1,24 @@
+# One grouped PR a month for npm packages and one for GitHub Actions.
+# Sveltia CMS is pinned in package.json too, so its bumps show up here;
+# test the editor before merging one.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      npm:
+        patterns: ["*"]
+    ignore:
+      # satori 0.x minors change the og:image layout; bump it by hand and
+      # compare a few cards
+      - dependency-name: satori
+        update-types: ["version-update:semver-minor"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]

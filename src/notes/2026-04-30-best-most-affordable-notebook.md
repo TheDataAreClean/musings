@@ -6,7 +6,6 @@ tags:
   - personal
   - writing
 slug: best-notebook
-permalink: /notes/2026-04-30-best-notebook/
 draft: false
 ---
 

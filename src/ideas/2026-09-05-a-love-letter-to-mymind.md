@@ -7,7 +7,6 @@ description: .. and a case for entropy
 tags:
   - tech
   - personal
-permalink: /ideas/2026-09-05-mymind/
 ---
 
 > _What are some digital rituals you participate in?_

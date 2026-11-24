@@ -7,7 +7,6 @@ tags:
   - history
   - india
 slug: grandmother
-permalink: /ideas/2026-08-15-grandmother/
 draft: false
 ---
 

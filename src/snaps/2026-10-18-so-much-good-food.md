@@ -9,7 +9,6 @@ tags:
   - life
 version: 1
 versionNote: ''
-permalink: /snaps/2026-10-18-food/
 ---
 
 The last couple of weeks have just been an extravaganza of great food by [Shaoni](https://sundaytable.in/) at home for friends, family and her customers. I want to remember all of this for a very long time.

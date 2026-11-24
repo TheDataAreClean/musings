@@ -9,13 +9,13 @@
 //   • the title shows up again at the top of the body
 //   • a margin note is dropped, or loses its "Note on … · date" label
 //   • a margin note's card header runs into one line ("AArpit16 Oct")
-//   • a post with prose extracts to nothing (Readability, Mercury, h-entry)
+//   • a post with prose extracts to nothing (Readability, h-entry)
 //   • the h-entry or the BlogPosting JSON-LD is missing a field
 // article-extractor skips posts under its length threshold by design, so an
-// empty result there is a note, not a failure. So is Mercury handing back the
-// whole <body> for a post with no prose block, while Readability and the
-// h-entry still extract it cleanly. A photo-only snap, or one whose
+// empty result there is a note, not a failure. A photo-only snap, or one whose
 // only text is a link, has nothing for any engine to hold onto; a note too.
+// (Mercury, @postlight/parser, was checked here until Nov 2026: it's no longer
+// maintained and pulled in old, vulnerable packages.)
 //
 // Run on its own with `npm run check:readers` (needs a built _site).
 
@@ -23,7 +23,6 @@ const fs = require("fs");
 const path = require("path");
 const { JSDOM, VirtualConsole } = require("jsdom");
 const { Readability } = require("@mozilla/readability");
-const Mercury = require("@postlight/parser");
 const { mf2 } = require("microformats-parser");
 
 const SITE = path.join(__dirname, "..", "_site");
@@ -78,12 +77,6 @@ async function check({ url, file }) {
   const note = [];
 
   const readability = new Readability(doc.cloneNode(true)).parse();
-  let mercury = null;
-  try {
-    mercury = await Mercury.parse(abs, { html, fetchAllPages: false });
-  } catch (e) {
-    fail.push(`mercury: threw ${e.message}`);
-  }
   let extractus = null;
   try {
     const { extractFromHtml } = await import("@extractus/article-extractor");
@@ -95,21 +88,12 @@ async function check({ url, file }) {
 
   const outputs = {
     readability: readability?.content,
-    mercury: mercury?.content,
     "article-extractor": extractus?.content,
     "h-entry": entry?.properties.content?.[0]?.html,
   };
 
   for (const [engine, content] of Object.entries(outputs)) {
     const text = textOf(content);
-    // Mercury scores blocks of prose and discounts link-heavy ones, so a post of
-    // nothing but linked bullets gives it no body to pick and it hands back the
-    // whole <body>. That is the engine's limit, not a leak in our markup, so
-    // excuse it only while Readability and the h-entry both extract cleanly.
-    if (engine === "mercury" && /^\s*<body\b/.test(content || "") && readability?.content && entry?.properties.content?.[0]?.html) {
-      note.push("mercury: returned the whole page (no prose block to pick; list or link-only post)");
-      continue;
-    }
     if (!text && /<img\b/.test(content || "")) continue; // a photo, no words: nothing to misread
     if (!text) {
       if (!hasText) note.push(`${engine}: nothing to extract (little or no text outside links)`);
@@ -172,5 +156,5 @@ async function check({ url, file }) {
     console.error(`check-readers: ${failed} of ${list.length} posts would read wrong in reader apps (see above)`);
     process.exit(1);
   }
-  console.log(`check-readers: ${list.length} posts read cleanly in Readability, Mercury, article-extractor and h-entry`);
+  console.log(`check-readers: ${list.length} posts read cleanly in Readability, article-extractor and h-entry`);
 })();

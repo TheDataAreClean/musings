@@ -9,7 +9,6 @@ slug: pwd-4
 date: 2026-11-18T08:43:00+05:30
 version: 1
 versionNote: ''
-permalink: /notes/2026-11-18-pwd-4/
 ---
 
 > **Day**: Four

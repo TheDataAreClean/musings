@@ -1,7 +1,6 @@
 ---
 title: Trying to fill my well again
 slug: well
-permalink: /ideas/2026-10-10-well/
 date: 2026-10-10T12:41:00+05:30
 draft: false
 description: On losing confidence and making things for myself again.

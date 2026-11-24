@@ -8,15 +8,15 @@
 // alone can't be the version store: Sveltia commits on every save.
 //
 // It also stamps `versionDate:` on the live post (when the bump was first
-// committed, or now if it isn't committed yet) and keeps each snapshot's
-// permalink in step with its post's URL, like backfill-permalink.js.
+// committed, or now if it isn't committed yet). A snapshot's URL isn't stored:
+// src/versions/versions.11tydata.js puts it under the post's current URL.
 const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");
 const matter = require("gray-matter");
 
-const ROOT = path.join(__dirname, "..");
-const SECTIONS = ["ideas", "notes", "snaps"];
+const { ROOT, postFiles } = require("./content.js");
+
 const VERSIONS_DIR = path.join(ROOT, "src/versions");
 
 const versionOf = (text) => {
@@ -51,10 +51,6 @@ function history(relPath) {
     .filter((c) => c.text !== null);
 }
 
-function postUrl(section, file, data) {
-  return data.permalink || `/${section}/${file.replace(/\.md$/, "")}/`;
-}
-
 function setFrontMatterLine(text, key, value, after) {
   const fm = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   const eol = text.includes("\r\n") ? "\r\n" : "\n";
@@ -67,33 +63,20 @@ function setFrontMatterLine(text, key, value, after) {
   return text.replace(fm[0], `---${eol}${body}${eol}---`);
 }
 
-for (const section of SECTIONS) {
-  const dir = path.join(ROOT, "src", section);
-  for (const file of fs.readdirSync(dir).filter((f) => f.endsWith(".md"))) {
+{
+  for (const { section, file, path: filePath } of postFiles()) {
     const relPath = `src/${section}/${file}`;
-    const filePath = path.join(ROOT, relPath);
     let text = fs.readFileSync(filePath, "utf8");
     const latest = versionOf(text);
     if (latest < 2) continue;
 
     const { data } = matter(text);
-    const url = postUrl(section, file, data);
     const snapDir = path.join(VERSIONS_DIR, section, file.replace(/\.md$/, ""));
     let commits = null;
 
     for (let n = 1; n < latest; n++) {
       const snapPath = path.join(snapDir, `v${n}.md`);
-      const permalink = `${url}v${n}/`;
-
-      if (fs.existsSync(snapPath)) {
-        const snap = fs.readFileSync(snapPath, "utf8");
-        const fixed = setFrontMatterLine(snap, "permalink", permalink);
-        if (fixed !== snap) {
-          fs.writeFileSync(snapPath, fixed, "utf8");
-          console.log(`versions: ${path.relative(ROOT, snapPath)}  → ${permalink}`);
-        }
-        continue;
-      }
+      if (fs.existsSync(snapPath)) continue;
 
       commits = commits || history(relPath);
       const atN = commits.filter((c) => versionOf(c.text) === n);
@@ -112,7 +95,6 @@ for (const section of SECTIONS) {
         versionDate: n === 1 ? old.data.date : old.data.versionDate || atN[atN.length - 1].date,
         ...(n > 1 && old.data.versionNote && { versionNote: old.data.versionNote }),
         versionOf: relPath,
-        permalink,
       };
       fs.mkdirSync(snapDir, { recursive: true });
       fs.writeFileSync(snapPath, matter.stringify(old.content, fm), "utf8");

@@ -9,8 +9,9 @@
 // card's titlebar come from the same functions the site uses — one function,
 // not two copies that can drift.
 //
-// Skips regenerating a post's image if the PNG is already newer than its
-// source .md file — same caching pattern as convert-webp.js.
+// Renders every card on every build (about 90, a few seconds). There is no
+// cache: one keyed on file times was always cold on CI and never noticed a
+// change to this generator, the fonts or the tokens.
 
 const fs = require("fs");
 const path = require("path");
@@ -23,14 +24,11 @@ const FONT_DIR = path.join(__dirname, "og-fonts");
 const OUT_DIR = path.join(ROOT, "images", "og");
 const TOKENS_PATH = path.join(ROOT, "src", "css", "tokens.css");
 
-const SECTIONS = [
-  { dir: path.join(ROOT, "src", "ideas"), name: "ideas" },
-  { dir: path.join(ROOT, "src", "notes"), name: "notes" },
-  { dir: path.join(ROOT, "src", "snaps"), name: "snaps" },
-];
+const site = require("../src/_data/site.json");
+const { SECTIONS, postFiles, postUrl } = require("./content.js");
 
-const SITE_DOMAIN = "musings.thedataareclean.com"; // real value, src/_data/site.json's "url"
-const COLLECTION_TAGS = new Set(["ideas", "notes", "snaps"]); // mirrors .eleventy.js's collectionTags filter
+const SITE_DOMAIN = site.url.replace(/^https?:\/\//, "");
+const COLLECTION_TAGS = new Set(SECTIONS); // mirrors .eleventy.js's collectionTags filter
 
 const W = 1200;
 const H = 630;
@@ -43,15 +41,21 @@ const TITLEBAR_H = 34; // real, unzoomed — chrome never scales with content zo
 const TXT_BASE = 16;
 const SP = { 2: 8, 4: 16, 6: 24, 8: 32, 10: 40 };
 
+// Colour tokens come from tokens.css (via src/_data/tokens.js, the same parse
+// the /style/ page uses); the titlebar's gradient and border are hard-coded in
+// doc-chrome.css, the one file allowed hex colours, so they're copied here.
+const token = Object.fromEntries(
+  require("../src/_data/tokens.js")().colorGroups.flatMap((g) => g.tokens).map((t) => [t.name, t.value])
+);
 const colors = {
-  appBg: "#c8c8c8",
+  appBg: token["--color-app-bg"],
   chromeGradientTop: "#f8f8f8",
   chromeGradientBottom: "#efefef",
   chromeBorderTitlebar: "#e0e0e0",
-  pageBg: "#ffffff",
-  text: "#000000",
-  muted: "#666666",
-  mark: "#ffff00",
+  pageBg: token["--color-page-bg"],
+  text: token["--color-text"],
+  muted: token["--color-muted"],
+  mark: token["--color-mark"],
 };
 
 // "15 Oct, 2026" — every date a reader sees (lists, posts, version notes,
@@ -108,12 +112,6 @@ function ogImageSlug(url) {
  */
 function ogImageExists(slug) {
   return fs.existsSync(path.join(OUT_DIR, `${slug}.png`));
-}
-
-function computePostUrl(section, filename, data) {
-  if (data.permalink) return data.permalink;
-  const stem = filename.replace(/\.md$/, "");
-  return `/${section}/${stem}/`;
 }
 
 // ---- font ------------------------------------------------------------------
@@ -297,8 +295,6 @@ async function renderPng(card, fonts) {
   return new Resvg(svg, { fitTo: { mode: "width", value: W } }).render().asPng();
 }
 
-const SIGILS = { ideas: "→", notes: "·", snaps: "○" }; // mirrors .eleventy.js's postSigil filter
-const SITE_DATA_PATH = path.join(ROOT, "src", "_data", "site.json");
 
 async function main() {
   const docFont = resolveDocFont();
@@ -309,19 +305,10 @@ async function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
   let generated = 0;
-  let skipped = 0;
 
-  // Renders and writes one card unless its PNG is already newer than srcPath
-  // (same caching pattern as convert-webp.js). Returns without writing when
-  // srcPath is null — used for the tag pages below, whose content depends on
-  // every tagged post rather than one source file.
-  async function renderIfStale(url, srcPath, content) {
+  async function render(url, content) {
     const slug = ogImageSlug(url);
     const outPath = path.join(OUT_DIR, `${slug}.png`);
-    if (srcPath && fs.existsSync(outPath) && fs.statSync(outPath).mtimeMs >= fs.statSync(srcPath).mtimeMs) {
-      skipped++;
-      return;
-    }
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
     const png = await renderPng(buildCard(content, docFont.name, chromeFont.name), fonts);
     fs.writeFileSync(outPath, png);
@@ -331,68 +318,56 @@ async function main() {
 
   // ---- posts --------------------------------------------------------------
   const versions = require("../src/_data/versions.js")();
-  for (const { dir, name } of SECTIONS) {
-    const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md"));
-    for (const file of files) {
-      const srcPath = path.join(dir, file);
-      const { data } = matter(fs.readFileSync(srcPath, "utf8"));
-      const url = computePostUrl(name, file, data);
-      const tags = (data.tags || []).filter((t) => !COLLECTION_TAGS.has(t));
-      const vinfo = versions[`./src/${name}/${file}`];
-      await renderIfStale(url, srcPath, { title: data.title, description: data.description, tags, edited: vinfo && vinfo.latest.date });
-    }
+  for (const { section, file, path: srcPath } of postFiles()) {
+    const { data } = matter(fs.readFileSync(srcPath, "utf8"));
+    const tags = (data.tags || []).filter((t) => !COLLECTION_TAGS.has(t));
+    const vinfo = versions[`./src/${section}/${file}`];
+    await render(postUrl(section, file, data), { title: data.title, description: data.description, tags, edited: vinfo && vinfo.latest.date });
   }
 
   // ---- home -----------------------------------------------------------------
   const homeSrcPath = path.join(ROOT, "src", "index.md");
   const homeData = matter(fs.readFileSync(homeSrcPath, "utf8")).data;
-  const siteData = JSON.parse(fs.readFileSync(SITE_DATA_PATH, "utf8"));
-  await renderIfStale("/", homeSrcPath, { title: siteData.shortTitle, description: homeData.description, tags: [] });
+  await render("/", { title: site.shortTitle, description: homeData.description, tags: [] });
 
   // ---- section indices --------------------------------------------------
-  for (const { name } of SECTIONS) {
-    const srcPath = path.join(ROOT, "src", name, "index.njk");
-    const { data } = matter(fs.readFileSync(srcPath, "utf8"));
-    await renderIfStale(`/${name}/`, srcPath, { title: data.title, description: data.description, tags: [], sigil: SIGILS[name] });
+  for (const s of site.sections) {
+    await render(`/${s.name}/`, { title: s.title, description: s.description, tags: [], sigil: s.sigil });
   }
 
   // ---- about ----------------------------------------------------------------
   const aboutSrcPath = path.join(ROOT, "src", "about.md");
   const aboutData = matter(fs.readFileSync(aboutSrcPath, "utf8")).data;
-  await renderIfStale("/about/", aboutSrcPath, { title: aboutData.title, description: aboutData.description, tags: [] });
+  await render("/about/", { title: aboutData.title, description: aboutData.description, tags: [] });
 
   // ---- standalone pages (reference, style) -----------------------------------
   for (const [url, file] of [["/reference/", "reference.md"], ["/style/", "style.njk"]]) {
     const srcPath = path.join(ROOT, "src", file);
     const data = matter(fs.readFileSync(srcPath, "utf8")).data;
-    await renderIfStale(url, srcPath, { title: data.title, description: data.description, tags: [] });
+    await render(url, { title: data.title, description: data.description, tags: [] });
   }
 
   // ---- 404 --------------------------------------------------------------
   const notFoundSrcPath = path.join(ROOT, "src", "404.md");
   const notFoundData = matter(fs.readFileSync(notFoundSrcPath, "utf8")).data;
-  await renderIfStale("/404.html", notFoundSrcPath, { title: notFoundData.title, description: notFoundData.description, tags: [] });
+  await render("/404.html", { title: notFoundData.title, description: notFoundData.description, tags: [] });
 
   // ---- tag pages --------------------------------------------------------
-  // No single source file — a tag's card depends on every post carrying it —
-  // so these always regenerate rather than trying to cache against one mtime.
   const tagCounts = {};
-  for (const { dir } of SECTIONS) {
-    for (const file of fs.readdirSync(dir).filter((f) => f.endsWith(".md"))) {
-      const { data } = matter(fs.readFileSync(path.join(dir, file), "utf8"));
-      if (data.draft) continue; // drafts stay off tag pages, so off their counts too
-      for (const t of data.tags || []) {
-        if (COLLECTION_TAGS.has(t)) continue;
-        tagCounts[t] = (tagCounts[t] || 0) + 1;
-      }
+  for (const { path: srcPath } of postFiles()) {
+    const { data } = matter(fs.readFileSync(srcPath, "utf8"));
+    if (data.draft) continue; // drafts stay off tag pages, so off their counts too
+    for (const t of data.tags || []) {
+      if (COLLECTION_TAGS.has(t)) continue;
+      tagCounts[t] = (tagCounts[t] || 0) + 1;
     }
   }
   for (const [tag, count] of Object.entries(tagCounts)) {
     const description = `${count} post${count !== 1 ? "s" : ""} tagged as ${tag}.`;
-    await renderIfStale(`/tags/${tagSlug(tag)}/`, null, { title: tag, description, tags: [], highlightTitle: true });
+    await render(`/tags/${tagSlug(tag)}/`, { title: tag, description, tags: [], highlightTitle: true });
   }
 
-  console.log(`Done — ${generated} generated, ${skipped} up to date.`);
+  console.log(`og:images: ${generated} generated`);
 }
 
 if (require.main === module) {

@@ -10,19 +10,7 @@ layout: layouts/base.njk
 
   {% if description %}<p class="doc-description">{{ description }}</p>{% endif %}
 
-  {% if collections.feed.length %}
-  <div class="post-list">
-    {% for post in collections.feed %}
-    <div class="post-list__item">
-      <p class="post-list__title">
-        <span class="post-sigil">{{ post.data.tags | postSigil }}</span><a href="{{ post.url }}">{{ post.data.title }}</a>
-      </p>
-      <p class="post-list__line2">{% for tag in post.data.tags | collectionTags %}<a class="post-tag" href="/tags/{{ tag | tagSlug }}/">{{ tag }}</a>{% endfor %}{% include "post-date.njk" %}</p>
-    </div>
-    {% endfor %}
-  </div>
-  {% else %}
-  <p>No posts yet.</p>
-  {% endif %}
+  {% set listPosts = collections.feed %}{% set listSigils = true %}{% set listTags = true %}
+  {% include "post-list.njk" %}
 
 </div>

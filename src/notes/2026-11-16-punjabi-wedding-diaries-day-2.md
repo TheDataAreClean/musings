@@ -7,7 +7,6 @@ tags:
   - food
   - delhi
 slug: pwd-2
-permalink: /notes/2026-11-16-pwd-2/
 date: 2026-11-16T07:57:00+05:30
 version: 1
 versionNote: ''

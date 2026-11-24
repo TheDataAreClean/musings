@@ -9,7 +9,6 @@ slug: arc
 date: 2026-11-14T05:32:00+05:30
 version: 1
 versionNote: ''
-permalink: /ideas/2026-11-14-arc/
 ---
 
 A few weeks ago, The Browser Company [announced that it is shutting down Arc](https://resources.arc.net/hc/en-us/articles/44412972248471-Arc-Sunset-Key-Dates-and-What-to-Expect).

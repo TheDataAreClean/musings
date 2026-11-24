@@ -6,7 +6,6 @@ tags:
   - family
   - delhi
 slug: pwd-9
-permalink: /notes/2026-11-23-pwd-9/
 date: 2026-11-23T10:00:00+05:30
 version: 1
 versionNote: ''

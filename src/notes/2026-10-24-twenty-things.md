@@ -6,7 +6,6 @@ tags:
   - personal
   - lists
 slug: twenty
-permalink: /notes/2026-10-24-twenty/
 date: 2026-10-24T15:07:00+05:30
 version: 1
 versionNote: ''

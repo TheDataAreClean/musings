@@ -6,7 +6,6 @@ tags:
   - people
   - community
 slug: vizchitra-2026
-permalink: /notes/2026-07-11-vizchitra-2026/
 draft: false
 ---
 
