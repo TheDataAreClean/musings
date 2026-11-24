@@ -17,22 +17,22 @@ versionNote: ''
 
 ***
 
-# **Morning**
+## Morning
 
 - Last morning at the Airbnb for Shaoni and me. While it was slightly weird staying away from the family over the last week or so, no complaints about the quiet and slow start to the mornings.![](/images/uploads/2026-11-24-pwd-10-ff3b8b89.webp)
 - Literally five minutes after we handed over the keys, my sister told us that she and her partner were coming home for the _pag phera_ and planned to stay the night. We ended up extending our Airbnb stay by another day and picking up the keys again.
 
-# Afternoon
+## Afternoon
 
 - Shaoni made some tasty chicken curry and dum aaloo for everyone! Sunday Table, Delhi edition.
 - Somehow, word reached Aamchur that my sister was back home, and came over to complain about the lack of treats.![](/images/uploads/2026-11-24-pwd-10-0b5c82e6.webp)
 
-# Evening
+## Evening
 
 - Took my sister’s partner for a stroll around the neighbourhood and tried our beloved mutton rolls. The evening ended with a crash course in family gossip.
 - Clicked a bunch of photos with the funky new camera.![](/images/uploads/2026-11-24-pwd-10-d6bcbea3.webp)
 
-# Bonus: The next morning
+## Bonus: The next morning
 
 - My masi and her family left at 7 am. We went along to the station, using three cars to transport four people and 12 bags. Weddings.
 - Before my sister and her partner left at noon, we opened a hundred or so _lifafas_ and counted all the “gifts” we received from friends and family.
