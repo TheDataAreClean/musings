@@ -6,10 +6,10 @@ tags:
   - family
   - delhi
 slug: pwd-10
-permalink: /notes/2026-11-24-pwd-10/
 date: 2026-11-24T17:07:00+05:30
 version: 1
 versionNote: ''
+permalink: /notes/2026-11-24-pwd-10/
 ---
 
 > **Day**: Ten
@@ -17,7 +17,7 @@ versionNote: ''
 
 ***
 
-# **Morning**
+# Morning
 
 - Last morning at the Airbnb for Shaoni and me. While it was slightly weird staying away from the family over the last week or so, no complaints about the quiet and slow start to the mornings.![](/images/uploads/2026-11-24-pwd-10-ff3b8b89.webp)
 - Literally five minutes after we handed over the keys, my sister told us that she and her partner were coming home for the _pag phera_ and planned to stay the night. We ended up extending our Airbnb stay by another day and picking up the keys again.
