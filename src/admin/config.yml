@@ -43,6 +43,9 @@ collections:
     folder: src/ideas
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    sortable_fields:
+      - { field: date, label: Date, default_sort: desc }
+      - { field: title, label: Title }
     fields:
       - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
       - { name: title, label: Title, widget: string, hint: "The post's headline." }
@@ -64,6 +67,9 @@ collections:
     folder: src/notes
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    sortable_fields:
+      - { field: date, label: Date, default_sort: desc }
+      - { field: title, label: Title }
     fields:
       - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
       - { name: title, label: Title, widget: string, hint: "The post's headline." }
@@ -85,6 +91,9 @@ collections:
     folder: src/snaps
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    sortable_fields:
+      - { field: date, label: Date, default_sort: desc }
+      - { field: title, label: Title }
     fields:
       - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
       - { name: title, label: Title, widget: string, hint: "The post's headline." }
