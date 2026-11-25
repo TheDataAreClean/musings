@@ -10,7 +10,7 @@ Architecture and technical reference. Claude's operating manual lives in [CLAUDE
 
 Static site generator (Eleventy 3.x) → HTML + CSS + JS → GitHub Pages.
 
-No bundler. Eleventy templates produce static HTML; JS is served as-is and `main.css` is inlined into one file. Three Node `prebuild` scripts run before each build (HEIC conversion, version snapshots, og:images), and two checks after it (see Deployment). Eleventy Image resizes every image in the built pages.
+No bundler. Eleventy templates produce static HTML; JS is served as-is and `main.css` is inlined into one file. Two Node `prebuild` scripts run before each build (version snapshots, og:images), and two checks after it (see Deployment). Eleventy Image resizes every image in the built pages.
 
 **Author/deploy flow:**
 1. Author writes `.md` in `src/` (directly, or via Sveltia CMS at `/admin/`)
@@ -82,7 +82,7 @@ A post can be revised in public: readers land on the latest version at the post'
 
 **Authoring.** In the CMS, bump **Version** and fill **What changed** in the same save as the first edit of the new version. Saves publish immediately, so edits saved before the bump become part of the old version.
 
-**Snapshots.** `scripts/snapshot-versions.js` (prebuild, and before each dev-server rebuild) looks at every post with `version: N` (N ≥ 2). For each earlier version without a snapshot it finds, in the file's git history (`git log --follow`), the newest commit where the post was still at that version (no `version:` counts as 1), and writes it to `src/versions/{section}/{post-file-stem}/v{n}.md`. The deploy's commit step saves it (after the deploy); from then on it's never regenerated and no longer depends on history. Snapshot front matter: `title`, `description`, `date`, `postTags` (not `tags`, so snapshots stay out of tag collections), `version`, `versionDate`, `versionNote` and `versionOf` (the live post's path). No permalink: `src/versions/versions.11tydata.js` puts each snapshot under its post's current URL, so a slug change moves them. The script also stamps `versionDate` on the live post when the bump is first committed (now, if it isn't committed yet). A version bump is the only content change the deploy commits back to `main`, apart from a HEIC upload.
+**Snapshots.** `scripts/snapshot-versions.js` (prebuild, and before each dev-server rebuild) looks at every post with `version: N` (N ≥ 2). For each earlier version without a snapshot it finds, in the file's git history (`git log --follow`), the newest commit where the post was still at that version (no `version:` counts as 1), and writes it to `src/versions/{section}/{post-file-stem}/v{n}.md`. The deploy's commit step saves it (after the deploy); from then on it's never regenerated and no longer depends on history. Snapshot front matter: `title`, `description`, `date`, `postTags` (not `tags`, so snapshots stay out of tag collections), `version`, `versionDate`, `versionNote` and `versionOf` (the live post's path). No permalink: `src/versions/versions.11tydata.js` puts each snapshot under its post's current URL, so a slug change moves them. The script also stamps `versionDate` on the live post when the bump is first committed (now, if it isn't committed yet). A version bump is the only content change the deploy commits back to `main`.
 
 **URLs.** `{post-url}` is always the latest version. `{post-url}v{n}/` is an earlier version (`src/versions/`, layout and URL from `src/versions/versions.11tydata.js`). `{post-url}v{n}/changes/` is what changed from version n to the next version that exists (`src/changes.njk`, paginated over the `versions` collection). Numbers can be skipped (1 → 3): the script warns that v2 can't be saved and everything compares 1 with 3. The changes page shows the newer title and description, and notes the old title, description or tags in its version footnote when they changed. Earlier versions and changes pages set `rel=canonical` and `og:image` to the latest version.
 
@@ -307,16 +307,17 @@ Session persistence: `sessionStorage` only, and only within one visit. On load, 
 
 **Re-running a failed deploy** works from the Actions tab: the Pages artifact is named per attempt (`github-pages-{run_attempt}`), so a second attempt doesn't trip over the first one's ("Multiple artifacts named github-pages"). "Run workflow" works too.
 
-**What the bot commits.** Only two things change files during a build: a version bump (a snapshot in `src/versions/` and `versionDate` on the post) and a HEIC upload (converted to WebP). Permalinks are computed and uploads keep the name the CMS gave them, so an ordinary save, with or without images, produces no bot commit and can't race the next CMS save. The commit runs after the deploy, so a push that loses a race never blocks publishing.
+**What the bot commits.** Only a version bump changes files during a build (a snapshot in `src/versions/` and `versionDate` on the post). Permalinks are computed and uploads keep the name the CMS gave them, so an ordinary save, with or without images, produces no bot commit and can't race the next CMS save. The commit runs after the deploy, so a push that loses a race never blocks publishing.
 
 **Pull requests** run `check.yml`: `npm ci`, `npm test`, `npm run build` (with `URLS_STRICT=1`), no deploy and no commit. Dependabot (`.github/dependabot.yml`) opens one grouped PR a month for npm and one for Actions; satori minors are ignored, since a 0.x minor changes the og:image layout.
 
-`npm run build` runs `prebuild` automatically, which chains three scripts:
-1. `convert-heic.js` turns a HEIC upload into a WebP with the same name (decoded by `heic-decode`, libheif in WebAssembly, since sharp's prebuilt binaries can't read HEIC; capped at 2400px, quality 82) and points posts and snapshots at it. A file it can't convert stops the build with its name. JPEG and PNG never reach it: the CMS converts them to WebP in the browser (`media_libraries` in `src/admin/config.yml`), and Eleventy Image reads any that slip through.
-2. `snapshot-versions.js` saves earlier versions of revised posts to `src/versions/` (see Post versions).
-3. `generate-og-images.js` renders every page's `og:image` (see below).
+`npm run build` runs `prebuild` automatically, which chains two scripts:
+Uploads are not converted at build time. The CMS converts JPEG, PNG and HEIC to WebP in the browser (`media_libraries` in `src/admin/config.yml`, Sveltia 0.271+; a browser that can't decode HEIC will refuse the file), and Eleventy Image reads any JPEG or PNG that slips through. A HEIC that reaches the repo another way fails `check-site.js` by name.
 
-After the build, `postbuild` runs `check-site.js` (feed is valid XML with no margin-note card header, no `{#` in content, dates have a time, `site.url` and `feed.njk` rules, drafts out of every listing, every root-relative link and image resolves, `test/urls.txt` URLs still exist, unused uploads listed as warnings) and then `check-readers.js` (see Reader views). A failure stops `npm run build`, so CI deploys nothing. `npm test` runs the unit tests in `test/` (Node's built-in runner): the markdown rules, `htmlDiff`, `beforeSentence`, `rssContent` against the real `marginnote` shortcode, `postUrl`, and a round trip of every CMS insert-menu block.
+1. `snapshot-versions.js` saves earlier versions of revised posts to `src/versions/` (see Post versions).
+2. `generate-og-images.js` renders every page's `og:image` (see below).
+
+After the build, `postbuild` runs `check-site.js` (feed is valid XML with no margin-note card header, no `{#` in content, dates have a time, `site.url` and `feed.njk` rules, drafts out of every listing, every root-relative link and image resolves, `test/urls.txt` URLs still exist, unused uploads listed as warnings, and no HEIC left in the uploads folder) and then `check-readers.js` (see Reader views). A failure stops `npm run build`, so CI deploys nothing. `npm test` runs the unit tests in `test/` (Node's built-in runner): the markdown rules, `htmlDiff`, `beforeSentence`, `rssContent` against the real `marginnote` shortcode, `postUrl`, and a round trip of every CMS insert-menu block.
 
 `src/CNAME` is passthrough-copied to `_site/CNAME` — required for the custom domain to survive deploys.
 
@@ -343,7 +344,7 @@ Access: `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
 - `media_folder` in `config.yml` is `images/uploads` (the real path, not the `src/images` symlink — see above); served from `/images/uploads/`
 - `src/admin/index.html` pins the tab title to "Musings CMS": Sveltia rewrites the title as it loads (CMS name → site URL), so a `MutationObserver` on `<head>` puts the `<title>` text back. It deliberately does not override `document.title`.
 - `src/admin/index.html` loads Sveltia at a pinned version (`@sveltia/cms@x.y.z`), not `latest`, so an upstream release can't break the editor components unnoticed. Bump it on purpose.
-- `field_defaults.richtext.captioned_images` is `false` in `config.yml`: Sveltia's own image caption would save a raw HTML `<figure>`, but the site builds the figure and `<figcaption>` itself from the markdown image title. Sveltia 0.271+ also converts HEIC to WebP in the browser through the `raster_image` transform.
+- `field_defaults.richtext.captioned_images` is `false` in `config.yml`: Sveltia's own image caption would save a raw HTML `<figure>`, but the site builds the figure and `<figcaption>` itself from the markdown image title. Sveltia 0.271+ also converts HEIC to WebP in the browser through the `raster_image` transform, so there is no build-time HEIC step.
 - Each collection sets `sortable_fields` with `date` as `default_sort: desc`, so the entry lists open newest first (the Sort menu also offers Title). It sorts by the `date` field, not the filename; an editor's own Sort choice is remembered in their browser and wins over the default.
 - `src/admin/editor-components.js` adds the body editor's insert menu: margin note, callout, page break, footnote marker, footnote text, image with caption, and quote with source. Each component's `pattern` must match exactly what its `toBlock` writes, or a saved block won't reopen in its form; a pattern with the `m` flag is a block, without it an inline element. Adding a shortcode means adding its component here too. The footnote marker and its text are separate inserts sharing a name, since the note belongs at the end of the post.
 
@@ -394,7 +395,6 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 | `@resvg/resvg-js` | Rasterizes the SVG `satori` produces into the final og:image PNG |
 | `diff` | Word-level diff for post-version changes pages (`htmlDiff` filter) |
 | `gray-matter` | Front-matter parsing in `scripts/` and `_data/versions.js` |
-| `heic-decode` | Decodes HEIC uploads for `convert-heic.js` (sharp can't) |
 | `jsdom` | DOM for the reader-view check, and the feed XML check in `check-site.js` |
 | `markdown-it` | Markdown parser (configured in `.eleventy.js`) |
 | `markdown-it-anchor` | Heading anchors |
@@ -402,4 +402,4 @@ All `devDependencies` — build-time only, nothing shipped to the browser.
 | `markdown-it-footnote` | Footnotes |
 | `microformats-parser` | Reader-view check: parses the h-entry |
 | `satori` | Lays out each post's og:image (title/description/tags) as SVG. Held at 0.33: later 0.x minors change the layout |
-| `sharp` | Encodes decoded HEIC as WebP in `convert-heic.js` (Eleventy Image uses it too) |
+| `sharp` | Image encoder; Eleventy Image uses it |

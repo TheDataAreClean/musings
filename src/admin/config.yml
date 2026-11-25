@@ -20,7 +20,8 @@ public_folder: /images/uploads
 # commits a finished .webp, so the deploy bot has nothing to convert and
 # doesn't push a follow-up commit to main (that commit raced the next CMS
 # save: "The repository has been updated by someone else while saving").
-# Sveltia 0.271+ also converts HEIC here, so uploads need no bot commit.
+# Sveltia 0.271+ converts HEIC here too, which browsers decode themselves
+# (Safari, and Chrome on a Mac). There is no build-time conversion any more.
 media_libraries:
   default:
     config:

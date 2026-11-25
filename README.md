@@ -34,7 +34,7 @@ src/              Content, templates, CSS, JS, static assets
   _data/          Global data (site.json, tokens.js, versions.js)
   images/         Static images (symlink → top-level images/, see APP.md)
   admin/          Sveltia CMS entry point + config
-scripts/          Build scripts: HEIC conversion, version snapshots, og:images, site and reader checks; content.js holds the shared section and URL rules
+scripts/          Build scripts: version snapshots, og:images, site and reader checks; content.js holds the shared section and URL rules
 .eleventy.js      Eleventy config — collections, filters, shortcodes
 images/           Uploads, and generated og:images in images/og/ (gitignored)
 .github/          Deploy and pull request workflows, Dependabot

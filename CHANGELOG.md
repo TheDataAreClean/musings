@@ -6,6 +6,8 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ## UNRELEASED
 
+- docs: the Reference page now says photos, HEIC included, are converted to WebP in the editor before they are saved, not at build time.
+
 ---
 
 ## 2026-11-23 (v4.6.0)

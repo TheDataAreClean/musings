@@ -149,7 +149,7 @@ Images are block-level. They sit on their own line with vertical spacing above a
 
 _An SVG placeholder standing in for a real photograph. This italic line is the caption._
 
-The insert menu's image with caption writes the image and an italic line under it. Uploaded JPEG, PNG and HEIC files are converted to WebP when the site is built.
+The insert menu's image with caption writes the image and an italic line under it. Photos you upload in the editor, including HEIC from an iPhone, are converted to WebP before they are saved.
 
 ***
 

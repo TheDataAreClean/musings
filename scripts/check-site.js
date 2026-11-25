@@ -33,6 +33,15 @@ const walk = (dir) =>
   );
 
 // ---- source --------------------------------------------------------------
+// The CMS converts uploads to WebP in the browser (Sveltia, media_libraries in
+// src/admin/config.yml). A HEIC that arrives some other way (a git push, a
+// phone app) can't be read by Eleventy Image, so say so by name.
+const uploadsDir = path.join(ROOT, "images", "uploads");
+if (fs.existsSync(uploadsDir)) {
+  for (const f of fs.readdirSync(uploadsDir)) {
+    if (/\.hei[cf]$/i.test(f)) fail(`images/uploads/${f}: HEIC isn't converted at build time; upload it through the CMS or convert it to WebP or JPEG first`);
+  }
+}
 const mdFiles = walk(path.join(ROOT, "src")).filter((f) => f.endsWith(".md"));
 for (const f of mdFiles) {
   if (fs.readFileSync(f, "utf8").includes("{#")) fail(`${path.relative(ROOT, f)}: contains "{#"`);

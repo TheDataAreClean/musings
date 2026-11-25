@@ -8,7 +8,7 @@ description: Pre-push checklist (build/content/behaviour/infrastructure) and rel
 ### Build
 - [ ] `npm test` passes
 - [ ] `npm run build` — zero errors, and both checks pass: `check-site` (feed, links, drafts, old URLs) and `check-readers` (every post reads cleanly in reader apps)
-- [ ] `git status` clean after the build (only a version bump or HEIC upload should change files)
+- [ ] `git status` clean after the build (only a version bump should change files)
 - [ ] `_site/` not committed
 - [ ] Browser console clean — no JS errors, no 404s
 
