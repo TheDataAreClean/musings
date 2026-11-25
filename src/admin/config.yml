@@ -61,7 +61,7 @@ collections:
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm", hint: "Shown on the post and used to sort it." }
       - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Raise by 1 in the same save as your first edit to keep the old version." }
       - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version." }
-      - { name: moveTo, label: Move to, widget: select, options: [ideas, notes, snaps], required: false, hint: "Optional. Pick another section and save to move this post there on the next build. The old link stops working. Don't change Version in the same save." }
+      - { name: moveTo, label: Section, widget: select, options: [{ label: Ideas, value: ideas }, { label: Notes, value: notes }, { label: Snaps, value: snaps }], required: false, hint: "Leave as is, or pick another section and save to move this post there. The old link stops working. Don't change Version in the same save." }
 
   - name: notes
     label: Notes
@@ -86,7 +86,7 @@ collections:
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm", hint: "Shown on the post and used to sort it." }
       - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Raise by 1 in the same save as your first edit to keep the old version." }
       - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version." }
-      - { name: moveTo, label: Move to, widget: select, options: [ideas, notes, snaps], required: false, hint: "Optional. Pick another section and save to move this post there on the next build. The old link stops working. Don't change Version in the same save." }
+      - { name: moveTo, label: Section, widget: select, options: [{ label: Ideas, value: ideas }, { label: Notes, value: notes }, { label: Snaps, value: snaps }], required: false, hint: "Leave as is, or pick another section and save to move this post there. The old link stops working. Don't change Version in the same save." }
 
   - name: snaps
     label: Snaps
@@ -111,4 +111,4 @@ collections:
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm", hint: "Shown on the post and used to sort it." }
       - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Raise by 1 in the same save as your first edit to keep the old version." }
       - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version." }
-      - { name: moveTo, label: Move to, widget: select, options: [ideas, notes, snaps], required: false, hint: "Optional. Pick another section and save to move this post there on the next build. The old link stops working. Don't change Version in the same save." }
+      - { name: moveTo, label: Section, widget: select, options: [{ label: Ideas, value: ideas }, { label: Notes, value: notes }, { label: Snaps, value: snaps }], required: false, hint: "Leave as is, or pick another section and save to move this post there. The old link stops working. Don't change Version in the same save." }
