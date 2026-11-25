@@ -48,20 +48,20 @@ collections:
       - { field: date, label: Date, default_sort: desc }
       - { field: title, label: Title }
     fields:
-      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
+      - { name: moveTo, label: Section, widget: select, options: [{ label: Ideas, value: ideas }, { label: Notes, value: notes }, { label: Snaps, value: snaps }], required: false, hint: "Leave as is, or pick another section and save to move this post there. The old link stops working. Don't change Version in the same save." }
       - { name: title, label: Title, widget: string, hint: "The post's headline." }
       - { name: description, label: Description, widget: text, required: false, hint: "One sentence. Shown under the title and in link previews." }
+      - { name: body, label: Body, widget: markdown, hint: "Write the post here." }
       - name: tags
         label: Tags
         widget: list
         required: false
         hint: "Extra tags, e.g. design, tech, personal. 'ideas' is automatic."
-      - { name: body, label: Body, widget: markdown, hint: "Write the post here." }
-      - { name: slug, label: Slug, widget: string, required: false, hint: "Optional. Blank uses the title. Lowercase, hyphens only." }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm", hint: "Shown on the post and used to sort it." }
+      - { name: slug, label: Slug, widget: string, required: false, hint: "Optional. Blank uses the title. Lowercase, hyphens only." }
       - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Raise by 1 in the same save as your first edit to keep the old version." }
       - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version." }
-      - { name: moveTo, label: Section, widget: select, options: [{ label: Ideas, value: ideas }, { label: Notes, value: notes }, { label: Snaps, value: snaps }], required: false, hint: "Leave as is, or pick another section and save to move this post there. The old link stops working. Don't change Version in the same save." }
 
   - name: notes
     label: Notes
@@ -73,20 +73,20 @@ collections:
       - { field: date, label: Date, default_sort: desc }
       - { field: title, label: Title }
     fields:
-      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
+      - { name: moveTo, label: Section, widget: select, options: [{ label: Ideas, value: ideas }, { label: Notes, value: notes }, { label: Snaps, value: snaps }], required: false, hint: "Leave as is, or pick another section and save to move this post there. The old link stops working. Don't change Version in the same save." }
       - { name: title, label: Title, widget: string, hint: "The post's headline." }
       - { name: description, label: Description, widget: text, required: false, hint: "One sentence. Shown under the title and in link previews." }
+      - { name: body, label: Body, widget: markdown, hint: "Write the post here." }
       - name: tags
         label: Tags
         widget: list
         required: false
         hint: "Extra tags, e.g. personal, tech, create. 'notes' is automatic."
-      - { name: body, label: Body, widget: markdown, hint: "Write the post here." }
-      - { name: slug, label: Slug, widget: string, required: false, hint: "Optional. Blank uses the title. Lowercase, hyphens only." }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm", hint: "Shown on the post and used to sort it." }
+      - { name: slug, label: Slug, widget: string, required: false, hint: "Optional. Blank uses the title. Lowercase, hyphens only." }
       - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Raise by 1 in the same save as your first edit to keep the old version." }
       - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version." }
-      - { name: moveTo, label: Section, widget: select, options: [{ label: Ideas, value: ideas }, { label: Notes, value: notes }, { label: Snaps, value: snaps }], required: false, hint: "Leave as is, or pick another section and save to move this post there. The old link stops working. Don't change Version in the same save." }
 
   - name: snaps
     label: Snaps
@@ -98,17 +98,17 @@ collections:
       - { field: date, label: Date, default_sort: desc }
       - { field: title, label: Title }
     fields:
-      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
+      - { name: moveTo, label: Section, widget: select, options: [{ label: Ideas, value: ideas }, { label: Notes, value: notes }, { label: Snaps, value: snaps }], required: false, hint: "Leave as is, or pick another section and save to move this post there. The old link stops working. Don't change Version in the same save." }
       - { name: title, label: Title, widget: string, hint: "The post's headline." }
       - { name: description, label: Description, widget: text, required: false, hint: "One line of context." }
+      - { name: body, label: Body, widget: markdown, hint: "Add the photo, then any caption." }
       - name: tags
         label: Tags
         widget: list
         required: false
         hint: "Extra tags, e.g. luru, family, street. 'snaps' is automatic."
-      - { name: body, label: Body, widget: markdown, hint: "Add the photo, then any caption." }
-      - { name: slug, label: Slug, widget: string, required: false, hint: "Optional. Blank uses the title. Lowercase, hyphens only." }
+      - { name: draft, label: Draft, widget: boolean, default: false, required: false, hint: "Tick before saving if not ready. Hidden from listings and feed; the link still works." }
       - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm", hint: "Shown on the post and used to sort it." }
+      - { name: slug, label: Slug, widget: string, required: false, hint: "Optional. Blank uses the title. Lowercase, hyphens only." }
       - { name: version, label: Version, widget: number, value_type: int, min: 1, default: 1, required: false, hint: "Raise by 1 in the same save as your first edit to keep the old version." }
       - { name: versionNote, label: What changed, widget: string, required: false, hint: "One line on what's new in this version." }
-      - { name: moveTo, label: Section, widget: select, options: [{ label: Ideas, value: ideas }, { label: Notes, value: notes }, { label: Snaps, value: snaps }], required: false, hint: "Leave as is, or pick another section and save to move this post there. The old link stops working. Don't change Version in the same save." }
