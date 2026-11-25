@@ -343,6 +343,7 @@ Access: `https://musings.thedataareclean.com/admin/` — sign in with GitHub.
 - `media_folder` in `config.yml` is `images/uploads` (the real path, not the `src/images` symlink — see above); served from `/images/uploads/`
 - `src/admin/index.html` pins the tab title to "Musings CMS": Sveltia rewrites the title as it loads (CMS name → site URL), so a `MutationObserver` on `<head>` puts the `<title>` text back. It deliberately does not override `document.title`.
 - `src/admin/index.html` loads Sveltia at a pinned version (`@sveltia/cms@x.y.z`), not `latest`, so an upstream release can't break the editor components unnoticed. Bump it on purpose.
+- `field_defaults.richtext.captioned_images` is `false` in `config.yml`: Sveltia's own image caption would save a raw HTML `<figure>`, but the site builds the figure and `<figcaption>` itself from the markdown image title. Sveltia 0.271+ also converts HEIC to WebP in the browser through the `raster_image` transform.
 - `src/admin/editor-components.js` adds the body editor's insert menu: margin note, callout, page break, footnote marker, footnote text, image with caption, and quote with source. Each component's `pattern` must match exactly what its `toBlock` writes, or a saved block won't reopen in its form; a pattern with the `m` flag is a block, without it an inline element. Adding a shortcode means adding its component here too. The footnote marker and its text are separate inserts sharing a name, since the note belongs at the end of the post.
 
 ### Feed

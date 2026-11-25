@@ -7,6 +7,12 @@ backend:
   branch: main
   base_url: https://sveltia-cms-auth.thedataareclean.workers.dev
 
+# Sveltia's image caption field would save a raw HTML figure. Captions here are
+# the markdown image title, which the site turns into a figure itself.
+field_defaults:
+  richtext:
+    captioned_images: false
+
 media_folder: images/uploads
 public_folder: /images/uploads
 
@@ -14,7 +20,7 @@ public_folder: /images/uploads
 # commits a finished .webp, so the deploy bot has nothing to convert and
 # doesn't push a follow-up commit to main (that commit raced the next CMS
 # save: "The repository has been updated by someone else while saving").
-# HEIC can't be decoded by browsers; it still goes through convert-webp.js.
+# Sveltia 0.271+ also converts HEIC here, so uploads need no bot commit.
 media_libraries:
   default:
     config:
