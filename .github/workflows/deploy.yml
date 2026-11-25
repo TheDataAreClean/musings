@@ -25,21 +25,21 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           # Full history (snapshot-versions.js reads it), but old file
           # contents are only downloaded when a script asks for them. A plain
           # full clone pulls every original photo ever committed (~400 MB).
           fetch-depth: 0
           filter: blob:none
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
       # Resized images from Eleventy Image (see .eleventy.js). Each file is
       # named by a hash of its source and settings, so restoring last run's
       # copies only skips work; a new or changed image is made fresh.
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: _site/img
           key: eleventy-img-${{ hashFiles('images/uploads/**', '.eleventy.js') }}
