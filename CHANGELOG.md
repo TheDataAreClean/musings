@@ -6,7 +6,11 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ## UNRELEASED
 
-- feat: a post can be moved to another section from the CMS (new "Move to" field). Its old link stops working.
+---
+
+## 2026-11-25 (v4.7.0)
+
+- add: a post can be moved to another section from the CMS (new "Move to" field). Its old link stops working.
 
 ---
 
