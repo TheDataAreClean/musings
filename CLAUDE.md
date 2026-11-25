@@ -6,7 +6,7 @@ Operating manual for Claude. Architecture lives in [APP.md](APP.md). Commands li
 
 ## Before you push
 
-- Run `npm test` and `npm run build` on a clean tree. `prebuild` only writes files for a version bump or a HEIC upload, so `git status` should be clean after. The build must exit with zero errors and both `postbuild` checks (`check-site.js`, `check-readers.js`) passing
+- Run `npm test` and `npm run build` on a clean tree. `prebuild` only writes files for a version bump, so `git status` should be clean after. The build must exit with zero errors and both `postbuild` checks (`check-site.js`, `check-readers.js`) passing
 - Check browser console — no JS errors, no 404s
 - Test the golden path: home page loads → post opens → font/zoom dropdowns work → anchor links land below chrome
 
@@ -41,8 +41,8 @@ Font, text size, zoom and ¶ marks reset on a new tab or a fresh arrival by desi
 **Passthrough copies must be registered**
 Any new asset directory or file needs a corresponding `addPassthroughCopy` in `.eleventy.js`. Missing entries silently 404 in production.
 
-**The deploy commits back to `main` only for version bumps and HEIC uploads**
-Permalinks are computed (`scripts/content.js` → each section's `.11tydata.js`), uploads keep the CMS's file name, and nothing else in `prebuild` writes to the repo. Keep it that way: every bot commit races the next CMS save ("The repository has been updated by someone else while saving"). Never add a `permalink:` line to a post, and don't reintroduce upload renaming. The commit step stays unscoped (`git add -A`), since `convert-heic.js` writes through the `src/images` symlink to `images/...`.
+**The deploy commits back to `main` only for version bumps**
+Permalinks are computed (`scripts/content.js` → each section's `.11tydata.js`), uploads keep the CMS's file name, and nothing else in `prebuild` writes to the repo. Keep it that way: every bot commit races the next CMS save ("The repository has been updated by someone else while saving"). Never add a `permalink:` line to a post, and don't reintroduce upload renaming. The commit step stays unscoped (`git add -A`) so nothing a build writes is left out.
 
 **New posts default to `draft: false` in Sveltia CMS**
 There is no separate draft pipeline — `draft` only hides a post from listings, tag pages and the feed; the URL still resolves once the file is on `main` (see `APP.md` → Drafts). Any new listing must drop drafts too (`filterDrafts` or the `published` filter): Eleventy's own `collections[tag]` includes them. The `draft` field in `src/admin/config.yml` defaults to `false`, so a new post publishes immediately on save unless you tick Draft first.
@@ -60,7 +60,7 @@ Every `<img>` in a built page becomes WebP at 640/1200/2000px with `srcset`, `wi
 Every `/tags/` link, the tag page permalink and the og:image path use the `tagSlug` filter (shared with `generate-og-images.js`). Building a tag URL any other way breaks for a tag with a capital letter or a space.
 
 **Post versions: snapshots live in `src/versions/` and must never be hand-edited or regenerated**
-Once `snapshot-versions.js` writes `src/versions/{section}/{stem}/v{n}.md`, that file *is* version n; it is only ever created, never rewritten (apart from image paths `convert-heic.js` changes from `.heic` to `.webp`). Its URL isn't stored: `src/versions/versions.11tydata.js` puts it under the post's current URL. Snapshots carry `postTags`, not `tags`, so they stay out of tag collections, listings and the feed; keep it that way. Renaming a post file orphans its snapshots (the folder is keyed by file stem), so move `src/versions/{section}/{stem}/` with it. See `APP.md` → Post versions.
+Once `snapshot-versions.js` writes `src/versions/{section}/{stem}/v{n}.md`, that file *is* version n; it is only ever created, never rewritten. Its URL isn't stored: `src/versions/versions.11tydata.js` puts it under the post's current URL. Snapshots carry `postTags`, not `tags`, so they stay out of tag collections, listings and the feed; keep it that way. Renaming a post file orphans its snapshots (the folder is keyed by file stem), so move `src/versions/{section}/{stem}/` with it. See `APP.md` → Post versions.
 
 **The edit note is built once, for the page and the feed**
 `src/_includes/version-notes.njk` holds the edit note's macros (the `[*]` mark, the latest version's line and footnote, the note-or-"Edited on" fallback); `doc.njk` and `feed.njk` both import it, so change wording there, not in either template. The feed passes `site.url` as `base` for absolute links and gets an inline `*` marker, since feed readers drop the site CSS. `withVersionFootnote` builds its markup from markdown-it-footnote's own renderer rules; don't hard-code `<section class="footnotes">` strings. The `#fn-version`/`#fnref-version` ids must stay unique: a post's own footnotes are numbered, so they can't clash.

@@ -8,6 +8,14 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## 2026-11-25 (v4.6.1)
+
+- chore: CMS upgraded to Sveltia 0.272.0. HEIC photos now convert to WebP in the editor, so the build-time HEIC script and its bot commit are gone (a HEIC added outside the CMS fails the build by name).
+- chore: CMS entry lists open newest first, and the built-in image caption field is off (the "Image with caption" insert is the way to add one).
+- docs: the Reference page now says photos, HEIC included, are converted to WebP in the editor before they are saved, not at build time.
+
+---
+
 ## 2026-11-23 (v4.6.0)
 
 - change: photos load much faster, especially on phones. Each image is now served at the size the screen needs (a photo that was 4.3 MB is about 400 KB on a phone), reserves its space before it loads, and loads only as you scroll to it.
