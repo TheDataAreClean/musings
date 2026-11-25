@@ -1,17 +1,18 @@
 {
   "name": "musings",
-  "version": "4.6.1",
+  "version": "4.7.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "eleventy --serve --watch --port=8081",
-    "prebuild": "node scripts/snapshot-versions.js && node scripts/generate-og-images.js",
+    "prebuild": "node scripts/move-posts.js && node scripts/snapshot-versions.js && node scripts/generate-og-images.js",
     "build": "eleventy",
     "postbuild": "node scripts/check-site.js && node scripts/check-readers.js",
     "clean": "rm -rf _site",
     "test": "node --test \"test/**/*.test.js\"",
     "ogimages": "node scripts/generate-og-images.js",
     "versions": "node scripts/snapshot-versions.js",
+    "move": "node scripts/move-posts.js",
     "check:site": "node scripts/check-site.js",
     "check:readers": "node scripts/check-readers.js"
   },

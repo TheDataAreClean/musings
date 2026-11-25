@@ -8,6 +8,12 @@ Version bump policy and entry prefixes: see the [release skill](.claude/skills/r
 
 ---
 
+## 2026-11-25 (v4.7.0)
+
+- add: a post can be moved to another section from the CMS (new "Section" field). Its old link stops working.
+
+---
+
 ## 2026-11-25 (v4.6.1)
 
 - chore: CMS upgraded to Sveltia 0.272.0. HEIC photos now convert to WebP in the editor, so the build-time HEIC script and its bot commit are gone (a HEIC added outside the CMS fails the build by name).

@@ -352,11 +352,13 @@ module.exports = function (eleventyConfig) {
     return `Before, ${list}${last && /[.!?]$/.test(last) ? "" : "."}`;
   });
 
-  // `npm run build` runs scripts/snapshot-versions.js as a prebuild step; the
-  // dev server doesn't, so run it before each dev rebuild too. A bump saved in
-  // the CMS (local repository mode) then gets its snapshot straight away.
+  // `npm run build` runs scripts/move-posts.js and scripts/snapshot-versions.js
+  // as prebuild steps; the dev server doesn't, so run them before each dev
+  // rebuild too. A bump or move saved in the CMS (local repository mode) then
+  // takes effect straight away.
   if (isDev) {
     eleventyConfig.on("eleventy.before", () => {
+      require("child_process").execFileSync("node", ["scripts/move-posts.js"], { stdio: "inherit" });
       require("child_process").execFileSync("node", ["scripts/snapshot-versions.js"], { stdio: "inherit" });
     });
   }

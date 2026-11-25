@@ -120,3 +120,16 @@ test("every insert-menu block reopens into its form", () => {
     }
   }
 });
+
+// ---- scripts/move-posts.js -------------------------------------------------
+test("move-posts reads the moveTo field and ignores blanks", () => {
+  const { requestedSection, withoutMoveTo } = require("../scripts/move-posts.js");
+  const post = (line) => `---\ntitle: x\n${line}\nversion: 1\n---\n\nmoveTo: notes in the body\n`;
+  assert.equal(requestedSection(post("moveTo: notes")), "notes");
+  assert.equal(requestedSection(post("moveTo: 'snaps'")), "snaps");
+  assert.equal(requestedSection(post("moveTo: ''")), "");
+  assert.equal(requestedSection(post("moveTo:")), "");
+  assert.equal(requestedSection("---\ntitle: x\n---\nmoveTo: notes\n"), "");
+  // only the front matter line goes; the body keeps its text
+  assert.equal(withoutMoveTo(post("moveTo: notes")), "---\ntitle: x\nversion: 1\n---\n\nmoveTo: notes in the body\n");
+});
