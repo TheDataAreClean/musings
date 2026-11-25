@@ -14,6 +14,7 @@ All runnable commands. Source: `package.json`.
 | Clean build output | `npm run clean` |
 | Run the unit tests | `npm test` |
 | Generate every og:image | `npm run ogimages` |
+| Move posts that have a `moveTo` field | `npm run move` |
 | Save earlier versions of revised posts | `npm run versions` |
 | Check the built site: feed, links, drafts, old URLs (runs after every build) | `npm run check:site` |
 | …and record today's URLs as the ones that must keep working | `node scripts/check-site.js --update-urls` |
@@ -50,5 +51,5 @@ Full checklist and bump policy: [release skill](.claude/skills/release/SKILL.md)
 - `npm run clean` deletes `_site/` only — safe to run before a fresh build
 - Node 24 (`.nvmrc`; `nvm use` picks it up)
 - `npm ci` is used in CI (`deploy.yml`, `check.yml`); prefer `npm install` locally
-- `npm run build` runs `prebuild` first (snapshot-versions + generate-og-images) and `postbuild` last (`check-site.js`, then `check-readers.js`); either check failing fails the build, and so the deploy. See `APP.md` → Deployment and Reader views
+- `npm run build` runs `prebuild` first (move-posts + snapshot-versions + generate-og-images) and `postbuild` last (`check-site.js`, then `check-readers.js`); either check failing fails the build, and so the deploy. See `APP.md` → Deployment and Reader views
 - The first build resizes every image (about 30s); later ones reuse `_site/img/`. `npm run clean` clears that too
